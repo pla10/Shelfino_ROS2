@@ -77,6 +77,5 @@
         "vector": "cpp",
         "__bits": "cpp",
         "filesystem": "cpp"
-    },
-    "cmake.sourceDirectory": "${workspaceFolder}/ros1_version/hw_rplidar_reader"
+    }
 }
