@@ -118,6 +118,21 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
+<tr class="memitem:ae85238f133122b9b8300987a8c1650ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#ae85238f133122b9b8300987a8c1650ae">lidar_callback</a> ()</td></tr>
+<tr class="memdesc:ae85238f133122b9b8300987a8c1650ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method callback that retrieves the lidar scan data from ZMQ and publishes to ROS.  <a href="classShelfinoHWNode.html#ae85238f133122b9b8300987a8c1650ae">More...</a><br /></td></tr>
+<tr class="separator:ae85238f133122b9b8300987a8c1650ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a326b48d22386967fd4f45972171ad5b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#a326b48d22386967fd4f45972171ad5b7">t265_callback</a> ()</td></tr>
+<tr class="memdesc:a326b48d22386967fd4f45972171ad5b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method callback that retrieves the RealSense odometry data from ZMQ and publishes to ROS.  <a href="classShelfinoHWNode.html#a326b48d22386967fd4f45972171ad5b7">More...</a><br /></td></tr>
+<tr class="separator:a326b48d22386967fd4f45972171ad5b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a203b522a6fbed4cc836ce25a04119cca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#a203b522a6fbed4cc836ce25a04119cca">odom_callback</a> ()</td></tr>
+<tr class="memdesc:a203b522a6fbed4cc836ce25a04119cca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method callback that retrieves odometry data from ZMQ and publishes to ROS.  <a href="classShelfinoHWNode.html#a203b522a6fbed4cc836ce25a04119cca">More...</a><br /></td></tr>
+<tr class="separator:a203b522a6fbed4cc836ce25a04119cca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd6808630aa8ca7ff90db5c914017c0d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#afd6808630aa8ca7ff90db5c914017c0d">enc_callback</a> ()</td></tr>
+<tr class="memdesc:afd6808630aa8ca7ff90db5c914017c0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method callback that retrieves the encoders data from ZMQ and publishes to ROS.  <a href="classShelfinoHWNode.html#afd6808630aa8ca7ff90db5c914017c0d">More...</a><br /></td></tr>
+<tr class="separator:afd6808630aa8ca7ff90db5c914017c0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae20489e2572d2dfecf96efcbc9481aeb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#ae20489e2572d2dfecf96efcbc9481aeb">handle_shelfino_cmd_vel</a> (const std::shared_ptr&lt; geometry_msgs::msg::Twist &gt; msg)</td></tr>
+<tr class="memdesc:ae20489e2572d2dfecf96efcbc9481aeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method that handles the velocities commands from ROS to ZMQ.  <a href="classShelfinoHWNode.html#ae20489e2572d2dfecf96efcbc9481aeb">More...</a><br /></td></tr>
+<tr class="separator:ae20489e2572d2dfecf96efcbc9481aeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8caf842fae2fc008c0a7a3e3494d0546"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#a8caf842fae2fc008c0a7a3e3494d0546">handle_shelfino_pose</a> (nav_msgs::msg::Odometry msg)</td></tr>
 <tr class="memdesc:a8caf842fae2fc008c0a7a3e3494d0546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method that broadcasts the transform from the "odom" frame to "base_link" frame.  <a href="classShelfinoHWNode.html#a8caf842fae2fc008c0a7a3e3494d0546">More...</a><br /></td></tr>
 <tr class="separator:a8caf842fae2fc008c0a7a3e3494d0546"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,6 +170,67 @@ Private Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="afd6808630aa8ca7ff90db5c914017c0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd6808630aa8ca7ff90db5c914017c0d">&#9670;&nbsp;</a></span>enc_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ShelfinoHWNode::enc_callback </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Method callback that retrieves the encoders data from ZMQ and publishes to ROS. </p>
+
+</div>
+</div>
+<a id="ae20489e2572d2dfecf96efcbc9481aeb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae20489e2572d2dfecf96efcbc9481aeb">&#9670;&nbsp;</a></span>handle_shelfino_cmd_vel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ShelfinoHWNode::handle_shelfino_cmd_vel </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; geometry_msgs::msg::Twist &gt;&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Method that handles the velocities commands from ROS to ZMQ. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>The velocity mesasge used as control action for the robot. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a8caf842fae2fc008c0a7a3e3494d0546"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8caf842fae2fc008c0a7a3e3494d0546">&#9670;&nbsp;</a></span>handle_shelfino_pose()</h2>
 
@@ -186,6 +262,88 @@ Private Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="ae85238f133122b9b8300987a8c1650ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae85238f133122b9b8300987a8c1650ae">&#9670;&nbsp;</a></span>lidar_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ShelfinoHWNode::lidar_callback </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Method callback that retrieves the lidar scan data from ZMQ and publishes to ROS. </p>
+
+</div>
+</div>
+<a id="a203b522a6fbed4cc836ce25a04119cca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a203b522a6fbed4cc836ce25a04119cca">&#9670;&nbsp;</a></span>odom_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ShelfinoHWNode::odom_callback </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Method callback that retrieves odometry data from ZMQ and publishes to ROS. </p>
+<p>The odometry is calculated from the sensor fusion of encoders and RealSense data </p>
+
+</div>
+</div>
+<a id="a326b48d22386967fd4f45972171ad5b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a326b48d22386967fd4f45972171ad5b7">&#9670;&nbsp;</a></span>t265_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ShelfinoHWNode::t265_callback </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Method callback that retrieves the RealSense odometry data from ZMQ and publishes to ROS. </p>
 
 </div>
 </div>
