@@ -2,6 +2,8 @@ var NAVTREEINDEX0 =
 {
 "annotated.html":[1,0],
 "classCMDPublisher.html":[1,0,0],
+"classCMDPublisher.html#a37c8a951b3b252c019faf482ff9bc729":[1,0,0,0],
+"classCMDPublisher.html#af2668c5f4a68f9bcf04e3f4b10376b0e":[1,0,0,1],
 "classHardwareGlobalInterface.html":[1,0,1],
 "classShelfinoHWNode.html":[1,0,3],
 "classShelfinoHWNode.html#a203b522a6fbed4cc836ce25a04119cca":[1,0,3,5],

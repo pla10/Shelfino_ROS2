@@ -1,6 +1,6 @@
 var annotated_dup =
 [
-    [ "CMDPublisher", "classCMDPublisher.html", null ],
+    [ "CMDPublisher", "classCMDPublisher.html", "classCMDPublisher" ],
     [ "HardwareGlobalInterface", "classHardwareGlobalInterface.html", null ],
     [ "HardwareParameters", "structHardwareParameters.html", null ],
     [ "ShelfinoHWNode", "classShelfinoHWNode.html", "classShelfinoHWNode" ]
