@@ -93,11 +93,317 @@ $(document).ready(function(){initNavTree('classHardwareGlobalInterface.html','')
 
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classHardwareGlobalInterface-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">HardwareGlobalInterface Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface that handles all the communication with ZMQ for the hardware of the robot.  
+ <a href="classHardwareGlobalInterface.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="shelfino__node_2include_2hardwareglobalinterface_8h_source.html">hardwareglobalinterface.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a98b824b71f0bde4defebece6af84aca6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHardwareGlobalInterface.html#a98b824b71f0bde4defebece6af84aca6">getLocalizationData</a> (RobotStatus::LocalizationData &amp;locData)</td></tr>
+<tr class="memdesc:a98b824b71f0bde4defebece6af84aca6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Localization Data object.  <a href="classHardwareGlobalInterface.html#a98b824b71f0bde4defebece6af84aca6">More...</a><br /></td></tr>
+<tr class="separator:a98b824b71f0bde4defebece6af84aca6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8be066c9c5346972e68fe39f3f75d707"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structHardwareParameters.html">HardwareParameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHardwareGlobalInterface.html#a8be066c9c5346972e68fe39f3f75d707">getParams</a> ()</td></tr>
+<tr class="memdesc:a8be066c9c5346972e68fe39f3f75d707"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Params object containing the list of IP addresses and ports used by ZMQ in the robot.  <a href="classHardwareGlobalInterface.html#a8be066c9c5346972e68fe39f3f75d707">More...</a><br /></td></tr>
+<tr class="separator:a8be066c9c5346972e68fe39f3f75d707"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3be131ff6f220d0ecfb12e1c6bdc117"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHardwareGlobalInterface.html#aa3be131ff6f220d0ecfb12e1c6bdc117">getFrontLidarData</a> (RobotStatus::LidarData &amp;lidarData)</td></tr>
+<tr class="memdesc:aa3be131ff6f220d0ecfb12e1c6bdc117"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Front Lidar Data object.  <a href="classHardwareGlobalInterface.html#aa3be131ff6f220d0ecfb12e1c6bdc117">More...</a><br /></td></tr>
+<tr class="separator:aa3be131ff6f220d0ecfb12e1c6bdc117"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad3754f7f43e226263db7ee3b567fddd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHardwareGlobalInterface.html#aad3754f7f43e226263db7ee3b567fddd">getRealSenseOdomData</a> (RobotStatus::OdometryData &amp;odomData)</td></tr>
+<tr class="memdesc:aad3754f7f43e226263db7ee3b567fddd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Real Sense Odometry Data object.  <a href="classHardwareGlobalInterface.html#aad3754f7f43e226263db7ee3b567fddd">More...</a><br /></td></tr>
+<tr class="separator:aad3754f7f43e226263db7ee3b567fddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a7e7f3741b7f7b46ff0e6d207b558add4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classHardwareGlobalInterface.html">HardwareGlobalInterface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHardwareGlobalInterface.html#a7e7f3741b7f7b46ff0e6d207b558add4">getInstance</a> ()</td></tr>
+<tr class="memdesc:a7e7f3741b7f7b46ff0e6d207b558add4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Instance object.  <a href="classHardwareGlobalInterface.html#a7e7f3741b7f7b46ff0e6d207b558add4">More...</a><br /></td></tr>
+<tr class="separator:a7e7f3741b7f7b46ff0e6d207b558add4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a505189b6fe2531ef6a7516e1473c6255"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classHardwareGlobalInterface.html">HardwareGlobalInterface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHardwareGlobalInterface.html#a505189b6fe2531ef6a7516e1473c6255">getInstance</a> (unsigned long i)</td></tr>
+<tr class="memdesc:a505189b6fe2531ef6a7516e1473c6255"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a specific Instance object.  <a href="classHardwareGlobalInterface.html#a505189b6fe2531ef6a7516e1473c6255">More...</a><br /></td></tr>
+<tr class="separator:a505189b6fe2531ef6a7516e1473c6255"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03dbf836809f2c4a84de06c051bfa082"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classHardwareGlobalInterface.html">HardwareGlobalInterface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHardwareGlobalInterface.html#a03dbf836809f2c4a84de06c051bfa082">initialize</a> ()</td></tr>
+<tr class="memdesc:a03dbf836809f2c4a84de06c051bfa082"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a robot istance.  <a href="classHardwareGlobalInterface.html#a03dbf836809f2c4a84de06c051bfa082">More...</a><br /></td></tr>
+<tr class="separator:a03dbf836809f2c4a84de06c051bfa082"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ae935343e0d4546937992b03b1b704c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classHardwareGlobalInterface.html">HardwareGlobalInterface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHardwareGlobalInterface.html#a4ae935343e0d4546937992b03b1b704c">initialize</a> (<a class="el" href="structHardwareParameters.html">HardwareParameters</a> *hp)</td></tr>
+<tr class="memdesc:a4ae935343e0d4546937992b03b1b704c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a robot istance defining its parameters.  <a href="classHardwareGlobalInterface.html#a4ae935343e0d4546937992b03b1b704c">More...</a><br /></td></tr>
+<tr class="separator:a4ae935343e0d4546937992b03b1b704c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface that handles all the communication with ZMQ for the hardware of the robot. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa3be131ff6f220d0ecfb12e1c6bdc117"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3be131ff6f220d0ecfb12e1c6bdc117">&#9670;&nbsp;</a></span>getFrontLidarData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool HardwareGlobalInterface::getFrontLidarData </td>
+          <td>(</td>
+          <td class="paramtype">RobotStatus::LidarData &amp;&#160;</td>
+          <td class="paramname"><em>lidarData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Front Lidar Data object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lidarData</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true the lidar data is available. </dd>
+<dd>
+false the lidar data has expired. </dd></dl>
+
+</div>
+</div>
+<a id="a7e7f3741b7f7b46ff0e6d207b558add4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e7f3741b7f7b46ff0e6d207b558add4">&#9670;&nbsp;</a></span>getInstance() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classHardwareGlobalInterface.html">HardwareGlobalInterface</a>&amp; HardwareGlobalInterface::getInstance </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Instance object. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classHardwareGlobalInterface.html" title="Interface that handles all the communication with ZMQ for the hardware of the robot.">HardwareGlobalInterface</a>&amp; </dd></dl>
+
+</div>
+</div>
+<a id="a505189b6fe2531ef6a7516e1473c6255"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a505189b6fe2531ef6a7516e1473c6255">&#9670;&nbsp;</a></span>getInstance() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classHardwareGlobalInterface.html">HardwareGlobalInterface</a>&amp; HardwareGlobalInterface::getInstance </td>
+          <td>(</td>
+          <td class="paramtype">unsigned long&#160;</td>
+          <td class="paramname"><em>i</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a specific Instance object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>the index of the wanted initialized robot </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classHardwareGlobalInterface.html" title="Interface that handles all the communication with ZMQ for the hardware of the robot.">HardwareGlobalInterface</a>&amp; </dd></dl>
+
+</div>
+</div>
+<a id="a98b824b71f0bde4defebece6af84aca6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98b824b71f0bde4defebece6af84aca6">&#9670;&nbsp;</a></span>getLocalizationData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool HardwareGlobalInterface::getLocalizationData </td>
+          <td>(</td>
+          <td class="paramtype">RobotStatus::LocalizationData &amp;&#160;</td>
+          <td class="paramname"><em>locData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Localization Data object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">locData</td><td>the localization data object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true the localization data is available. </dd>
+<dd>
+false the localization data has expired. </dd></dl>
+
+</div>
+</div>
+<a id="a8be066c9c5346972e68fe39f3f75d707"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8be066c9c5346972e68fe39f3f75d707">&#9670;&nbsp;</a></span>getParams()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structHardwareParameters.html">HardwareParameters</a> HardwareGlobalInterface::getParams </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Params object containing the list of IP addresses and ports used by ZMQ in the robot. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structHardwareParameters.html" title="Structure that contains all the IP addresses and ports information used by ZMQ in the robot.">HardwareParameters</a> object containing the list of IP addresses and ports used by ZMQ in the robot. </dd></dl>
+
+</div>
+</div>
+<a id="aad3754f7f43e226263db7ee3b567fddd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad3754f7f43e226263db7ee3b567fddd">&#9670;&nbsp;</a></span>getRealSenseOdomData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool HardwareGlobalInterface::getRealSenseOdomData </td>
+          <td>(</td>
+          <td class="paramtype">RobotStatus::OdometryData &amp;&#160;</td>
+          <td class="paramname"><em>odomData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Real Sense Odometry Data object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">odomData</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true the real sense odometry data is available. </dd>
+<dd>
+false the real sense odometry data has expired. </dd></dl>
+
+</div>
+</div>
+<a id="a03dbf836809f2c4a84de06c051bfa082"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03dbf836809f2c4a84de06c051bfa082">&#9670;&nbsp;</a></span>initialize() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classHardwareGlobalInterface.html">HardwareGlobalInterface</a>&amp; HardwareGlobalInterface::initialize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialize a robot istance. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classHardwareGlobalInterface.html" title="Interface that handles all the communication with ZMQ for the hardware of the robot.">HardwareGlobalInterface</a>&amp; </dd></dl>
+
+</div>
+</div>
+<a id="a4ae935343e0d4546937992b03b1b704c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ae935343e0d4546937992b03b1b704c">&#9670;&nbsp;</a></span>initialize() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classHardwareGlobalInterface.html">HardwareGlobalInterface</a>&amp; HardwareGlobalInterface::initialize </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structHardwareParameters.html">HardwareParameters</a> *&#160;</td>
+          <td class="paramname"><em>hp</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialize a robot istance defining its parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hp</td><td>object containing the list of the robot IP addresses and ports used by ZMQ in the robot. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classHardwareGlobalInterface.html" title="Interface that handles all the communication with ZMQ for the hardware of the robot.">HardwareGlobalInterface</a>&amp; </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

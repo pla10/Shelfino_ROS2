@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['odom_5fcallback_21',['odom_callback',['../classShelfinoHWNode.html#a203b522a6fbed4cc836ce25a04119cca',1,'ShelfinoHWNode']]]
+  ['initialize_34',['initialize',['../classHardwareGlobalInterface.html#a03dbf836809f2c4a84de06c051bfa082',1,'HardwareGlobalInterface::initialize()'],['../classHardwareGlobalInterface.html#a4ae935343e0d4546937992b03b1b704c',1,'HardwareGlobalInterface::initialize(HardwareParameters *hp)']]]
 ];

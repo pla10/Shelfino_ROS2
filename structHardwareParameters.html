@@ -93,11 +93,104 @@ $(document).ready(function(){initNavTree('structHardwareParameters.html',''); in
 
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="structHardwareParameters-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">HardwareParameters Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Structure that contains all the IP addresses and ports information used by ZMQ in the robot.  
+ <a href="structHardwareParameters.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="shelfino__node_2include_2hardwareparameters_8h_source.html">hardwareparameters.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a89c88d91e77c3cb4ebd72cd881eebfcc"><td class="memItemLeft" align="right" valign="top"><a id="a89c88d91e77c3cb4ebd72cd881eebfcc"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHardwareParameters.html#a89c88d91e77c3cb4ebd72cd881eebfcc">HardwareParameters</a> ()</td></tr>
+<tr class="memdesc:a89c88d91e77c3cb4ebd72cd881eebfcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contruct a new Hardware Parameters structure with the default values. <br /></td></tr>
+<tr class="separator:a89c88d91e77c3cb4ebd72cd881eebfcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad846fa556c4663ddcd653813a6133a7a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHardwareParameters.html#ad846fa556c4663ddcd653813a6133a7a">HardwareParameters</a> (std::string val)</td></tr>
+<tr class="memdesc:ad846fa556c4663ddcd653813a6133a7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Hardware Parameters structure using localhost.  <a href="structHardwareParameters.html#ad846fa556c4663ddcd653813a6133a7a">More...</a><br /></td></tr>
+<tr class="separator:ad846fa556c4663ddcd653813a6133a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63f2bfb0e838e40e23fd26f390eb5afa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHardwareParameters.html#a63f2bfb0e838e40e23fd26f390eb5afa">HardwareParameters</a> (int i)</td></tr>
+<tr class="memdesc:a63f2bfb0e838e40e23fd26f390eb5afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Hardware Parameters structure using an integer value for the initialization of the IP addresses.  <a href="structHardwareParameters.html#a63f2bfb0e838e40e23fd26f390eb5afa">More...</a><br /></td></tr>
+<tr class="separator:a63f2bfb0e838e40e23fd26f390eb5afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Structure that contains all the IP addresses and ports information used by ZMQ in the robot. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ad846fa556c4663ddcd653813a6133a7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad846fa556c4663ddcd653813a6133a7a">&#9670;&nbsp;</a></span>HardwareParameters() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">HardwareParameters::HardwareParameters </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a new Hardware Parameters structure using localhost. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>string </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a63f2bfb0e838e40e23fd26f390eb5afa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63f2bfb0e838e40e23fd26f390eb5afa">&#9670;&nbsp;</a></span>HardwareParameters() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">HardwareParameters::HardwareParameters </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a new Hardware Parameters structure using an integer value for the initialization of the IP addresses. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>integer value used to set the NUC and BeagleBone addresses. <div class="fragment"><div class="line">BeagleBone IP = 100 + i*10 + 2;</div>
+<div class="line">NUC IP = 100 + i*10 + 5;</div>
+</div><!-- fragment --> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

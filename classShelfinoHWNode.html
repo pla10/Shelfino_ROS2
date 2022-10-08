@@ -95,6 +95,7 @@ $(document).ready(function(){initNavTree('classShelfinoHWNode.html',''); initRes
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classShelfinoHWNode-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">ShelfinoHWNode Class Reference</div>  </div>
@@ -136,6 +137,17 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a8caf842fae2fc008c0a7a3e3494d0546"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#a8caf842fae2fc008c0a7a3e3494d0546">handle_shelfino_pose</a> (nav_msgs::msg::Odometry msg)</td></tr>
 <tr class="memdesc:a8caf842fae2fc008c0a7a3e3494d0546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method that broadcasts the transform from the "odom" frame to "base_link" frame.  <a href="classShelfinoHWNode.html#a8caf842fae2fc008c0a7a3e3494d0546">More...</a><br /></td></tr>
 <tr class="separator:a8caf842fae2fc008c0a7a3e3494d0546"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:abccbc9c2d574280777a9f586caad8466"><td class="memItemLeft" align="right" valign="top"><a id="abccbc9c2d574280777a9f586caad8466"></a>
+const auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#abccbc9c2d574280777a9f586caad8466">R_ID_DEFAULT</a> = 2</td></tr>
+<tr class="memdesc:abccbc9c2d574280777a9f586caad8466"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variable for definition of the shelfino ID number. <br /></td></tr>
+<tr class="separator:abccbc9c2d574280777a9f586caad8466"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfdbfa396e51ee16680a7608b0aa63a7"><td class="memItemLeft" align="right" valign="top"><a id="acfdbfa396e51ee16680a7608b0aa63a7"></a>
+std::unique_ptr&lt; <a class="el" href="structHardwareParameters.html">HardwareParameters</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShelfinoHWNode.html#acfdbfa396e51ee16680a7608b0aa63a7">hp</a></td></tr>
+<tr class="memdesc:acfdbfa396e51ee16680a7608b0aa63a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a Hardware Parameters instance which contains all the information on the IP addresses and ports of the specific shelfino robot. <br /></td></tr>
+<tr class="separator:acfdbfa396e51ee16680a7608b0aa63a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Shelfino ROS2 node to bridge the sensor data from ZMQ to ROS2. </p>
