@@ -6,7 +6,5 @@ var classShelfinoHWNode =
     [ "handle_shelfino_pose", "classShelfinoHWNode.html#a8caf842fae2fc008c0a7a3e3494d0546", null ],
     [ "lidar_callback", "classShelfinoHWNode.html#ae85238f133122b9b8300987a8c1650ae", null ],
     [ "odom_callback", "classShelfinoHWNode.html#a203b522a6fbed4cc836ce25a04119cca", null ],
-    [ "t265_callback", "classShelfinoHWNode.html#a326b48d22386967fd4f45972171ad5b7", null ],
-    [ "hp", "classShelfinoHWNode.html#acfdbfa396e51ee16680a7608b0aa63a7", null ],
-    [ "R_ID_DEFAULT", "classShelfinoHWNode.html#abccbc9c2d574280777a9f586caad8466", null ]
+    [ "t265_callback", "classShelfinoHWNode.html#a326b48d22386967fd4f45972171ad5b7", null ]
 ];
