@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Shelfino ROS2 Interface: Shelfino_ROS2</title>
+<title>Shelfino ROS2 Interface: Shelfino ROS2</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,15 +93,38 @@ $(document).ready(function(){initNavTree('md_README.html',''); initResizable(); 
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">Shelfino_ROS2 </div>  </div>
+<div class="title">Shelfino ROS2 </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>ROS 2 interface for the mobile robot Shelfino of the Department of Information Engineering and Computer Science of the University of Trento.</p>
+<div class="textblock"><p>This repository contains the ROS 2 interface developed for the mobile robot Shelfino of the Department of Information Engineering and Computer Science of the University of Trento, Italy.</p>
 <p>The topics provided by the interface are:</p>
-<p>/scan - Data from the Lidar</p>
-<p>/odom - Data of the odometry (sensor fusion of the RealSense and encoders data)</p>
-<p>/t265 - Data from the RealSense camera</p>
-<p>/encoders - Data from the encoders of the wheels</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">TOPIC </th><th class="markdownTableHeadNone">Description  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">/scan </td><td class="markdownTableBodyNone">Data from the Lidar  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">/odom </td><td class="markdownTableBodyNone">Data of the odometry (sensor fusion of the RealSense and encoders data)  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">/t265 </td><td class="markdownTableBodyNone">Data from the RealSense camera  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">/joint_states </td><td class="markdownTableBodyNone">Data from the encoders of the wheels  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">/cmd_vel </td><td class="markdownTableBodyNone">Topic to control the movement of the robot acting on the velocities  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">/robot_description </td><td class="markdownTableBodyNone">The urdf description of the shelfino robot  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">/tf_static </td><td class="markdownTableBodyNone">The fixed transform between the <em>base_link</em> frame and the <em>base_laser</em> frame  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">/tf </td><td class="markdownTableBodyNone">The tranforms between the robot and the <em>odom</em> frame, and between the wheels and the robot body  </td></tr>
+</table>
+<p>|</p>
+<p><br  />
+</p>
+<hr  />
+<p>You can pull the docker image containing all the ROS2 nodes of this project with: <br  />
+ <code>docker pull pla10/ros2_humble:amd64</code></p>
+<hr  />
 <p>Check the <a href="https://pla10.github.io/Shelfino_ROS2">complete documentation</a> of this repository. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
