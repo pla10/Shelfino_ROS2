@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['shelfinohwnode_21',['ShelfinoHWNode',['../classShelfinoHWNode.html',1,'']]]
+  ['minimalpublisher_22',['MinimalPublisher',['../classMinimalPublisher.html',1,'']]]
 ];
