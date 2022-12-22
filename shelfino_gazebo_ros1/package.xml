@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>shelfino_gazebo</name>
+  <version>1.3.2</version>
+  <description>
+    Gazebo simulation package for the shelfino mobile robot of the University of Trento
+  </description>
+  <license>Apache 2.0</license>
+  <author email="placido.falqueto@unitn.it">Placido Falqueto</author>
+  <maintainer email="placido.falqueto@unitn.it">Placido Falqueto</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf</depend>
+  <depend>gazebo_ros</depend>
+  <exec_depend>gazebo</exec_depend>
+  <export>
+    <gazebo_ros gazebo_media_path="${prefix}"/>
+    <gazebo_ros gazebo_model_path="${prefix}/models"/>
+  </export>
+</package>

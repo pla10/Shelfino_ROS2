@@ -1,0 +1,307 @@
+<?xml version='1.0'?>
+<robot name="shelfino">
+
+  <!--
+                                                        MATERIALS 
+  -->
+    <material name="black">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+    </material>
+
+    <material name="grey">
+      <color rgba="0.7 0.7 0.7 1.0"/>
+    </material>
+
+    <material name="white">
+      <color rgba="1.0 1.0 1.0 1.0"/>
+    </material>
+
+  <!--
+                                                        BODY OF SHELFINO 
+  -->
+    <link name='base_link'>
+      <visual name='body_visual'>
+        <origin xyz='0 0 0.25'/>
+        <geometry>
+          <box size="0.5 0.5 0.4" />
+        </geometry>
+        <material name="grey" />
+      </visual>
+      
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="20.0"/>
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+                 iyy="1.0" iyz="0.0"
+                 izz="1.0" />
+      </inertial>
+
+      <visual name='front_caster_visual'>
+        <origin xyz='-0.2 0 0.05'/>
+        <geometry>
+          <sphere radius="0.05" />
+        </geometry>
+        <material name="white" />
+      </visual>
+
+      <visual name='back_caster_visual'>
+        <origin xyz='0.2 0 0.05'/>
+        <geometry>
+          <sphere radius="0.05" />
+        </geometry>
+        <material name="white" />
+      </visual>
+
+      <collision name='collision'>
+        <origin xyz='0 0 0.225'/>
+        <geometry>
+          <box size="0.5 0.5 0.449" />
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.0</mu>
+              <mu2>0.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+
+  <!--
+                                                        LEFT WHEEL JOINT 
+  -->
+    <joint name="wheel_left_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="left_wheel"/>
+      <origin xyz="0 0.27 0.125" rpy="0 1.5707 1.5707"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+
+  <!--
+                                                        LEFT WHEEL
+  -->
+    <link name="left_wheel">
+      <visual name="visual">
+        <geometry>
+        <cylinder radius="0.125" length="0.03" />
+        </geometry>
+        <material name="black" />
+      </visual>
+      
+      <collision name="collision">
+        <geometry>
+          <cylinder radius="0.125" length="0.03" />
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1000.0</mu>
+              <mu2>1000.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <inertial>
+        <mass value="2.0" />
+        <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+                iyy="1.1192413e-05" iyz="-1.4400107e-11"
+                izz="2.0712558e-05" />
+      </inertial>
+    </link>
+
+  <!--
+                                                        RIGHT WHEEL JOINT 
+  -->
+    <joint name="wheel_right_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="right_wheel"/>
+      <origin xyz="0 -0.27 0.125" rpy="0 1.5707 1.5707"/> 
+      <axis xyz="0 0 1"/>
+    </joint>
+
+  <!--
+                                                        RIGHT WHEEL 
+  -->
+    <link name="right_wheel">
+      <visual name="visual">
+        <geometry>
+          <cylinder radius="0.125" length="0.03" />
+        </geometry>
+        <material name="black" />
+      </visual>
+
+      <collision name="collision">
+        <geometry>
+          <cylinder radius="0.125" length="0.03" />
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1000.0</mu>
+              <mu2>1000.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <inertial>
+        <mass value="2.0" />
+        <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+                iyy="1.1192413e-05" iyz="-1.4400107e-11"
+                izz="2.0712558e-05" />
+      </inertial>
+    </link>
+    
+  <!--
+                                                        CAMERA FIXED JOINT 
+  -->
+    <joint name="camera_joint" type="fixed">
+      <parent link="base_link"></parent>
+      <child link="base_camera"></child>
+      <origin xyz="0 0 0.45" rpy="-1.5707 0 -1.5707"/>
+    </joint>
+
+  <!--
+                                                        LIDAR 
+  -->
+    <link name="base_camera">
+    </link>
+
+  <!--
+                                                        LIDAR FIXED JOINT 
+  -->
+    <joint name="lidar2d_joint" type="fixed">
+      <parent link="base_link"></parent>
+      <child link="base_laser"></child>
+      <origin xyz="0 0 0.45" rpy="0 0 0"/>
+    </joint>
+
+  <!--
+                                                        LIDAR 
+  -->
+    <link name="base_laser">
+      <visual>
+        <geometry>
+          <mesh filename="/home/placido/ros_ws/hokuyo.dae" />
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0.02"/>
+        <geometry>
+          <cylinder length="0.04" radius="0.023"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.1" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                iyy="0.001" iyz="0.0"
+                izz="0.001" />
+      </inertial>
+    </link>
+    
+    <gazebo>
+    <plugin name="shelfino_controller" filename="libgazebo_ros_diff_drive.so">
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometrySource>world</odometrySource>
+      <publishOdomTF>true</publishOdomTF>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <publishWheelTF>true</publishWheelTF>
+      <publishTf>true</publishTf>
+      <publishWheelJointState>true</publishWheelJointState>
+      <legacyMode>false</legacyMode>
+      <updateRate>30</updateRate>
+      <leftJoint>wheel_left_joint</leftJoint>
+      <rightJoint>wheel_right_joint</rightJoint>
+      <wheelSeparation>0.54</wheelSeparation>
+      <wheelDiameter>0.25</wheelDiameter>
+      <wheelAcceleration>1</wheelAcceleration>
+      <wheelTorque>20</wheelTorque>
+      <rosDebugLevel>na</rosDebugLevel>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="base_laser">
+    <material>Gazebo/FlatBlack</material>
+    <sensor type="ray" name="lds_lfcd_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>30</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>6.28318530718</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.15</min>
+          <max>12.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.02</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
+        <topicName>scan</topicName>
+        <frameName>base_laser</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+  
+  <gazebo reference="base_laser">
+	  <sensor name="base_camera" type="depth">
+	    <update_rate>30</update_rate>
+	    <camera>
+	      <horizontal_fov>1.047198</horizontal_fov>
+	      <image>
+		<width>640</width>
+		<height>480</height>
+		<format>R8G8B8</format>
+	      </image>
+	      <clip>
+		<near>0.05</near>
+		<far>3</far>
+	      </clip>
+	    </camera>
+	    <plugin name="base_controller" filename="libgazebo_ros_openni_kinect.so">
+	      <baseline>0.2</baseline>
+	      <alwaysOn>true</alwaysOn>
+	      <updateRate>1.0</updateRate>
+	      <cameraName>camera_ir</cameraName>
+	      <imageTopicName>/camera_ir/color/image_raw</imageTopicName>
+	      <cameraInfoTopicName>/camera_ir/color/camera_info</cameraInfoTopicName>
+	      <depthImageTopicName>/camera_ir/depth/image_raw</depthImageTopicName>
+	      <depthImageInfoTopicName>/camera_ir/depth/camera_info</depthImageInfoTopicName>
+	      <pointCloudTopicName>/camera_ir/depth/points</pointCloudTopicName>
+	      <frameName>base_camera</frameName>
+	      <pointCloudCutoff>0.5</pointCloudCutoff>
+	      <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+	      <distortionK1>0.00000001</distortionK1>
+	      <distortionK2>0.00000001</distortionK2>
+	      <distortionK3>0.00000001</distortionK3>
+	      <distortionT1>0.00000001</distortionT1>
+	      <distortionT2>0.00000001</distortionT2>
+	      <CxPrime>0</CxPrime>
+	      <Cx>0</Cx>
+	      <Cy>0</Cy>
+	      <focalLength>0</focalLength>
+	      <hackBaseline>0</hackBaseline>
+	    </plugin>
+	  </sensor>
+  </gazebo>
+
+</robot>
+
