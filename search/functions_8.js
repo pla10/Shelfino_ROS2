@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['odom_5fcallback_125',['odom_callback',['../classShelfinoHWNode.html#a203b522a6fbed4cc836ce25a04119cca',1,'ShelfinoHWNode']]]
+  ['sample_72',['sample',['../classJoystick.html#a13d48d8d9a32a788394f69472b6b3d9d',1,'Joystick']]],
+  ['shelfinohwnode_73',['ShelfinoHWNode',['../classShelfinoHWNode.html#a3879ce295420ddcd1bac899c0fbb7338',1,'ShelfinoHWNode']]]
 ];

@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['factory_19',['Factory',['../classros1__bridge_1_1Factory.html',1,'ros1_bridge']]],
-  ['factoryinterface_20',['FactoryInterface',['../classros1__bridge_1_1FactoryInterface.html',1,'ros1_bridge']]]
+  ['initialize_15',['initialize',['../classHardwareGlobalInterface.html#a03dbf836809f2c4a84de06c051bfa082',1,'HardwareGlobalInterface::initialize()'],['../classHardwareGlobalInterface.html#a4ae935343e0d4546937992b03b1b704c',1,'HardwareGlobalInterface::initialize(HardwareParameters *hp)']]],
+  ['isaxis_16',['isAxis',['../classJoystickEvent.html#a0b82c33e3a562798595138bcffe02d6a',1,'JoystickEvent']]],
+  ['isbutton_17',['isButton',['../classJoystickEvent.html#aae34d965daafe3e45a0bbfd733866386',1,'JoystickEvent']]],
+  ['isfound_18',['isFound',['../classJoystick.html#a466b80d028a829cb4aa24ae60602c646',1,'Joystick']]],
+  ['isinitialstate_19',['isInitialState',['../classJoystickEvent.html#a33df9d4e8ffc2a83e96fda2010a5d7ca',1,'JoystickEvent']]]
 ];

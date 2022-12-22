@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['circle_5fline_80',['Circle_line',['../structCircle__line.html',1,'']]],
-  ['cmdpublisher_81',['CMDPublisher',['../classCMDPublisher.html',1,'']]],
-  ['curves_5fstruct_82',['Curves_struct',['../structCurves__struct.html',1,'']]]
+  ['hardwareglobalinterface_45',['HardwareGlobalInterface',['../classHardwareGlobalInterface.html',1,'']]],
+  ['hardwareparameters_46',['HardwareParameters',['../structHardwareParameters.html',1,'']]]
 ];

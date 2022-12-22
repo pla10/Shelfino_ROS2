@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['handle_5fshelfino_5fcmd_5fvel_115',['handle_shelfino_cmd_vel',['../classShelfinoHWNode.html#ae20489e2572d2dfecf96efcbc9481aeb',1,'ShelfinoHWNode']]],
-  ['handle_5fshelfino_5fpose_116',['handle_shelfino_pose',['../classShelfinoHWNode.html#a8caf842fae2fc008c0a7a3e3494d0546',1,'ShelfinoHWNode']]],
-  ['hardwareparameters_117',['HardwareParameters',['../structHardwareParameters.html#a89c88d91e77c3cb4ebd72cd881eebfcc',1,'HardwareParameters::HardwareParameters()'],['../structHardwareParameters.html#ad846fa556c4663ddcd653813a6133a7a',1,'HardwareParameters::HardwareParameters(std::string val)'],['../structHardwareParameters.html#a63f2bfb0e838e40e23fd26f390eb5afa',1,'HardwareParameters::HardwareParameters(int i)']]]
+  ['initialize_64',['initialize',['../classHardwareGlobalInterface.html#a03dbf836809f2c4a84de06c051bfa082',1,'HardwareGlobalInterface::initialize()'],['../classHardwareGlobalInterface.html#a4ae935343e0d4546937992b03b1b704c',1,'HardwareGlobalInterface::initialize(HardwareParameters *hp)']]],
+  ['isaxis_65',['isAxis',['../classJoystickEvent.html#a0b82c33e3a562798595138bcffe02d6a',1,'JoystickEvent']]],
+  ['isbutton_66',['isButton',['../classJoystickEvent.html#aae34d965daafe3e45a0bbfd733866386',1,'JoystickEvent']]],
+  ['isfound_67',['isFound',['../classJoystick.html#a466b80d028a829cb4aa24ae60602c646',1,'Joystick']]],
+  ['isinitialstate_68',['isInitialState',['../classJoystickEvent.html#a33df9d4e8ffc2a83e96fda2010a5d7ca',1,'JoystickEvent']]]
 ];

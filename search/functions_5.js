@@ -1,8 +1,4 @@
 var searchData=
 [
-  ['initialize_118',['initialize',['../classHardwareGlobalInterface.html#a03dbf836809f2c4a84de06c051bfa082',1,'HardwareGlobalInterface::initialize()'],['../classHardwareGlobalInterface.html#a4ae935343e0d4546937992b03b1b704c',1,'HardwareGlobalInterface::initialize(HardwareParameters *hp)']]],
-  ['isaxis_119',['isAxis',['../classJoystickEvent.html#a0b82c33e3a562798595138bcffe02d6a',1,'JoystickEvent']]],
-  ['isbutton_120',['isButton',['../classJoystickEvent.html#aae34d965daafe3e45a0bbfd733866386',1,'JoystickEvent']]],
-  ['isfound_121',['isFound',['../classJoystick.html#a466b80d028a829cb4aa24ae60602c646',1,'Joystick']]],
-  ['isinitialstate_122',['isInitialState',['../classJoystickEvent.html#a33df9d4e8ffc2a83e96fda2010a5d7ca',1,'JoystickEvent']]]
+  ['joystick_69',['Joystick',['../classJoystick.html#a158b1f77b78717efbf1b8fac43b1fcef',1,'Joystick::Joystick()'],['../classJoystick.html#a0bd88249a8e103fe326d5345019a3de2',1,'Joystick::Joystick(int joystickNumber)'],['../classJoystick.html#ac0cd7f0cb955fd62850589e1f0660285',1,'Joystick::Joystick(std::string devicePath)'],['../classJoystick.html#acfd22601c2d98af935a95fcf8308d726',1,'Joystick::Joystick(Joystick const &amp;)=delete'],['../classJoystick.html#a4f988a0c2cf6f3d3f58dc840e2f686c4',1,'Joystick::Joystick(Joystick &amp;&amp;)=default'],['../classJoystick.html#aab7720fce11483b0f35b82726fc8f2db',1,'Joystick::Joystick(std::string devicePath, bool blocking)']]]
 ];

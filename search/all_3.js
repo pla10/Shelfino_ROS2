@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['dubins_5farc_16',['Dubins_arc',['../structDubins__arc.html',1,'']]],
-  ['dubins_5fcurve_17',['Dubins_curve',['../structDubins__curve.html',1,'']]]
+  ['getfrontlidardata_6',['getFrontLidarData',['../classHardwareGlobalInterface.html#aa3be131ff6f220d0ecfb12e1c6bdc117',1,'HardwareGlobalInterface']]],
+  ['getinstance_7',['getInstance',['../classHardwareGlobalInterface.html#a7e7f3741b7f7b46ff0e6d207b558add4',1,'HardwareGlobalInterface::getInstance()'],['../classHardwareGlobalInterface.html#a505189b6fe2531ef6a7516e1473c6255',1,'HardwareGlobalInterface::getInstance(unsigned long i)']]],
+  ['getlocalizationdata_8',['getLocalizationData',['../classHardwareGlobalInterface.html#a98b824b71f0bde4defebece6af84aca6',1,'HardwareGlobalInterface']]],
+  ['getparams_9',['getParams',['../classHardwareGlobalInterface.html#a8be066c9c5346972e68fe39f3f75d707',1,'HardwareGlobalInterface']]],
+  ['getrealsenseodomdata_10',['getRealSenseOdomData',['../classHardwareGlobalInterface.html#aad3754f7f43e226263db7ee3b567fddd',1,'HardwareGlobalInterface']]]
 ];
