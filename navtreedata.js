@@ -30,13 +30,32 @@ var NAVTREE =
       [ "Docker image", "md_README.html#autotoc_md3", null ],
       [ "Complete documentation", "md_README.html#autotoc_md5", null ]
     ] ],
+    [ "CONTRIBUTING", "md_ros1_bridge_CONTRIBUTING.html", null ],
+    [ "Bridge communication between ROS 1 and ROS 2", "md_ros1_bridge_README.html", [
+      [ "Prerequisites", "md_ros1_bridge_README.html#autotoc_md7", [
+        [ "Prerequisites for the examples in this file", "md_ros1_bridge_README.html#autotoc_md8", null ],
+        [ "Building the bridge from source", "md_ros1_bridge_README.html#autotoc_md9", null ]
+      ] ],
+      [ "Example 1: run the bridge and the example talker and listener", "md_ros1_bridge_README.html#autotoc_md10", [
+        [ "Example 1a: ROS 1 talker and ROS 2 listener", "md_ros1_bridge_README.html#autotoc_md11", null ],
+        [ "Example 1b: ROS 2 talker and ROS 1 listener", "md_ros1_bridge_README.html#autotoc_md15", null ]
+      ] ],
+      [ "Example 2: run the bridge and exchange images", "md_ros1_bridge_README.html#autotoc_md19", null ],
+      [ "Example 3: run the bridge for AddTwoInts service", "md_ros1_bridge_README.html#autotoc_md23", null ],
+      [ "Example 4: bridge only selected topics and services", "md_ros1_bridge_README.html#autotoc_md24", [
+        [ "Parametrizing Quality of Service", "md_ros1_bridge_README.html#autotoc_md25", null ]
+      ] ],
+      [ "Action bridge", "md_ros1_bridge_README.html#autotoc_md26", null ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ]
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ],
+        [ "Related Functions", "functions_rela.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -47,7 +66,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"annotated.html"
+"action__factory_8hpp_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['handle_5fshelfino_5fcmd_5fvel_29',['handle_shelfino_cmd_vel',['../classShelfinoHWNode.html#ae20489e2572d2dfecf96efcbc9481aeb',1,'ShelfinoHWNode']]],
-  ['handle_5fshelfino_5fpose_30',['handle_shelfino_pose',['../classShelfinoHWNode.html#a8caf842fae2fc008c0a7a3e3494d0546',1,'ShelfinoHWNode']]],
-  ['hardwareparameters_31',['HardwareParameters',['../structHardwareParameters.html#a89c88d91e77c3cb4ebd72cd881eebfcc',1,'HardwareParameters::HardwareParameters()'],['../structHardwareParameters.html#ad846fa556c4663ddcd653813a6133a7a',1,'HardwareParameters::HardwareParameters(std::string val)'],['../structHardwareParameters.html#a63f2bfb0e838e40e23fd26f390eb5afa',1,'HardwareParameters::HardwareParameters(int i)']]]
+  ['getfrontlidardata_110',['getFrontLidarData',['../classHardwareGlobalInterface.html#aa3be131ff6f220d0ecfb12e1c6bdc117',1,'HardwareGlobalInterface']]],
+  ['getinstance_111',['getInstance',['../classHardwareGlobalInterface.html#a7e7f3741b7f7b46ff0e6d207b558add4',1,'HardwareGlobalInterface::getInstance()'],['../classHardwareGlobalInterface.html#a505189b6fe2531ef6a7516e1473c6255',1,'HardwareGlobalInterface::getInstance(unsigned long i)']]],
+  ['getlocalizationdata_112',['getLocalizationData',['../classHardwareGlobalInterface.html#a98b824b71f0bde4defebece6af84aca6',1,'HardwareGlobalInterface']]],
+  ['getparams_113',['getParams',['../classHardwareGlobalInterface.html#a8be066c9c5346972e68fe39f3f75d707',1,'HardwareGlobalInterface']]],
+  ['getrealsenseodomdata_114',['getRealSenseOdomData',['../classHardwareGlobalInterface.html#aad3754f7f43e226263db7ee3b567fddd',1,'HardwareGlobalInterface']]]
 ];

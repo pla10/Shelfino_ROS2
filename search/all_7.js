@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['shelfino_20ros2_14',['Shelfino ROS2',['../md_README.html',1,'']]],
-  ['shelfinohwnode_15',['ShelfinoHWNode',['../classShelfinoHWNode.html',1,'ShelfinoHWNode'],['../classShelfinoHWNode.html#a3879ce295420ddcd1bac899c0fbb7338',1,'ShelfinoHWNode::ShelfinoHWNode()']]]
+  ['handle_5fshelfino_5fcmd_5fvel_27',['handle_shelfino_cmd_vel',['../classShelfinoHWNode.html#ae20489e2572d2dfecf96efcbc9481aeb',1,'ShelfinoHWNode']]],
+  ['handle_5fshelfino_5fpose_28',['handle_shelfino_pose',['../classShelfinoHWNode.html#a8caf842fae2fc008c0a7a3e3494d0546',1,'ShelfinoHWNode']]],
+  ['hardwareglobalinterface_29',['HardwareGlobalInterface',['../classHardwareGlobalInterface.html',1,'']]],
+  ['hardwareparameters_30',['HardwareParameters',['../structHardwareParameters.html',1,'HardwareParameters'],['../structHardwareParameters.html#a89c88d91e77c3cb4ebd72cd881eebfcc',1,'HardwareParameters::HardwareParameters()'],['../structHardwareParameters.html#ad846fa556c4663ddcd653813a6133a7a',1,'HardwareParameters::HardwareParameters(std::string val)'],['../structHardwareParameters.html#a63f2bfb0e838e40e23fd26f390eb5afa',1,'HardwareParameters::HardwareParameters(int i)']]]
 ];
