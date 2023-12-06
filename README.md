@@ -1,8 +1,20 @@
 # Shelfino ROS2
 
-This repository contains the ROS 2 interface developed for the mobile robot Shelfino of the Department of Information Engineering and Computer Science of the University of Trento, Italy.
+<img src="./assets/images/shelfino.png" align="right" alt="shelfino robot" height="280px">
 
-## Shelfino topics
+This repository contains the ROS2 interface developed for the mobile robot **Shelfino** of the Department of Information Engineering and Computer Science of the University of Trento, Italy. </br>
+
+Both a bringup node for the physical robot and a simulation of the robot itself are present here.
+
+- [Shelfino ROS2](#shelfino-ros2)
+  - [Shelfino ROS2 topics](#shelfino-ros2-topics)
+  - [Docker image](#docker-image)
+  - [Complete documentation](#complete-documentation)
+
+<br/><br/>
+
+
+## Shelfino ROS2 topics
 
 The topics provided by the interface are:
 
@@ -17,6 +29,9 @@ The topics provided by the interface are:
 | /tf_static         | The fixed transform between the *base_link* frame and the *base_laser* frame |
 | /tf                | The tranforms between the robot and the *odom* frame, and between the wheels and the robot body |
 
+![shelfino robot in rviz](./assets/images/rviz.png)
+
+![transform frames in rviz](./assets/images/tfs.png)
 
 ---
 ## Docker image
