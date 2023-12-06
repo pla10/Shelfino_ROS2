@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<sdf version="1.6"> 
+<model name='povo'>
+      <static>1</static>
+      <link name='walls'>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+
+        <visual name='Walls_Visual'>
+          <geometry>
+            <mesh>
+              <uri>model://povo/meshes/povo.dae</uri>
+            </mesh>
+          </geometry>
+          <!--<material>
+            <ambient>0.85 0.85 0.85 1</ambient>
+            <diffuse>0.92 0.92 0.92 1</diffuse>
+            <specular>0.99 0.99 0.99 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>-->
+          <!-- <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+            <ambient>1 0.764706 0.305882 1</ambient>
+            <diffuse>0.7 0.7 0.7 1</diffuse>
+            <specular>0.01 0.01 0.01 1</specular>
+            <emissive>0 0 0 1</emissive>
+            <shader type='pixel'/>
+          </material> -->
+          <cast_shadows>1</cast_shadows>
+          <transparency>0</transparency>
+        </visual>
+
+        <collision name='Walls_Collision'>
+          <geometry>
+            <mesh>
+              <uri>model://povo/meshes/povo.dae</uri>
+            </mesh>
+          </geometry>
+        </collision>
+        
+      </link>
+    </model>
+</sdf>

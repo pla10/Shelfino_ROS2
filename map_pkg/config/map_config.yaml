@@ -1,0 +1,16 @@
+obstacles_sender:
+  ros__parameters:
+    max_radius: 1.5
+    min_radius: 0.5
+    n_obstacles: 5
+    no_boxes: false
+    no_cylinders: false
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: transient_local
+          history: keep_last
+          reliability: reliable
+
+
