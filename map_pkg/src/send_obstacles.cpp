@@ -19,67 +19,10 @@
 
 #include "gazebo_msgs/srv/spawn_entity.hpp"
 
-static const rmw_qos_profile_t rmw_qos_profile_custom =
-{
-  RMW_QOS_POLICY_HISTORY_KEEP_LAST,
-  10,
-  RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-  RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
-  RMW_QOS_DEADLINE_DEFAULT,
-  RMW_QOS_LIFESPAN_DEFAULT,
-  RMW_QOS_POLICY_LIVELINESS_SYSTEM_DEFAULT,
-  RMW_QOS_LIVELINESS_LEASE_DURATION_DEFAULT,
-  false
-};
+#include "ament_index_cpp/get_package_share_directory.hpp"
 
-enum obstacle_type {
-  CYLINDER,
-  BOX
-};
-
-struct obstacle {
-  double radius;
-  double x, y;
-  double dx, dy;
-  obstacle_type type;
-  std::string xml_file = "";
-};
-
-// Function that checks that two obstacles do not overlap
-bool check_overlap(obstacle o1, obstacle o2) {
-  if (o1.type == obstacle_type::CYLINDER && o2.type == obstacle_type::CYLINDER) {
-    double dist = sqrt(pow(o1.x - o2.x, 2) + pow(o1.y - o2.y, 2));
-    if (dist < o1.radius + o2.radius) {
-      return false;
-    }
-  } 
-  else if (o1.type == obstacle_type::BOX && o2.type == obstacle_type::BOX) {
-    if (abs(o1.x - o2.x) < (o1.dx + o2.dx)/2.0 && abs(o1.y - o2.y) < (o1.dy + o2.dy)/2.0) {
-      return false;
-    }
-  } 
-  else {
-    if (o1.type == obstacle_type::CYLINDER) {
-      obstacle temp = o1;
-      o1 = o2;
-      o2 = temp;
-    }
-    if (abs(o1.x - o2.x) < o1.radius + o2.dx/2.0 && abs(o1.y - o2.y) < o1.radius + o2.dy/2.0) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool check_overlap(obstacle o1, std::vector<obstacle> obstacles){
-  for (auto o2 : obstacles){
-    if (!check_overlap(o1, o2)){
-      return false;
-    }
-  }
-  return true;
-}
-
+#include "map_pkg/utilities.hpp"
+#include "map_pkg/spawn_model.hpp"
 
 class ObstaclesPublisher : public rclcpp::Node
 {
@@ -87,92 +30,136 @@ private:
   rclcpp::Publisher<obstacles_msgs::msg::ObstacleArrayMsg>::SharedPtr publisher_;
   rclcpp::Client<gazebo_msgs::srv::SpawnEntity>::SharedPtr spawner_;
   std::string node_namespace;
+  std::string share_dir;
 
 public:
-  ObstaclesPublisher() : Node("obstacles_sender")
+  ObstaclesPublisher() : Node("send_obstacles")
   {
-    // Parameters
+    this->share_dir = ament_index_cpp::get_package_share_directory("map_pkg");
+    this->node_namespace = this->get_namespace();
+
+    // Map parameters
+    this->declare_parameter("map", "hexagon");
+    this->declare_parameter("dx", 10.0);
+    this->declare_parameter("dy", 10.0);
+    this->declare_parameter("max_timeout", 3);
+
+    // Obstacle parameters
     this->declare_parameter("n_obstacles", 3);
     this->declare_parameter("no_cylinders", false);
     this->declare_parameter("no_boxes", false);
-    this->declare_parameter("min_radius", 0.5);
-    this->declare_parameter("max_radius", 1.5);
+    this->declare_parameter("min_size", 0.5);
+    this->declare_parameter("max_size", 1.5);
+
+    // Print parameters values
+    RCLCPP_INFO(this->get_logger(), "Parameters:");
+    
+    RCLCPP_INFO(this->get_logger(), "map: %s", this->get_parameter("map").as_string().c_str());
+    RCLCPP_INFO(this->get_logger(), "dx: %f", this->get_parameter("dx").as_double());
+    RCLCPP_INFO(this->get_logger(), "dy: %f", this->get_parameter("dy").as_double());
+    RCLCPP_INFO(this->get_logger(), "max_timeout: %ld", this->get_parameter("max_timeout").as_int());
+    RCLCPP_INFO(this->get_logger(), "n_obstacles: %ld", this->get_parameter("n_obstacles").as_int());
+    RCLCPP_INFO(this->get_logger(), "no_cylinders: %d", this->get_parameter("no_cylinders").as_bool());
+    RCLCPP_INFO(this->get_logger(), "no_boxes: %d", this->get_parameter("no_boxes").as_bool());
+    RCLCPP_INFO(this->get_logger(), "min_size: %f", this->get_parameter("min_size").as_double());
+    RCLCPP_INFO(this->get_logger(), "max_size: %f", this->get_parameter("max_size").as_double());
+
+    if (this->get_parameter("n_obstacles").as_int() == 0) {
+      RCLCPP_INFO(this->get_logger(), "Number of requested obstacles is 0, exiting");
+      exit(0);
+    }
 
     if (this->get_parameter("no_cylinders").as_bool() && this->get_parameter("no_boxes").as_bool()) {
       RCLCPP_ERROR(this->get_logger(), "Both no_cylinders and no_boxes are true. At least one of them must be false.");
       exit(1);
     }
 
-    this->node_namespace = this->get_namespace();
-
     auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
 
     this->spawner_ = this->create_client<gazebo_msgs::srv::SpawnEntity>("/spawn_entity");
+    publisher_ = this->create_publisher<obstacles_msgs::msg::ObstacleArrayMsg>("/obstacles", qos);
 
     std::vector<obstacle> obstacles;
 
-    // Print parameters values
-    RCLCPP_INFO(this->get_logger(), "n_obstacles: %ld", this->get_parameter("n_obstacles").as_int());
-    RCLCPP_INFO(this->get_logger(), "no_cylinders: %d", this->get_parameter("no_cylinders").as_bool());
-    RCLCPP_INFO(this->get_logger(), "no_boxes: %d", this->get_parameter("no_boxes").as_bool());
-    RCLCPP_INFO(this->get_logger(), "min_radius: %f", this->get_parameter("min_radius").as_double());
-    RCLCPP_INFO(this->get_logger(), "max_radius: %f", this->get_parameter("max_radius").as_double());
-
+    std::string map = this->get_parameter("map").as_string();
+    if (map != "hexagon" && map != "rectangle"){
+      RCLCPP_ERROR(this->get_logger(), "Map parameter must be either hexagon or rectangle.");
+      exit(1);
+    }
+    double dx = this->get_parameter("dx").as_double();
+    double dy = this->get_parameter("dy").as_double();
+    double max_timeout = this->get_parameter("max_timeout").as_int();
+    int n_obstacles = this->get_parameter("n_obstacles").as_int();
+    
     // Define a random number generator for doubles
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> rad_dis(
-      this->get_parameter("min_radius").as_double(), 
-      this->get_parameter("max_radius").as_double()
+    std::uniform_real_distribution<> size_dis(
+      this->get_parameter("min_size").as_double(), 
+      this->get_parameter("max_size").as_double()
     ); 
-    std::uniform_real_distribution<> x_dis(-10, 10);
-    std::uniform_real_distribution<> y_dis(-10, 10);
+    std::uniform_real_distribution<> x_dis(-dx, dx);
+    std::uniform_real_distribution<> y_dis(-dy, dy);
+    std::uniform_real_distribution<> shape(0, 2);
 
-    int n_obstacles = this->get_parameter("n_obstacles").as_int();
-    for (int i=0; i<n_obstacles; i++) {
-      double radius = 0.0, dx = 0.0, dy = 0.0, x = 0.0, y = 0.0;
+    auto startTime = this->get_clock()->now();
+    for (int i=0; i<n_obstacles && !overTime(this->get_clock(), startTime, max_timeout); i++) {
+      obstacle obs {0.0, 0.0, 0.0, 0.0, 0.0, obstacle_type::CYLINDER};
 
       if (this->get_parameter("no_cylinders").as_bool()) {
         do {
-          dx = rad_dis(gen);
-          dy = rad_dis(gen);
-          x = x_dis(gen);
-          y = y_dis(gen);
+          obs.dx = size_dis(gen);
+          obs.dy = size_dis(gen);
+          obs.x = x_dis(gen);
+          obs.y = y_dis(gen);
+          obs.type = obstacle_type::BOX;
         }
-        while(!check_overlap(obstacle{0.0, x, y, dx, dy, obstacle_type::BOX}, obstacles));
-        obstacles.push_back(obstacle{0.0, x, y, dx, dy, obstacle_type::BOX});
+        while(overlaps(obs, obstacles) && !is_inside_map(obs, map, dx, dy)
+              && !overTime(this->get_clock(), startTime, max_timeout));
+        obstacles.push_back(obs);
       } 
       else if (this->get_parameter("no_boxes").as_bool()) {
         do {
-          radius = rad_dis(gen);
-          x = x_dis(gen);
-          y = y_dis(gen);
-        } while(!check_overlap(obstacle{radius, x, y, 0.0, 0.0, obstacle_type::CYLINDER}, obstacles));
-        obstacles.push_back(obstacle{radius, x, y, 0.0, 0.0, obstacle_type::CYLINDER});
+          obs.radius = size_dis(gen);
+          obs.x = x_dis(gen);
+          obs.y = y_dis(gen);
+          obs.type = obstacle_type::CYLINDER;
+        } while(overlaps(obs, obstacles) && !is_inside_map(obs, map, dx, dy)
+              && !overTime(this->get_clock(), startTime, max_timeout));
+        obstacles.push_back(obs);
       } 
       else {
-        obstacle_type type = (obstacle_type)(rand() % 2);
+        obstacle_type type = shape(gen)<1 ? obstacle_type::BOX : obstacle_type::CYLINDER;
+        RCLCPP_INFO(this->get_logger(), "Obstacle type: %s", (type==obstacle_type::BOX ? "box" : "cylinder"));
         if (type == obstacle_type::CYLINDER) {
           do {
-            radius = rad_dis(gen);
-            x = x_dis(gen);
-            y = y_dis(gen);
-          } while(!check_overlap(obstacle{radius, x, y, 0.0, 0.0, obstacle_type::CYLINDER}, obstacles));
-          obstacles.push_back(obstacle{radius, x, y, 0.0, 0.0, obstacle_type::CYLINDER});
+            obs.radius = size_dis(gen);
+            obs.x = x_dis(gen);
+            obs.y = y_dis(gen);
+            obs.type = obstacle_type::CYLINDER;
+          } while(overlaps(obs, obstacles) && !is_inside_map(obs, map, dx, dy)
+              && !overTime(this->get_clock(), startTime, max_timeout));
+          obstacles.push_back(obs);
         }
         else {
           do {
-            dx = rad_dis(gen);
-            dy = rad_dis(gen);
-            x = x_dis(gen);
-            y = y_dis(gen);
-          } while(!check_overlap(obstacle{radius, x, y, 0.0, 0.0, obstacle_type::CYLINDER}, obstacles));
-          obstacles.push_back(obstacle{0.0, x, y, dx, dy, obstacle_type::BOX});
+            obs.dx = size_dis(gen);
+            obs.dy = size_dis(gen);
+            obs.x = x_dis(gen);
+            obs.y = y_dis(gen);
+            obs.type = obstacle_type::BOX;
+          } while(overlaps(obs, obstacles) && !is_inside_map(obs, map, dx, dy)
+              && !overTime(this->get_clock(), startTime, max_timeout));
+          obstacles.push_back(obs);
         }
       }
+      RCLCPP_INFO(this->get_logger(), "Obstacle %d: x=%f, y=%f, radius=%f, dx=%f, dy=%f", 
+        i, obs.x, obs.y, obs.radius, obs.dx, obs.dy);
     }
 
-    publisher_ = this->create_publisher<obstacles_msgs::msg::ObstacleArrayMsg>("obstacles", qos);
+    if (this->get_clock()->now().seconds() - startTime.seconds() >= max_timeout) {
+      RCLCPP_INFO(this->get_logger(), "Could not find a valid position for some obstacles [%ld/%d]", obstacles.size(), n_obstacles); 
+    }
 
     obstacles_msgs::msg::ObstacleArrayMsg msg;
     std_msgs::msg::Header hh;
@@ -216,139 +203,55 @@ public:
       }
       msg.obstacles.push_back(obs);
 
-      // Read XML file to string
-      std::ifstream xml_file("/home/enrico/shelfino_ros2_ws/src/map_pkg/models/box/model.sdf");
       std::string xml_string;
-      xml_string.assign(
-        std::istreambuf_iterator<char>(xml_file),
-        std::istreambuf_iterator<char>()
-      );
-      // In string, replace all occurences of <size>1 1 1</size> with <size>dx dy dz</size>
-      // std::string size_string = "<size>1 1 1</size>";
-      // std::string size_replace_string = "<size>" + std::to_string(obstacles[0].dx) + " " + std::to_string(obstacles[0].dy) + " 1</size>";
-      // size_t pos = 0;
-      // while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
-      //   xml_string.replace(pos, size_string.length(), size_replace_string);
-      //   pos += size_replace_string.length();
-      // }
+      if (o.type == obstacle_type::BOX) {
+        // Read XML file to string
+        std::ifstream xml_file(this->share_dir + "/models/box/model.sdf");
+        xml_string.assign(
+          std::istreambuf_iterator<char>(xml_file),
+          std::istreambuf_iterator<char>()
+        );
+        std::string size_string = "<size>1 1 1</size>";
+        std::string size_replace_string = "<size>" + std::to_string(o.dx) + " " + std::to_string(o.dy) + " 1</size>";
+        size_t pos = 0;
+        while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
+          xml_string.replace(pos, size_string.length(), size_replace_string);
+          pos += size_replace_string.length();
+        }
+      }
+      else { 
+        // Read XML file to string
+        std::ifstream xml_file(this->share_dir + "/models/cylinder/model.sdf");
+        xml_string.assign(
+          std::istreambuf_iterator<char>(xml_file),
+          std::istreambuf_iterator<char>()
+        );
+        std::string size_string = "<radius>0.5</radius>";
+        std::string size_replace_string = "<radius>" + std::to_string(o.radius) + "</radius>";
+        size_t pos = 0;
+        while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
+          xml_string.replace(pos, size_string.length(), size_replace_string);
+          pos += size_replace_string.length();
+        }
+      }
 
       // Spawn model in gazebo
       geometry_msgs::msg::Pose pose;
       pose.position.x = o.x;
       pose.position.y = o.y;
-      pose.position.z = 0.01;
+      pose.position.z = 0.1;
       pose.orientation.x = 0;
       pose.orientation.y = 0;
       pose.orientation.z = 0;
       pose.orientation.w = 0;
 
-      this->spawn_obstacle(xml_string, pose);
+      spawn_model(xml_string, pose, this->spawner_, this->node_namespace);
+
       sleep(0.5);
     }
 
-
-
-    // publisher_ = this->create_publisher<obstacles_msgs::msg::ObstacleArrayMsg>("obstacles", qos);
-
-    // std_msgs::msg::Header hh;
-    // hh.stamp = this->get_clock()->now();
-    // hh.frame_id = "map";
-
-    // obstacles_msgs::msg::ObstacleArrayMsg msg;
-    // obstacles_msgs::msg::ObstacleMsg obs;
-    // std::vector<obstacles_msgs::msg::ObstacleMsg> obs_temp;
-    // geometry_msgs::msg::Polygon pol;
-    // geometry_msgs::msg::Point32 point;
-
-    // geometry_msgs::msg::PolygonStamped pol1;
-    // geometry_msgs::msg::PolygonStamped pol2;
-
-    // pol1.header = hh;
-    // pol2.header = hh;
-
-    // // First square obstacle
-    // {
-    //   std::vector<geometry_msgs::msg::Point32> points_temp;
-    //   point.x = 0;
-    //   point.y = 0;
-    //   // point.x = -1.59;
-    //   // point.y = -2.69;
-    //   point.z = 0;
-    //   points_temp.push_back(point);
-    //   point.x = 0;
-    //   point.y = 1;
-    //   // point.x = -1.25;
-    //   // point.y = -2.45;
-    //   point.z = 0;
-    //   points_temp.push_back(point);
-    //   point.x = 1;
-    //   point.y = 1;
-    //   // point.x = -1.06;
-    //   // point.y = -2.79;
-    //   point.z = 0;
-    //   points_temp.push_back(point);
-    //   point.x = 1;
-    //   point.y = 0;
-    //   // point.x = -1.38;
-    //   // point.y = -2.99;
-
-    //   points_temp.push_back(point);
-    //   pol.points = points_temp;
-    //   obs.polygon = pol;
-    //   obs_temp.push_back(obs);
-    //   pol1.polygon = pol;
-    // }
-
-    // // First square obstacle
-    // {
-    //   std::vector<geometry_msgs::msg::Point32> points_temp;
-    //   point.x = -1;
-    //   point.y = -1;
-    //   //point.x = 0.953;
-    //   //point.y = -1.9;
-    //   point.z = 0;
-    //   points_temp.push_back(point);
-    //   point.x = -1;
-    //   point.y = -2;
-    //   //point.x = 0.762;
-    //   //point.y = -1.49;
-    //   point.z = 0;
-    //   points_temp.push_back(point);
-    //   point.x = -2;
-    //   point.y = -2;
-    //   //point.x = 1.08;
-    //   //point.y = -1.31;
-    //   point.z = 0;
-    //   points_temp.push_back(point);
-    //   point.x = -2;
-    //   point.y = -1;
-    //   //point.x = 1.28;
-    //   //point.y = -1.69;
-    //   point.z = 0;
-
-    //   points_temp.push_back(point);
-    //   pol.points = points_temp;
-    //   obs.polygon = pol;
-    //   obs_temp.push_back(obs);
-    //   pol2.polygon = pol;
-    // }
-
-    // msg.obstacles = obs_temp;
-
-    // rclcpp::Publisher<geometry_msgs::msg::PolygonStamped>::SharedPtr pub1 = this->create_publisher<geometry_msgs::msg::PolygonStamped>("obs1", 10);
-    // rclcpp::Publisher<geometry_msgs::msg::PolygonStamped>::SharedPtr pub2 = this->create_publisher<geometry_msgs::msg::PolygonStamped>("obs2", 10);
-
-    // while(1){
-    //   publisher_->publish(msg);
-    //   pub1->publish(pol1);
-    //   pub2->publish(pol2);
-    //   usleep(1000000);
-    // }
+    this->publisher_->publish(msg);
   }
-
-private:
-  void spawn_obstacle(std::string xml, geometry_msgs::msg::Pose pose);
-
 };
 
 int main(int argc, char * argv[])
@@ -359,29 +262,3 @@ int main(int argc, char * argv[])
   return 0;
 }
 
-
-/**
- * @brief Spawn model of the gate in gazebo
- * 
- * @param pose The position in which the gate should be spawned
- */
-void ObstaclesPublisher::spawn_obstacle(std::string xml, geometry_msgs::msg::Pose pose){
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for service spawn_entity...");
-  while(!this->spawner_->wait_for_service(std::chrono::milliseconds(100))){
-    if (!rclcpp::ok()){
-      RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service. Exiting.");
-      rclcpp::shutdown(nullptr, "Interrupted while waiting for the service. Exiting.");
-    }
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "service not available, waiting again...");
-  }
-
-  // Configure request
-  auto request = std::make_shared<gazebo_msgs::srv::SpawnEntity::Request>();
-  request->name = "obstacle"+std::to_string(pose.position.x)+"_"+std::to_string(pose.position.y);
-  request->initial_pose = pose;
-  request->robot_namespace = this->node_namespace;
-  request->xml = xml;
-
-  // Send request
-  auto result = this->spawner_->async_send_request(request);
-}

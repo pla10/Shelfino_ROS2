@@ -1,10 +1,28 @@
-obstacles_sender:
+/**/send_obstacles:
   ros__parameters:
-    max_radius: 1.5
-    min_radius: 0.5
     n_obstacles: 5
-    no_boxes: false
     no_cylinders: false
+    no_boxes: false
+    max_size: 2.5
+    min_size: 1.0
+
+/**/send_gates:
+  ros__parameters:
+    use_namespace: false
+    # Values of x and y different from 0.0 will spawn the gates in the given position    
+    x: 0.0
+    y: 0.0 
+
+/**/send_victims:
+  ros__parameters:
+    n_victims: 3
+
+/**:
+  ros__parameters:
+    map: hexagon #hexagon, rectangle
+    dx: 5.0
+    dy: 10.0
+    max_timeout: 3
     qos_overrides:
       /parameter_events:
         publisher:
@@ -12,5 +30,4 @@ obstacles_sender:
           durability: transient_local
           history: keep_last
           reliability: reliable
-
 

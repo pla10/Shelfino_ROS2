@@ -8,37 +8,39 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-
 #include "geometry_msgs/msg/point32.hpp"
 #include "geometry_msgs/msg/polygon.hpp"
 #include "geometry_msgs/msg/polygon_stamped.hpp"
 #include "std_msgs/msg/header.hpp"
 
-geometry_msgs::msg::Polygon create_exagon(){
+#include "ament_index_cpp/get_package_share_directory.hpp"
+
+geometry_msgs::msg::Polygon create_hexagon(double dx){
         geometry_msgs::msg::Polygon pol;
         geometry_msgs::msg::Point32 point;
         std::vector<geometry_msgs::msg::Point32> points_temp;
-        point.x = -6;
-        point.y = 10;
+        double f = 0.866;  // fixed number for apothem of hexagon calculation
+        point.x = -dx/2;
+        point.y = dx*f;
         point.z = 0;
         points_temp.push_back(point);
-        point.x = 6;
-        point.y = 10;
+        point.x = dx/2;
+        point.y = dx*f;
         point.z = 0;
         points_temp.push_back(point);
-        point.x = 12;
+        point.x = dx;
         point.y = 0;
         point.z = 0;
         points_temp.push_back(point);
-        point.x = 6;
-        point.y = -10;
+        point.x = dx/2;
+        point.y = -dx*f;
         point.z = 0;
         points_temp.push_back(point);
-        point.x = -6;
-        point.y = -10;
+        point.x = -dx/2;
+        point.y = -dx*f;
         point.z = 0;
         points_temp.push_back(point);
-        point.x = -12;
+        point.x = -dx;
         point.y = 0;
         point.z = 0;
         points_temp.push_back(point);
@@ -47,72 +49,24 @@ geometry_msgs::msg::Polygon create_exagon(){
 }
 
 
-geometry_msgs::msg::Polygon create_10square(){
+geometry_msgs::msg::Polygon create_rectangle(double dx, double dy){
         geometry_msgs::msg::Polygon pol;
         geometry_msgs::msg::Point32 point;
         std::vector<geometry_msgs::msg::Point32> points_temp;
-        point.x = -5; // -2.5;
-        point.y = -5; // -5;
+        point.x = -dx/2; 
+        point.y = -dy/2;
         point.z = 0;
         points_temp.push_back(point);
-        point.x = -5; //-3.86;
-        point.y = 5; //-2.6;
+        point.x = -dx/2; 
+        point.y = dy/2;
         point.z = 0;
         points_temp.push_back(point);
-        point.x = 5; //1.84;
-        point.y = 5; //0.794;
+        point.x = dx/2;
+        point.y = dy/2; 
         point.z = 0;
         points_temp.push_back(point);
-        point.x = 5; //3.29;
-        point.y = -5; //-1.55;
-        point.z = 0;
-        points_temp.push_back(point);
-        pol.points = points_temp;
-        return pol;
-}
-
-geometry_msgs::msg::Polygon create_8square(){
-        geometry_msgs::msg::Polygon pol;
-        geometry_msgs::msg::Point32 point;
-        std::vector<geometry_msgs::msg::Point32> points_temp;
-        point.x = -4;
-        point.y = -4;
-        point.z = 0;
-        points_temp.push_back(point);
-        point.x = -4;
-        point.y = 4; 
-        point.z = 0;
-        points_temp.push_back(point);
-        point.x = 4; 
-        point.y = 4;
-        point.z = 0;
-        points_temp.push_back(point);
-        point.x = 4; 
-        point.y = -4;
-        point.z = 0;
-        points_temp.push_back(point);
-        pol.points = points_temp;
-        return pol;
-}
-
-geometry_msgs::msg::Polygon create_50square(){
-        geometry_msgs::msg::Polygon pol;
-        geometry_msgs::msg::Point32 point;
-        std::vector<geometry_msgs::msg::Point32> points_temp;
-        point.x = -25;
-        point.y = -25;
-        point.z = 0;
-        points_temp.push_back(point);
-        point.x = -25;
-        point.y = 25;
-        point.z = 0;
-        points_temp.push_back(point);
-        point.x = 25;
-        point.y = 25;
-        point.z = 0;
-        points_temp.push_back(point);
-        point.x = 25;
-        point.y = -25;
+        point.x = dx/2;
+        point.y = -dy/2; 
         point.z = 0;
         points_temp.push_back(point);
         pol.points = points_temp;
@@ -134,45 +88,51 @@ static const rmw_qos_profile_t rmw_qos_profile_custom =
 
 class BordersPublisher : public rclcpp::Node
 {
-  public:
-    BordersPublisher()
-    : Node("send_borders")
-    {
-        std::string map_name = this->get_parameter("map").as_string();  // exagon, 10square, 8square, 50square
+private:
+  std::string share_dir;
 
-        auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
-        publisher_ = this->create_publisher<geometry_msgs::msg::Polygon>("map_borders", qos);
+public:
+  BordersPublisher()
+  : Node("send_borders")
+  {
+    this->share_dir = ament_index_cpp::get_package_share_directory("map_pkg");
 
-        std_msgs::msg::Header hh;
+    this->declare_parameter<std::string>("map", "hexagon");
+    this->declare_parameter<double>("dx", 5.0);
+    this->declare_parameter<double>("dy", 5.0);
+    std::string map_name = this->get_parameter("map").as_string();  // hexagon, rectangle
+    double dx = this->get_parameter("dx").as_double();
+    double dy = this->get_parameter("dy").as_double();
 
-        hh.stamp = this->get_clock()->now();
-        hh.frame_id = "map";
+    auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
+    publisher_ = this->create_publisher<geometry_msgs::msg::Polygon>("/map_borders", qos);
 
-        geometry_msgs::msg::Polygon pol;
+    std_msgs::msg::Header hh;
 
-        geometry_msgs::msg::PolygonStamped pol_stamped;
+    hh.stamp = this->get_clock()->now();
+    hh.frame_id = "map";
 
-        pol_stamped.header = hh;
+    geometry_msgs::msg::Polygon pol;
 
-        if(map_name=="exagon")        pol = create_exagon();
-        else if(map_name=="10square") pol = create_10square();
-        else if(map_name=="50square")  pol = create_50square();
-        else                          pol = create_8square();
-        
-        pol_stamped.polygon = pol;
+    geometry_msgs::msg::PolygonStamped pol_stamped;
 
-        pub_ = this->create_publisher<geometry_msgs::msg::PolygonStamped>("borders", qos);
+    pol_stamped.header = hh;
 
-        publisher_->publish(pol);
-        pub_->publish(pol_stamped);
-        usleep(1000000);
-    }
-
-  
-  private:
+    if(map_name=="hexagon")         pol = create_hexagon(dx);
+    else if(map_name=="rectangle")  pol = create_rectangle(dx,dy);
     
-    rclcpp::Publisher<geometry_msgs::msg::Polygon>::SharedPtr publisher_;
-    rclcpp::Publisher<geometry_msgs::msg::PolygonStamped>::SharedPtr pub_;
+    pol_stamped.polygon = pol;
+
+    pub_ = this->create_publisher<geometry_msgs::msg::PolygonStamped>("/borders", qos);
+
+    publisher_->publish(pol);
+    pub_->publish(pol_stamped);
+    usleep(1000000);
+  }
+  
+private:
+  rclcpp::Publisher<geometry_msgs::msg::Polygon>::SharedPtr publisher_;
+  rclcpp::Publisher<geometry_msgs::msg::PolygonStamped>::SharedPtr pub_;
 };
 
 int main(int argc, char * argv[])

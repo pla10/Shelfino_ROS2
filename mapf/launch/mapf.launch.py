@@ -31,11 +31,8 @@ def check_map(context):
     return 
 
 def get_map_name(context):
-    if context.launch_configurations['random_gates'] == "true":
-        context.launch_configurations['map_name'] = 'random'
-    else:
-        map_name = Path(context.launch_configurations['map_file']).stem
-        context.launch_configurations['map_name'] = map_name
+    map_name = Path(context.launch_configurations['map_file']).stem
+    context.launch_configurations['map_name'] = map_name
     return 
     
 
@@ -45,7 +42,7 @@ def generate_launch_description():
     shelfino_desc_pkg  = get_package_share_directory('shelfino_description')
     shelfino_nav2_pkg  = get_package_share_directory('shelfino_navigation')
     shelfino_gaze_pkg  = get_package_share_directory('shelfino_gazebo')
-    sapf_pkg           = get_package_share_directory('sapf')
+    map_env_pkg        = get_package_share_directory('map_pkg')
 
     nav2_params_file_path = os.path.join(shelfino_nav2_pkg, 'config', 'shelfino.yaml')
 
@@ -65,8 +62,8 @@ def generate_launch_description():
     nav2_params_file = LaunchConfiguration('nav2_params_file', default=nav2_params_file_path)
     nav2_rviz_config_file = LaunchConfiguration('nav2_rviz_config_file', default=os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino_nav.rviz'))
 
-    # Project arguments
-    random_gates = LaunchConfiguration('random_gates', default='false')
+    # Map package arguments
+    map_env_params_file_path = os.path.join(map_env_pkg, 'config', 'map_config.yaml')
 
     # Declare LaunchArguments for exposing launching arguments
     launch_args = [
@@ -130,12 +127,11 @@ def generate_launch_description():
             description='Full path to the nav2 rviz config file to use'
         ),
 
-        # Project arguments
+        # Map package arguments
         DeclareLaunchArgument(
-            'random_gates',
-            default_value=random_gates,
-            choices=['true', 'false'],
-            description='Flag to enable random gates'
+            'map_env_params_file',
+            default_value=map_env_params_file_path,
+            description='Full path to the map_pkg params file to use'
         ),
     ]
 
@@ -153,6 +149,16 @@ def generate_launch_description():
             'rviz_config_file': rviz_config_file,
             'gazebo_world_file': gazebo_world_file,
             'robot_model_file': robot_model_file,
+        }.items()
+    )
+
+    map_pkg_node = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(map_env_pkg, 'launch'),
+            '/map_env.launch.py']
+        ),
+        launch_arguments= {
+            'map_env_params_file': map_env_params_file_path,
         }.items()
     )
 
@@ -215,15 +221,6 @@ def generate_launch_description():
                     }.items()
                 ),
 
-                Node (
-                    package='map_pkg',
-                    executable='send_gates',
-                    name='send_gates',
-                    output='screen',
-                    namespace=shelfino_name,
-                    arguments=[LaunchConfiguration('map_name')]
-                ),
-                # TODO add the other nodes
             ])
 
             nodes.append(sapf_node)
@@ -242,6 +239,7 @@ def generate_launch_description():
     ld.add_action(OpaqueFunction(function=print_env))
     
     ld.add_action(gazebo_node)
+    ld.add_action(map_pkg_node)
     nodes = OpaqueFunction(function=populate)
     ld.add_action(nodes)
 

@@ -1,16 +1,16 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='cylinder'>
+  <model name='cylinder0'>
     <link name='link'>
       <inertial>
-        <mass>1</mass>
+        <mass>1000</mass>
         <inertia>
-          <ixx>0.145833</ixx>
+          <ixx>145.833</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.145833</iyy>
+          <iyy>145.833</iyy>
           <iyz>0</iyz>
-          <izz>0.125</izz>
+          <izz>125</izz>
         </inertia>
         <pose>0 0 0 0 -0 0</pose>
       </inertial>

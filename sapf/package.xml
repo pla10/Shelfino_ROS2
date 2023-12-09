@@ -13,7 +13,6 @@
   <depend>shelfino_description</depend>
   <depend>shelfino_navigation</depend>
   <depend>map_pkg</depend>
-  <depend>dubins_planner</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

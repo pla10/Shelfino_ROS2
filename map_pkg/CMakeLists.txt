@@ -10,27 +10,59 @@ find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(obstacles_msgs REQUIRED)
 find_package(gazebo_msgs REQUIRED)
+
+install(DIRECTORY launch models config
+  DESTINATION share/${PROJECT_NAME}
+)
 
 # list of nodes
 set(NODES
   send_borders
   send_gates
+  send_obstacles
+  send_victims
 )
+
+add_library(${PROJECT_NAME}_lib SHARED
+  src/utilities.cpp
+  src/spawn_model.cpp
+)
+
+target_include_directories(${PROJECT_NAME}_lib PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+target_compile_features(${PROJECT_NAME}_lib PUBLIC c_std_99 cxx_std_17)
+
+ament_target_dependencies(
+  ${PROJECT_NAME}_lib
+  "geometry_msgs"
+  "rclcpp"
+  "gazebo_msgs"
+  "obstacles_msgs"
+)
+
 
 # build nodes
 foreach(NODE ${NODES})
-  add_executable(${NODE} src/${NODE}.cpp)
+  add_executable(${NODE} src/${NODE}.cpp src/utilities.cpp src/spawn_model.cpp)
+  
   target_include_directories(${NODE} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
+
   target_compile_features(${NODE} PUBLIC c_std_99 cxx_std_17)
+  
+  # target_link_libraries(${NODE} ${PROJECT_NAME}_lib)
+
   ament_target_dependencies(
     ${NODE}
     "geometry_msgs"
     "rclcpp"
-    "std_msgs"
     "gazebo_msgs"
+    "obstacles_msgs"
   )
 
   install(TARGETS ${NODE}
@@ -38,29 +70,26 @@ foreach(NODE ${NODES})
 endforeach()
 
 
-# If the WITHOUT_OBSTACLE variable is defined, then DO NOT  build the obstacles node
-if(NOT DEFINED WITHOUT_OBSTACLE)
-  find_package(obstacles_msgs REQUIRED)
+# Tests
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
   
-  add_executable(send_obstacles src/send_obstacles.cpp)
-  
-  target_include_directories(send_obstacles PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
+  ament_add_gtest(${PROJECT_NAME}_tests test/utilities_test.cpp)
 
-  target_compile_features(send_obstacles PUBLIC c_std_99 cxx_std_17)
-  
-  ament_target_dependencies(
-    send_obstacles
+  target_include_directories(${PROJECT_NAME}_tests PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+  )
+
+  ament_target_dependencies(${PROJECT_NAME}_tests
     "geometry_msgs"
     "rclcpp"
     "std_msgs"
-    "obstacles_msgs"
     "gazebo_msgs"
+    "obstacles_msgs"
   )
-
-  install(TARGETS send_obstacles
-    DESTINATION lib/${PROJECT_NAME})
+  
+  target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME}_lib)
 endif()
 
 ament_package()
