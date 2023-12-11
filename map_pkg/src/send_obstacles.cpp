@@ -88,7 +88,7 @@ public:
     }
     double dx = this->get_parameter("dx").as_double();
     double dy = this->get_parameter("dy").as_double();
-    double max_timeout = this->get_parameter("max_timeout").as_int();
+    int max_timeout = this->get_parameter("max_timeout").as_int();
     int n_obstacles = this->get_parameter("n_obstacles").as_int();
     
     // Define a random number generator for doubles
@@ -100,64 +100,33 @@ public:
     ); 
     std::uniform_real_distribution<> x_dis(-dx, dx);
     std::uniform_real_distribution<> y_dis(-dy, dy);
-    std::uniform_real_distribution<> shape(0, 2);
+    std::uniform_int_distribution<> shape(0, 2);
 
     auto startTime = this->get_clock()->now();
     for (int i=0; i<n_obstacles && !overTime(this->get_clock(), startTime, max_timeout); i++) {
       obstacle obs {0.0, 0.0, 0.0, 0.0, 0.0, obstacle_type::CYLINDER};
 
       if (this->get_parameter("no_cylinders").as_bool()) {
-        do {
-          obs.dx = size_dis(gen);
-          obs.dy = size_dis(gen);
-          obs.x = x_dis(gen);
-          obs.y = y_dis(gen);
-          obs.type = obstacle_type::BOX;
-        }
-        while(overlaps(obs, obstacles) && !is_inside_map(obs, map, dx, dy)
-              && !overTime(this->get_clock(), startTime, max_timeout));
-        obstacles.push_back(obs);
+        rand_box(obs, obstacles, map, dx, dy, startTime, max_timeout, gen);
       } 
       else if (this->get_parameter("no_boxes").as_bool()) {
-        do {
-          obs.radius = size_dis(gen);
-          obs.x = x_dis(gen);
-          obs.y = y_dis(gen);
-          obs.type = obstacle_type::CYLINDER;
-        } while(overlaps(obs, obstacles) && !is_inside_map(obs, map, dx, dy)
-              && !overTime(this->get_clock(), startTime, max_timeout));
-        obstacles.push_back(obs);
+        rand_cylinder(obs, obstacles, map, dx, dy, startTime, max_timeout, gen);
       } 
       else {
-        obstacle_type type = shape(gen)<1 ? obstacle_type::BOX : obstacle_type::CYLINDER;
+        obstacle_type type = shape(gen) == 0 ? obstacle_type::CYLINDER : obstacle_type::BOX;
         RCLCPP_INFO(this->get_logger(), "Obstacle type: %s", (type==obstacle_type::BOX ? "box" : "cylinder"));
-        if (type == obstacle_type::CYLINDER) {
-          do {
-            obs.radius = size_dis(gen);
-            obs.x = x_dis(gen);
-            obs.y = y_dis(gen);
-            obs.type = obstacle_type::CYLINDER;
-          } while(overlaps(obs, obstacles) && !is_inside_map(obs, map, dx, dy)
-              && !overTime(this->get_clock(), startTime, max_timeout));
-          obstacles.push_back(obs);
+        if (type == obstacle_type::BOX) {
+          rand_box(obs, obstacles, map, dx, dy, startTime, max_timeout, gen);
         }
         else {
-          do {
-            obs.dx = size_dis(gen);
-            obs.dy = size_dis(gen);
-            obs.x = x_dis(gen);
-            obs.y = y_dis(gen);
-            obs.type = obstacle_type::BOX;
-          } while(overlaps(obs, obstacles) && !is_inside_map(obs, map, dx, dy)
-              && !overTime(this->get_clock(), startTime, max_timeout));
-          obstacles.push_back(obs);
+          rand_box(obs, obstacles, map, dx, dy, startTime, max_timeout, gen);
         }
       }
       RCLCPP_INFO(this->get_logger(), "Obstacle %d: x=%f, y=%f, radius=%f, dx=%f, dy=%f", 
         i, obs.x, obs.y, obs.radius, obs.dx, obs.dy);
     }
 
-    if (this->get_clock()->now().seconds() - startTime.seconds() >= max_timeout) {
+    if (overTime(this->get_clock(), startTime, max_timeout)) {
       RCLCPP_INFO(this->get_logger(), "Could not find a valid position for some obstacles [%ld/%d]", obstacles.size(), n_obstacles); 
     }
 
@@ -245,19 +214,67 @@ public:
       pose.orientation.z = 0;
       pose.orientation.w = 0;
 
-      spawn_model(xml_string, pose, this->spawner_, this->node_namespace);
+      spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose);
 
       sleep(0.5);
     }
 
     this->publisher_->publish(msg);
   }
+private:
+  void rand_cylinder(obstacle& obs, std::vector<obstacle>& obstacles, std::string map, double dx, double dy, rclcpp::Time& startTime, int max_timeout, std::mt19937& gen);
+  void rand_box(obstacle& obs, std::vector<obstacle>& obstacles, std::string map, double dx, double dy, rclcpp::Time& startTime, int max_timeout, std::mt19937& gen);
 };
+
+
+void ObstaclesPublisher::rand_cylinder(obstacle& obs, std::vector<obstacle>& obstacles, std::string map, double dx, double dy, rclcpp::Time& startTime, int max_timeout, std::mt19937& gen){
+  std::uniform_real_distribution<> size_dis(
+    this->get_parameter("min_size").as_double(), 
+    this->get_parameter("max_size").as_double()
+  );
+  std::uniform_real_distribution<> x_dis(-dx, dx);
+  std::uniform_real_distribution<> y_dis(-dy, dy);
+
+  obs.type = obstacle_type::CYLINDER;
+  do {
+    obs.radius = size_dis(gen);
+    obs.x = x_dis(gen);
+    obs.y = y_dis(gen);
+    if (!overlaps(obs, obstacles) && is_inside_map(obs, map, dx, dy)){
+      obstacles.push_back(obs);
+      break;
+    }
+  } while(!overTime(this->get_clock(), startTime, max_timeout));
+}
+
+void ObstaclesPublisher::rand_box(obstacle& obs, std::vector<obstacle>& obstacles, std::string map, double dx, double dy, rclcpp::Time& startTime, int max_timeout, std::mt19937& gen){
+  std::uniform_real_distribution<> size_dis(
+    this->get_parameter("min_size").as_double(), 
+    this->get_parameter("max_size").as_double()
+  );
+  std::uniform_real_distribution<> x_dis(-dx, dx);
+  std::uniform_real_distribution<> y_dis(-dy, dy);
+
+  obs.type = obstacle_type::BOX;
+  do {    
+    obs.dx = size_dis(gen);
+    obs.dy = size_dis(gen);
+    obs.x = x_dis(gen);
+    obs.y = y_dis(gen);
+    
+    if (!overlaps(obs, obstacles) && is_inside_map(obs, map, dx, dy)){
+      obstacles.push_back(obs);
+      break;
+    }
+  } while(!overTime(this->get_clock(), startTime, max_timeout));
+}
+
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<ObstaclesPublisher>());
+  auto node = std::make_shared<ObstaclesPublisher>();
+  rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
 }

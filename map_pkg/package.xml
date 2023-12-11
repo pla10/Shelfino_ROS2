@@ -5,7 +5,7 @@
   <version>1.0.0</version>
   <description>Package to publish details regarding the map</description>
   <maintainer email="enrico.saccon@unitn.it">enrico</maintainer>
-  <maintainer email="placido.falquetto@unitn.it">enrico</maintainer>
+  <maintainer email="placido.falqueto@unitn.it">enrico</maintainer>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

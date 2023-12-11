@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 #
-# Author: Enrico Saccon  enrico.saccon [at] unitn.it
+# Authors: 
+#     Enrico Saccon     enrico.saccon [at] unitn.it
+#     Placido Falqueto  placido.falqueto [at] unitn.it
 
 import os
 from pathlib import Path

@@ -46,6 +46,8 @@ public:
 
     // Obstacle parameters
     this->declare_parameter("n_victims", 3);
+    this->declare_parameter("min_weight", 10);
+    this->declare_parameter("max_weight", 500);
 
     auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
 
@@ -61,6 +63,8 @@ public:
     double dy = this->get_parameter("dy").as_double();
     double max_timeout = this->get_parameter("max_timeout").as_int();
     uint n_victims = this->get_parameter("n_victims").as_int();
+    uint min_weight = this->get_parameter("min_weight").as_int();
+    uint max_weight = this->get_parameter("max_weight").as_int();
 
     // Print parameters values
     RCLCPP_INFO(this->get_logger(), "map: %s", map.c_str());
@@ -68,6 +72,13 @@ public:
     RCLCPP_INFO(this->get_logger(), "dy: %f", dy);
     RCLCPP_INFO(this->get_logger(), "max_timeout: %f", max_timeout);
     RCLCPP_INFO(this->get_logger(), "n_victims: %d", n_victims);
+    RCLCPP_INFO(this->get_logger(), "min_weight: %d", min_weight);
+    RCLCPP_INFO(this->get_logger(), "max_weight: %d", max_weight);
+
+    if (n_victims == 0) {
+      RCLCPP_INFO(this->get_logger(), "No victims to generate.");
+      exit(0);
+    }
 
     publisher_ = this->create_publisher<obstacles_msgs::msg::ObstacleArrayMsg>("/victims", qos);
 
@@ -76,6 +87,7 @@ public:
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> x_dis(-dx, dx);
     std::uniform_real_distribution<> y_dis(-dy, dy);
+    std::uniform_int_distribution<> weight_dis(min_weight, max_weight);
 
     std::vector<obstacle> victims;
     auto startTime = this->get_clock()->now();
@@ -84,9 +96,11 @@ public:
       do {
         vict.x = x_dis(gen);
         vict.y = y_dis(gen);
-      } while(overlaps(vict, victims) && !is_inside_map(vict, map, dx, dy)
-              && !overTime(this->get_clock(), startTime, max_timeout));
-      victims.push_back(vict);
+        if (!overlaps(vict, victims) && is_inside_map(vict, map, dx, dy)) {
+          victims.push_back(vict);
+          break;
+        }
+      } while(!overTime(this->get_clock(), startTime, max_timeout));
     }
 
     if (overTime(this->get_clock(), startTime, max_timeout)) {
@@ -111,7 +125,9 @@ public:
       point.z = 0.0;
       pol.points.push_back(point);
       obs.polygon = pol;
-      obs.radius = vict.radius;
+      // While physically the radius of the victim won't be touched, the now 
+      // assigned value indicates the weight of the victim
+      obs.radius = weight_dis(gen);
 
       msg.obstacles.push_back(obs);
 
@@ -133,7 +149,7 @@ public:
       pose.orientation.z = 0;
       pose.orientation.w = 0;
     
-      spawn_model(xml_string, pose, this->spawner_, this->node_namespace);
+      spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose);
       sleep(0.5);
     }
 
@@ -144,85 +160,8 @@ public:
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<VictimPublisher>());
+  auto node = std::make_shared<VictimPublisher>();
+  rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
 }
-
-
-// /**
-//  * @brief Spawn model of the gate in gazebo
-//  * 
-//  * @param pose The position in which the gate should be spawned
-//  */
-// void VictimPublisher::spawn_victims(std::string xml, geometry_msgs::msg::Pose pose){
-//   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for service spawn_entity...");
-//   while(!this->spawner_->wait_for_service(std::chrono::milliseconds(100))){
-//     if (!rclcpp::ok()){
-//       RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service. Exiting.");
-//       rclcpp::shutdown(nullptr, "Interrupted while waiting for the service. Exiting.");
-//     }
-//     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "service not available, waiting again...");
-//   }
-
-//   // Configure request
-//   auto request = std::make_shared<gazebo_msgs::srv::SpawnEntity::Request>();
-//   request->name = "victim"+std::to_string(pose.position.x)+"_"+std::to_string(pose.position.y);
-//   request->initial_pose = pose;
-//   request->robot_namespace = this->node_namespace;
-//   request->xml = xml;
-
-//   // Send request
-//   auto result = this->spawner_->async_send_request(request);
-// }
-
-
-
-
-// // Function that checks that two victims do not overlap
-// bool overlaps(victim o1, victim o2) {
-//   double dist = sqrt(pow(o1.x - o2.x, 2) + pow(o1.y - o2.y, 2));
-//   if (dist < o1.radius + o2.radius) {
-//     return true;
-//   }
-//   return false;
-// }
-
-// bool overlaps(victim o1, std::vector<victim> victims){
-//   for (auto o2 : victims){
-//     if (overlaps(o1, o2)){
-//       return true;
-//     }
-//   }
-//   return false;
-// }
-
-// bool is_inside_map(victim obs, std::string map, uint dx, uint dy){
-//   if (map == "square"){
-//     // Check if the map is a square and consider it as a rectangle of equal edges
-//     if (dy == 0) {
-//       dy = dx;
-//     }
-//     if (abs(obs.x) < dx/2.0 - obs.radius  && abs(obs.y) < dy/2.0 - obs.radius) {
-//       return true;
-//     }
-//   }
-//   else if (map == "hexagon"){
-//     // Check if circle is inside of hexagon 
-//     // Inside the combination of rectangles
-//     if (abs(obs.x) < dx/2.0 + sqrt(2.0)/2.0*dx - obs.radius && abs(obs.y) < dy/2.0 + sqrt(2.0)/2.0*dy - obs.radius){
-//       if (abs(obs.x) < dx/2.0 - obs.radius && abs(obs.y) < dy/2.0 + sqrt(2.0)/2.0*dy - obs.radius && 
-//           abs(obs.x) < dx/2.0 + sqrt(2.0)/2.0*dx - obs.radius && abs(obs.y) < dy/2.0 - obs.radius) {
-//         return true;
-//       }
-//       else {
-//         return false;
-//       }
-//     }
-//   }
-//   else{
-//     RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Map %s not recognized.", map.c_str());
-//     return false;
-//   }
-//   return false;
-// }

@@ -109,6 +109,9 @@ bool overlaps(obstacle obs1, std::vector<obstacle> obstacles){
 bool is_inside_map(obstacle obs, std::string map, double dx, double dy){
   bool inside = false;
 
+  std::cout << "Checking obstacle " << obs.x << ", " << obs.y << ", " << obs.radius << ", " << obs.dx << ", " << obs.dy 
+            << " in map " << map << " dx: " << dx << " dy: " << dy << std::endl;
+
   h2d::CPolyline map_poly;
   if (map == "rectangle"){
     obstacle tmp = {0.0, 0.0, 0.0, dx, dy, obstacle_type::BOX};
@@ -137,27 +140,16 @@ bool is_inside_map(obstacle obs, std::string map, double dx, double dy){
   }
   else if (obs.type == obstacle_type::BOX){
     h2d::CPolyline obs_rect = obs_to_cpoly(obs);
-    
-    // Since there is a small bug in the library, it's better to manually check this
-    bool isInside = obs_rect.isInside(map_poly);
-    if (!isInside){
-      isInside = true;
-      for (auto p : obs_rect.getPts()){
-        if (!p.isInside(map_poly)){
-          isInside = false;
-          break;
-        }
-      }
-    }
-
-    if (isInside && obs_rect.intersects(map_poly).size() == 0) {
+    if (obs_rect.isInside(map_poly) && obs_rect.intersects(map_poly).size() == 0) {
       inside = true;
     }
   }
   else{
     RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Obstacle type %d not recognized.", obs.type);
     inside = false;
-  }   
+  }  
+
+  std::cout << "Result: " << (inside ? "inside" : "NOT inside") << std::endl;
   return inside;
 }
 

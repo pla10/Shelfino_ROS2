@@ -436,7 +436,6 @@ TEST(map_pkg, obstacle_rect_in_map_hexagon)
 
 
 
-
 int main (int argc, char** argv){
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
