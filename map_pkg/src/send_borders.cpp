@@ -5,13 +5,19 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <fstream>
 
 #include "rclcpp/rclcpp.hpp"
 
 #include "geometry_msgs/msg/point32.hpp"
 #include "geometry_msgs/msg/polygon.hpp"
 #include "geometry_msgs/msg/polygon_stamped.hpp"
+#include "geometry_msgs/msg/pose.hpp"
 #include "std_msgs/msg/header.hpp"
+
+#include "gazebo_msgs/srv/spawn_entity.hpp"
+
+#include "map_pkg/spawn_model.hpp"
 
 #include "ament_index_cpp/get_package_share_directory.hpp"
 
@@ -90,12 +96,15 @@ class BordersPublisher : public rclcpp::Node
 {
 private:
   std::string share_dir;
+  std::string gz_models;
+  rclcpp::Client<gazebo_msgs::srv::SpawnEntity>::SharedPtr spawner_;
 
 public:
   BordersPublisher()
   : Node("send_borders")
   {
     this->share_dir = ament_index_cpp::get_package_share_directory("map_pkg");
+    this->gz_models = ament_index_cpp::get_package_share_directory("shelfino_description");
 
     this->declare_parameter<std::string>("map", "hexagon");
     this->declare_parameter<double>("dx", 5.0);
@@ -106,6 +115,8 @@ public:
 
     auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
     publisher_ = this->create_publisher<geometry_msgs::msg::Polygon>("/map_borders", qos);
+
+    this->spawner_ = this->create_client<gazebo_msgs::srv::SpawnEntity>("/spawn_entity");
 
     std_msgs::msg::Header hh;
 
@@ -118,8 +129,37 @@ public:
 
     pol_stamped.header = hh;
 
-    if(map_name=="hexagon")         pol = create_hexagon(dx);
-    else if(map_name=="rectangle")  pol = create_rectangle(dx,dy);
+    std::string xml_string;
+    if(map_name=="hexagon"){
+      pol = create_hexagon(dx);
+      // Read XML file to string
+      std::ifstream xml_file(this->gz_models + "/models/hexagon_world/model.sdf");
+      xml_string.assign(
+        std::istreambuf_iterator<char>(xml_file),
+        std::istreambuf_iterator<char>()
+      );
+      float original_size = 12.00;     // 13.20
+      std::string size_string = "<scale>1 1 1</scale>";
+      std::string size_replace_string = "<scale>" + std::to_string(dx/original_size) + " " + std::to_string(dx/original_size) + " 1</scale>";
+      size_t pos = 0;
+      while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
+        xml_string.replace(pos, size_string.length(), size_replace_string);
+        pos += size_replace_string.length();
+      }
+      // Spawn model in gazebo
+      geometry_msgs::msg::Pose pose;
+      pose.position.x = 0.0;
+      pose.position.y = 0.0;
+      pose.position.z = 0.1;
+      pose.orientation.x = 0;
+      pose.orientation.y = 0;
+      pose.orientation.z = 0;
+      pose.orientation.w = 0;
+
+      spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose);
+    }else if(map_name=="rectangle"){
+      pol = create_rectangle(dx,dy);
+    }
     
     pol_stamped.polygon = pol;
 

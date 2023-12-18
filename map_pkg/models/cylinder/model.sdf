@@ -1,16 +1,16 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='box'>
+  <model name='cylinder0'>
     <link name='link'>
       <inertial>
         <mass>1000</mass>
         <inertia>
-          <ixx>166.667</ixx>
+          <ixx>145.833</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>166.667</iyy>
+          <iyy>145.833</iyy>
           <iyz>0</iyz>
-          <izz>166.667</izz>
+          <izz>125</izz>
         </inertia>
         <pose>0 0 0 0 -0 0</pose>
       </inertial>
@@ -21,9 +21,10 @@
       <gravity>1</gravity>
       <visual name='visual'>
         <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
+          <cylinder>
+            <radius>0.5</radius>
+            <length>1</length>
+          </cylinder>
         </geometry>
         <material>
           <script>
@@ -47,9 +48,10 @@
         <max_contacts>10</max_contacts>
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
+          <cylinder>
+            <radius>0.5</radius>
+            <length>1</length>
+          </cylinder>
         </geometry>
         <surface>
           <friction>

@@ -63,8 +63,8 @@
         <surface>
           <friction>
             <ode>
-              <mu>0.0</mu>
-              <mu2>0.0</mu2>
+              <mu>0.0000001</mu>
+              <mu2>0.0000001</mu2>
             </ode>
           </friction>
         </surface>
@@ -189,13 +189,13 @@
       <inertial>
         <mass>0.1</mass>
       </inertial>
-      <visual name="visual">
+      <!-- <visual name="visual">
         <geometry>
           <mesh>
             <uri>model://lidar2d/meshes/hokuyo.dae</uri>
           </mesh>
         </geometry>
-      </visual>
+      </visual> -->
       <collision name="collision-base">
         <pose>0 0 -0.0145 0 0 0</pose>
         <geometry>

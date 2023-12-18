@@ -77,7 +77,7 @@ public:
     auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
 
     this->spawner_ = this->create_client<gazebo_msgs::srv::SpawnEntity>("/spawn_entity");
-    publisher_ = this->create_publisher<obstacles_msgs::msg::ObstacleArrayMsg>("/obstacles", qos);
+    this->publisher_ = this->create_publisher<obstacles_msgs::msg::ObstacleArrayMsg>("/obstacles", qos);
 
     std::vector<obstacle> obstacles;
 
@@ -267,6 +267,8 @@ void ObstaclesPublisher::rand_box(obstacle& obs, std::vector<obstacle>& obstacle
       break;
     }
   } while(!overTime(this->get_clock(), startTime, max_timeout));
+  RCLCPP_INFO(this->get_logger(), "Obstacle: x=%f, y=%f, dx=%f, dy=%f, intersections: %d, time: %f, max_time: %d, inside_map: %s", 
+    obs.x, obs.y, obs.dx, obs.dy, (bool)overlaps(obs, obstacles), (this->get_clock()->now().seconds()-startTime.seconds()), max_timeout, (is_inside_map(obs, map, dx, dy) ? std::string("true").c_str() : std::string("false").c_str()));
 }
 
 

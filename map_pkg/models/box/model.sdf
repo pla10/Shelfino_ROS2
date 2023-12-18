@@ -3,7 +3,7 @@
   <model name='box'>
     <link name='link'>
       <inertial>
-        <mass>1000</mass>
+        <mass>0</mass>
         <inertia>
           <ixx>166.667</ixx>
           <ixy>0</ixy>
@@ -42,7 +42,7 @@
         <transparency>0</transparency>
         <cast_shadows>1</cast_shadows>
       </visual>
-      <collision name='collision'>
+      <!-- <collision name='collision'>
         <laser_retro>0</laser_retro>
         <max_contacts>10</max_contacts>
         <pose>0 0 0 0 -0 0</pose>
@@ -96,7 +96,7 @@
             </bullet>
           </contact>
         </surface>
-      </collision>
+      </collision> -->
     </link>
     <static>0</static>
     <allow_auto_disable>1</allow_auto_disable>

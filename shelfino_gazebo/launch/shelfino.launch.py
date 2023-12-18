@@ -151,7 +151,9 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(
                 os.path.join(gazebo_ros_pkg, 'launch', 'gzserver.launch.py')
             ),
-            launch_arguments={'world': gazebo_world_file}.items(),
+            launch_arguments={
+                'world': gazebo_world_file
+            }.items(),
         ),
 
         IncludeLaunchDescription(
@@ -170,12 +172,6 @@ def generate_launch_description():
             condition=IfCondition(spawn_shelfino),
         ),
 
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource([launch_file_dir, '/robot_state_publisher.launch.py']),
-        #     launch_arguments={'use_sim_time': use_sim_time,
-        #                       'robot_id': robot_id}.items()
-        # ),
-
         Node(
             package='rviz2',
             executable='rviz2',
@@ -183,9 +179,4 @@ def generate_launch_description():
             condition=IfCondition(use_rviz),
         ),
 
-        # Node(
-        #     package='get_positions',
-        #     executable='get_positions',
-        #     namespace=robot_name,
-        # ),
     ])

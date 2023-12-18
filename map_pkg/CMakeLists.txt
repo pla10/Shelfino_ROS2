@@ -7,11 +7,14 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(obstacles_msgs REQUIRED)
 find_package(gazebo_msgs REQUIRED)
+find_package(tf2 REQUIRED)
 
 install(DIRECTORY launch models config
   DESTINATION share/${PROJECT_NAME}
@@ -23,6 +26,7 @@ set(NODES
   send_gates
   send_obstacles
   send_victims
+  send_initialposes
 )
 
 add_library(${PROJECT_NAME}_lib SHARED
@@ -42,8 +46,8 @@ ament_target_dependencies(
   "rclcpp"
   "gazebo_msgs"
   "obstacles_msgs"
+  "tf2"
 )
-
 
 # build nodes
 foreach(NODE ${NODES})
@@ -63,12 +67,19 @@ foreach(NODE ${NODES})
     "rclcpp"
     "gazebo_msgs"
     "obstacles_msgs"
+    "tf2"
   )
 
   install(TARGETS ${NODE}
     DESTINATION lib/${PROJECT_NAME})
 endforeach()
 
+# ament_python_install_package(scripts)
+
+install(PROGRAMS
+  scripts/create_map_pgm.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 # Tests
 if(BUILD_TESTING)

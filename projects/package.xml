@@ -10,7 +10,7 @@
     - Purseur evader: pv.launch.py 
   </description>
   <maintainer email="enrico.saccon@unitn.it">enrico</maintainer>
-  <maintainer email="placido.falqueto@unitn.it">enrico</maintainer>
+  <maintainer email="placido.falqueto@unitn.it">placido</maintainer>
   <license>Apache 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -18,7 +18,7 @@
   <depend>shelfino_gazebo</depend>
   <depend>shelfino_description</depend>
   <depend>shelfino_navigation</depend>
-  <depend>map_pkg</depend>
+  <!-- <depend>evader</depend> -->
 
   <export>
     <build_type>ament_cmake</build_type>

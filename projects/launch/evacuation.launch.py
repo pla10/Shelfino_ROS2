@@ -3,6 +3,7 @@
 # Author: Enrico Saccon  enrico.saccon [at] unitn.it
 
 import os
+import yaml
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
@@ -34,6 +35,61 @@ def get_map_name(context):
     map_name = Path(context.launch_configurations['map_file']).stem
     context.launch_configurations['map_name'] = map_name
     return 
+
+def evaluate_rviz(context, *args, **kwargs):
+    shelfino_nav2_pkg = get_package_share_directory('shelfino_navigation')
+    
+    rviz_path = context.launch_configurations['nav2_rviz_config_file']
+    cr_path = os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino') + \
+        'evacuation_'+context.launch_configurations['n_shelfini']+'_nav.rviz'
+    
+    output_config = {}
+    with open(rviz_path, 'r') as f_in:
+        rviz_config= yaml.load(f_in, Loader=yaml.FullLoader)
+        for key in rviz_config.keys():
+            if key != 'Visualization Manager':
+                output_config[key] = rviz_config[key]
+
+        # Add everything that is not displays or tools
+        output_config['Visualization Manager'] = {}
+        for key in rviz_config['Visualization Manager'].keys():
+            if key != 'Displays' and key != 'Tools':
+                output_config['Visualization Manager'][key] = rviz_config['Visualization Manager'][key]
+
+        # Configure displays for Rviz
+        displays = rviz_config['Visualization Manager']['Displays']
+        output_config['Visualization Manager']['Displays'] = []
+        for display in displays:
+            if type(display) is not dict:
+                raise Exception("[{}] Display `{}` is not a dictionary".format(__file__, display))
+            if "shelfinoX" in str(display):
+                display_str = str(display)
+                for shelfino_id in range(int(context.launch_configurations['n_shelfini'])):
+                    output_config['Visualization Manager']['Displays'].append(
+                        yaml.load(display_str.replace("shelfinoX", "shelfino"+str(shelfino_id)), Loader=yaml.FullLoader))
+            else:
+                output_config['Visualization Manager']['Displays'].append(display)
+
+        # Configure tools for Rviz
+        tools = rviz_config['Visualization Manager']['Tools']
+        output_config['Visualization Manager']['Tools'] = []
+        for tool in tools:
+            if type(tool) is not dict:
+                raise Exception("[{}] Tool `{}` is not a dictionary".format(__file__, tool))
+            if "shelfinoX" in str(tool):
+                tool_str = str(tool)
+                for shelfino_id in range(int(context.launch_configurations['n_shelfini'])):
+                    output_config['Visualization Manager']['Tools'].append(
+                        yaml.load(tool_str.replace("shelfinoX", "shelfino"+str(shelfino_id)), Loader=yaml.FullLoader))
+            else:
+                output_config['Visualization Manager']['Tools'].append(tool)
+
+        with open(cr_path, 'w+') as f_out:
+            yaml.dump(output_config, f_out, default_flow_style=False)
+
+    context.launch_configurations['rviz_config_file'] = cr_path
+    
+    return
     
 
 def generate_launch_description():
@@ -53,7 +109,7 @@ def generate_launch_description():
 
     # Gazebo simulation arguments
     use_gui           = LaunchConfiguration('use_gui', default='true')
-    use_rviz          = LaunchConfiguration('use_rviz', default='true')
+    use_rviz          = LaunchConfiguration('use_rviz', default='false')
     rviz_config_file  = LaunchConfiguration('rviz_config_file', default=os.path.join(shelfino_desc_pkg, 'rviz', 'shelfino.rviz'))
     gazebo_world_file = LaunchConfiguration('gazebo_world_file', default=os.path.join(shelfino_gaze_pkg, 'worlds', 'hexagon.world'))
     robot_model_file  = LaunchConfiguration('robot_model_file', default=os.path.join(shelfino_desc_pkg, 'models', 'shelfino', 'model.sdf.xacro'))
@@ -170,6 +226,17 @@ def generate_launch_description():
         }.items()
     )
 
+    rviz2_node = Node (
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', rviz_config_file],
+        parameters=[
+            {'use_sim_time': use_sim_time}
+        ],
+    )
+
     def populate(context):
         nodes = []
         print(__file__)
@@ -226,9 +293,9 @@ def generate_launch_description():
                         'nav2_params_file' : nav2_params_file,
                         'rviz_config_file': nav2_rviz_config_file,
                         'initial_x' : str(shelfino_id*2.0),
-                        # 'headless' : 'true',
+                        'headless' : 'true',
                     }.items()
-                ),
+                ), 
             ])
 
             nodes.append(sapf_node)
@@ -245,10 +312,12 @@ def generate_launch_description():
     ld.add_action(OpaqueFunction(function=check_map))
     ld.add_action(OpaqueFunction(function=get_map_name))
     ld.add_action(OpaqueFunction(function=print_env))
+    ld.add_action(OpaqueFunction(function=evaluate_rviz))
     
     ld.add_action(gazebo_node)
     ld.add_action(map_pkg_node)
     nodes = OpaqueFunction(function=populate)
     ld.add_action(nodes)
+    ld.add_action(rviz2_node)
 
     return ld
