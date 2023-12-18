@@ -25,6 +25,7 @@
   - [What you should provide](#what-you-should-provide)
   - [When you should provide the what](#when-you-should-provide-the-what)
   - [How you should provide the what](#how-you-should-provide-the-what)
+- [Other Useful Info](#other-useful-info)
 - [TODOs on my end](#todos-on-my-end)
 - [P.S.](#ps)
 
@@ -44,7 +45,7 @@ Each group of students, composed at maximum of 3 students $\left(|\text{group}|\
 
 General assumptions are:
 
-- The robots move at constant speed, i.e., use Dubins manoeuvres;
+- The robots move at constant speed, i.e., use Dubins manoeuvres; the speed of the robot cannot be decreased or increased at any time, you have to plan with constant velocity in mind. 
 - Touching the borders of the map and/or the obstacle will decrease the point obtained by completely the task successfully.  
 
 ## Coordinate Evacuation
@@ -250,7 +251,8 @@ You should write C++ (standard 17) nodes that allow the robots to complete their
 ## What you should provide
 
 - A PDF report describing the approach followed, the reason why you decided to follow said approach and the difficulties encountered. You should also, but it's not mandatory, include possible results that you have obtained, for example, statistics on the times it takes to compute a solution and/or the length of the solutions it finds. Any information that you think may be interesting regarding the project should be included.
-- An archive containing all the software to allow reproducing the approach written in the report. 
+- An archive containing all the software to allow reproducing the approach written in the report.
+- Optionally, one or more videos showing how your code works and showing a few simulations completed successfully. This does NOT replace the exam, i.e., the simulations run on the day of the exam, in any way or form, but may be used to your advantage. 
 
 ## When you should provide the what
 
@@ -265,6 +267,12 @@ The best thing would be for each group to create a fork of the repository so tha
 In any case, for the delivery you will have to provide an archive containing the code. Obviously no pre-compiled files nor executable will be taken into consideration.
 
 You should send the archive and the pdf to me as an email and wait for my ACK on the reception of the email. Also, in the email you should state the group components, and a name for the group (if you have chosen one). 
+
+# Other Useful Info
+
+Since many of you have asked, we are going to provide a computer in the robotics laboratory at DISI. Please, to use it coordinate with me for the creation of your account. After this step, you'll be able to book timeslots to work on the projects, through a portal that I'll set up.
+
+The exams of January and (likely) February are going to be simulation-based, i.e., the mark will be given on how your code will work with the simulation. The exams during the summer exam session will be also graded on how the code works on the real robots, until further notice.
 
 # TODOs on my end
 
