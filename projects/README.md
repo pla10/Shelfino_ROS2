@@ -274,6 +274,8 @@ Since many of you have asked, we are going to provide a computer in the robotics
 
 The exams of January and (likely) February are going to be simulation-based, i.e., the mark will be given on how your code will work with the simulation. The exams during the summer exam session will be also graded on how the code works on the real robots, until further notice.
 
+While you are allowed to use external libraries, you must show in the report that you fully understand what you are doing and provide good reasons for the usage and choice of that particular library. 
+
 # TODOs on my end
 
 - As you may see by looking at the repository, the evader package is still empty. It will be updated during the week. 
