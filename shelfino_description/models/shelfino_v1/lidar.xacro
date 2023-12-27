@@ -1,0 +1,71 @@
+<?xml version='1.0' ?>
+<robot name='shelfino' xmlns:xacro='http://www.ros.org/wiki/xacro'> 
+  <!--
+                  LIDAR
+  -->
+  <xacro:property name='laser_radius' value='0.04'/>
+  <xacro:property name='laser_height' value='0.02'/>
+  <xacro:property name='laser_mass' value='0.1'/>
+  
+  <link name='shelfino${robot_id}/base_laser'>
+    <visual>
+      <origin xyz='0 0 ${laser_height/2}' rpy='0 0 0'/>
+      <geometry>
+        <cylinder radius='${laser_radius}' length='${laser_height}'/>
+      </geometry>
+      <material name='Green' />
+    </visual> 
+    <inertial>
+      <mass value='0.1'/>
+      <inertia ixx='0.001' ixy='0.0' ixz='0.0'
+                iyy='0.001' iyz='0.0'
+                izz='0.001' />
+    </inertial>
+  </link>
+
+  <!-- 
+                  JOINT
+  -->  
+  
+  <joint name='lidar2d_joint' type='fixed'>
+    <parent link='shelfino${robot_id}/chassis_link'/>
+    <child link='shelfino${robot_id}/base_laser'/>
+    <origin xyz='0 0 ${body_height+0.11}' rpy='0 0 0'/>
+  </joint>
+
+  <gazebo reference='shelfino${robot_id}/base_laser'>
+    <material>Gazebo/Green</material>
+    <sensor name="laser" type="ray">
+      <pose> 0 0 0 0 0 0 </pose>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <min_angle>-3.14</min_angle>
+            <max_angle>3.14</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>${body_width/sqrt(2)+body_width*0.1}</min>
+          <max>15</max>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.02</stddev>
+        </noise>
+      </ray>
+      <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>shelfino${robot_id}/base_laser</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+</robot>

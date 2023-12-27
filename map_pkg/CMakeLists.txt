@@ -26,7 +26,6 @@ set(NODES
   send_gates
   send_obstacles
   send_victims
-  send_initialposes
 )
 
 add_library(${PROJECT_NAME}_lib SHARED
@@ -80,6 +79,7 @@ install(PROGRAMS
   scripts/create_map_pgm.py
   DESTINATION lib/${PROJECT_NAME}
 )
+
 
 # Tests
 if(BUILD_TESTING)

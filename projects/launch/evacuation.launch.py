@@ -8,7 +8,7 @@ from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch.actions import OpaqueFunction, DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, ExecuteProcess
+from launch.actions import OpaqueFunction, DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, ExecuteProcess, TimerAction
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
@@ -26,9 +26,9 @@ def print_env(context):
 def check_map(context):
     from pathlib import Path
     map_name = Path(context.launch_configurations['map_file'])
-    world_name = Path(context.launch_configurations['gazebo_world_file'])
-    if map_name.stem != world_name.stem:
-        raise Exception("[{}] Map `{}` does not match world `{}`".format(__file__, map_name.stem, world_name.stem))
+    # world_name = Path(context.launch_configurations['gazebo_world_file'])
+    # if map_name.stem != world_name.stem:
+    #     raise Exception("[{}] Map `{}` does not match world `{}`".format(__file__, map_name.stem, world_name.stem))
     return 
 
 def get_map_name(context):
@@ -109,13 +109,12 @@ def generate_launch_description():
 
     # Gazebo simulation arguments
     use_gui           = LaunchConfiguration('use_gui', default='true')
-    use_rviz          = LaunchConfiguration('use_rviz', default='false')
+    use_rviz          = LaunchConfiguration('use_rviz', default='true')
     rviz_config_file  = LaunchConfiguration('rviz_config_file', default=os.path.join(shelfino_desc_pkg, 'rviz', 'shelfino.rviz'))
-    gazebo_world_file = LaunchConfiguration('gazebo_world_file', default=os.path.join(shelfino_gaze_pkg, 'worlds', 'hexagon.world'))
-    robot_model_file  = LaunchConfiguration('robot_model_file', default=os.path.join(shelfino_desc_pkg, 'models', 'shelfino', 'model.sdf.xacro'))
+    gazebo_world_file = LaunchConfiguration('gazebo_world_file', default=os.path.join(shelfino_gaze_pkg, 'worlds', 'empty.world'))
 
     # Navigation arguments
-    map_file              = LaunchConfiguration('map_file', default=os.path.join(shelfino_nav2_pkg, 'maps', 'hexagon.yaml'))
+    map_file              = LaunchConfiguration('map_file', default=os.path.join(shelfino_nav2_pkg, 'maps', 'dynamic_map.yaml'))
     nav2_params_file      = LaunchConfiguration('nav2_params_file', default=nav2_params_file_path)
     nav2_rviz_config_file = LaunchConfiguration('nav2_rviz_config_file', default=os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino_nav.rviz'))
 
@@ -161,11 +160,6 @@ def generate_launch_description():
             # choices=['empty', 'povo', 'hexagon'],
             description='World used in the gazebo simulation'
         ),
-        DeclareLaunchArgument(
-            'robot_model_file',
-            default_value=robot_model_file,
-            description='Model used in the gazebo simulation'
-        ),
 
         # Navigation arguments
         DeclareLaunchArgument(
@@ -192,20 +186,17 @@ def generate_launch_description():
         ),
     ]
 
-    gazebo_node = IncludeLaunchDescription(
+    gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(shelfino_gaze_pkg, 'launch'),
             '/shelfino.launch.py']
         ),
         launch_arguments= {
             'use_sim_time': use_sim_time,
-            # 'robot_id': shelfino_id,
             'spawn_shlefino': 'false',
             'use_gui': use_gui,
             'use_rviz': use_rviz,
-            'rviz_config_file': rviz_config_file,
-            'gazebo_world_file': gazebo_world_file,
-            'robot_model_file': robot_model_file,
+            'gazebo_world_file': gazebo_world_file
         }.items()
     )
 
@@ -237,50 +228,57 @@ def generate_launch_description():
         ],
     )
 
-    def populate(context):
+    def launch_rsp(context):
         nodes = []
-        print(__file__)
-        print(int(context.launch_configurations['n_shelfini']))
+        for shelfino_id in range(int(context.launch_configurations['n_shelfini'])):
+            
+            shelfino_name = PythonExpression(["'", "shelfino", str(shelfino_id), "'"])
+    
+            rsp_node = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    os.path.join(shelfino_desc_pkg, 'launch'),
+                    '/rsp.launch.py']
+                ),
+                launch_arguments= {
+                    'use_sim_time': use_sim_time,
+                    'shelfino_id': str(shelfino_id),
+                }.items()
+            )
+            nodes.append(rsp_node)
+
+        return nodes
+    
+    def spawn_shelfini(context):
+        nodes = []
+        for shelfino_id in range(int(context.launch_configurations['n_shelfini'])):
+            
+            shelfino_name = PythonExpression(["'", "shelfino", str(shelfino_id), "'"])
+    
+            spawn_node = Node(
+                package='gazebo_ros',
+                executable='spawn_entity.py',
+                arguments=[
+                        '-topic', PythonExpression(["'/", shelfino_name, "/robot_description", "'"]),
+                        '-entity', shelfino_name,
+                        '-robot_namespace', shelfino_name,
+                        '-x', str(shelfino_id*1.5-1.5),
+                        '-y', '0.0',
+                        '-z', '0.0',
+                        '-Y', '0.0',
+                ]
+            )
+            nodes.append(spawn_node)
+
+        return nodes
+
+    def launch_navigation(context):
+        nodes = []
         for shelfino_id in range(int(context.launch_configurations['n_shelfini'])):
             
             shelfino_name = PythonExpression(["'", "shelfino", str(shelfino_id), "'"])
     
             model_output = PythonExpression(["'", os.path.join(shelfino_desc_pkg, 'models', 'shelfino'), str(shelfino_id), ".sdf'"])
             sapf_node = GroupAction([
-                ExecuteProcess(
-                    cmd=[[
-                        'xacro ',
-                        robot_model_file,
-                        ' robot_id:=',
-                        str(shelfino_id),
-                        ' > ',
-                        model_output
-                    ]],
-                    shell=True,
-                ),
-                Node(
-                    package='gazebo_ros',
-                    executable='spawn_entity.py',
-                    arguments=['-file', model_output,
-                            '-entity', shelfino_name,
-                            '-robot_namespace', shelfino_name,
-                            '-x', str(shelfino_id*2.0),
-                            '-y', '0.0',
-                            '-z', '0.0',
-                            '-Y', '0.0',
-                    ]
-                ),
-
-                IncludeLaunchDescription(
-                    PythonLaunchDescriptionSource([
-                        os.path.join(shelfino_desc_pkg, 'launch'),
-                        '/rsp.launch.py']
-                    ),
-                    launch_arguments= {
-                        'use_sim_time': use_sim_time,
-                        'robot_id': str(shelfino_id),
-                    }.items()
-                ),
                 IncludeLaunchDescription(
                     PythonLaunchDescriptionSource([
                         os.path.join(shelfino_nav2_pkg, 'launch'),
@@ -292,10 +290,10 @@ def generate_launch_description():
                         'map_file' : map_file,
                         'nav2_params_file' : nav2_params_file,
                         'rviz_config_file': nav2_rviz_config_file,
-                        'initial_x' : str(shelfino_id*2.0),
+                        'initial_x': str(shelfino_id*1.5-1.5),
                         'headless' : 'true',
                     }.items()
-                ), 
+                ),
             ])
 
             nodes.append(sapf_node)
@@ -309,15 +307,50 @@ def generate_launch_description():
     for launch_arg in launch_args:
         ld.add_action(launch_arg)
 
-    ld.add_action(OpaqueFunction(function=check_map))
     ld.add_action(OpaqueFunction(function=get_map_name))
     ld.add_action(OpaqueFunction(function=print_env))
     ld.add_action(OpaqueFunction(function=evaluate_rviz))
     
-    ld.add_action(gazebo_node)
+    create_map_node = Node (
+        package='map_pkg',
+        executable='create_map_pgm.py',
+        name='create_map_pgm',
+        output='screen',
+        parameters=[map_env_conf_params]
+    )
+
+    ld.add_action(gazebo_launch)
     ld.add_action(map_pkg_node)
-    nodes = OpaqueFunction(function=populate)
-    ld.add_action(nodes)
-    ld.add_action(rviz2_node)
+    
+    ld.add_action(TimerAction(
+        period='2',
+        actions = [create_map_node]
+    ))
+    
+    ld.add_action(TimerAction(
+        period='5',
+        actions = [OpaqueFunction(function=launch_rsp)]
+    ))
+    ld.add_action(TimerAction(
+        period='10',
+        actions = [OpaqueFunction(function=spawn_shelfini)]
+    ))
+
+    ld.add_action(TimerAction(
+        period='15',
+        actions = [rviz2_node]
+    ))
+
+    ld.add_action(TimerAction(
+        period='20',
+        actions = [OpaqueFunction(function=launch_navigation)]
+    ))
+
+
+
+    # ld.add_action(map_pkg_node)
+    # nodes = OpaqueFunction(function=populate)
+    # ld.add_action(nodes)
+    # ld.add_action(rviz2_node)
 
     return ld

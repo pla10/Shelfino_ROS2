@@ -3,8 +3,6 @@
 # Author: Placido Falqueto placido.falqueto [at] unitn.it
 # Maintainer: Enrico Saccon  enrico.saccon [at] unitn.it
 
-#TODO change robot_id to shelfino_id
-
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -22,15 +20,15 @@ def print_env(context):
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    robot_id = LaunchConfiguration('robot_id', default='')
+    shelfino_id = LaunchConfiguration('shelfino_id', default='')
 
-    robot_name = PythonExpression(["'", 'shelfino', robot_id, "'"])
+    shelfino_name = PythonExpression(["'", 'shelfino', shelfino_id, "'"])
 
     xacro_model = os.path.join(
         get_package_share_directory('shelfino_description'),
-        'models','shelfino','model.urdf.xacro')
+        'models','shelfino_v1.xacro')
     
-    robot_desc = Command(['xacro ', xacro_model, ' robot_id:=', robot_id])
+    robot_desc = Command(['xacro ', xacro_model, ' robot_id:=', shelfino_id])
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -39,7 +37,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         DeclareLaunchArgument(
-            'robot_id',
+            'shelfino_id',
             default_value='',
             description='Shelfino ID'),
 
@@ -49,7 +47,7 @@ def generate_launch_description():
             package='robot_state_publisher',
             executable='robot_state_publisher',
             name='robot_state_publisher',
-            namespace=robot_name,
+            namespace=shelfino_name,
             output='screen',
             parameters=[{'use_sim_time': use_sim_time},
                         {'robot_description': robot_desc}],

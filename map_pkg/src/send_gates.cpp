@@ -182,7 +182,7 @@ void GatesPublisher::spawn_gates(double x, double y){
   // Spawn gate in gazebo
   std::string xml = std::string((
     std::istreambuf_iterator<char>(std::ifstream(this->share_dir + "/models/gate/model.sdf").rdbuf())), std::istreambuf_iterator<char>());
-  spawn_model(this->get_node_base_interface(), this->spawner_, xml, pose);
+  spawn_model(this->get_node_base_interface(), this->spawner_, xml, pose, "gate");
 }
 
 int main(int argc, char * argv[])

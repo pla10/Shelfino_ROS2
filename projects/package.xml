@@ -19,6 +19,7 @@
   <depend>shelfino_description</depend>
   <depend>shelfino_navigation</depend>
   <!-- <depend>evader</depend> -->
+  <depend>map_pkg</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

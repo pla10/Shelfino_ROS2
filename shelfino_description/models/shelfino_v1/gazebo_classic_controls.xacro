@@ -1,0 +1,28 @@
+<?xml version='1.0' ?>
+<robot name='shelfino' xmlns:xacro='http://www.ros.org/wiki/xacro'>  
+  <gazebo>
+    <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
+      <update_rate>30</update_rate>
+      <!-- Wheel info -->
+      <left_joint>shelfino${robot_id}/left_wheel_joint</left_joint>
+      <right_joint>shelfino${robot_id}/right_wheel_joint</right_joint>
+      <wheel_separation>${body_width+0.04}</wheel_separation>
+      <wheel_diameter>${wheel_radius*2.0}</wheel_diameter>
+
+      <!-- Limits -->
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+      <command_topic>cmd_vel</command_topic>
+
+      <!-- Output -->
+      <odometry_frame>shelfino${robot_id}/odom</odometry_frame>
+      <robot_base_frame>shelfino${robot_id}/base_link</robot_base_frame>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>true</publish_wheel_tf>
+    </plugin>
+  </gazebo> 
+
+</robot>
+

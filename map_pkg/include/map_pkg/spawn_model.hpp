@@ -14,5 +14,5 @@
 void spawn_model(
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_interface,
   rclcpp::Client<gazebo_msgs::srv::SpawnEntity>::SharedPtr& spawner_,
-  std::string xml, geometry_msgs::msg::Pose pose, std::string node_namespace = ""
+  std::string xml, geometry_msgs::msg::Pose pose, std::string prefix = "obstacle"
 );

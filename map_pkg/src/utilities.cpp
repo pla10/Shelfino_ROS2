@@ -109,8 +109,10 @@ bool overlaps(obstacle obs1, std::vector<obstacle> obstacles){
 bool is_inside_map(obstacle obs, std::string map, double dx, double dy){
   bool inside = false;
 
-  std::cout << "Checking obstacle " << obs.x << ", " << obs.y << ", " << obs.radius << ", " << obs.dx << ", " << obs.dy 
-            << " in map " << map << " dx: " << dx << " dy: " << dy << std::endl;
+  RCLCPP_DEBUG(rclcpp::get_logger("rclcpp"),
+    "Checking obstacle %f, %f, %f, %f, %f, in map %s dx: %f  dy: %f", 
+    obs.x, obs.y, obs.radius, obs.dx, obs.dy, map.c_str(), dx, dy
+  );
 
   h2d::CPolyline map_poly;
   if (map == "rectangle"){
@@ -149,7 +151,7 @@ bool is_inside_map(obstacle obs, std::string map, double dx, double dy){
     inside = false;
   }  
 
-  std::cout << "Result: " << (inside ? "inside" : "NOT inside") << std::endl;
+  RCLCPP_DEBUG(rclcpp::get_logger("rclcpp"), "Result: %s", (inside ? "inside" : "NOT inside"));
   return inside;
 }
 

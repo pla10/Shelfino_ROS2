@@ -1,0 +1,25 @@
+<?xml version='1.0' ?>
+<robot name='shelfino' xmlns:xacro='http://www.ros.org/wiki/xacro'>  
+
+  <link name="shelfino${robot_id}/hat">
+    <pose>0.0 0.0 ${body_height} 0 0 0</pose>
+    <visual name='visual'>
+      <geometry>
+        <mesh filename='package://shelfino_description/models/xmas_hat/meshes/xmas_hat.dae' scale='0.01 0.01 0.01'/>
+      </geometry>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <cylinder radius='0.01' length='0.01'/>
+        <!-- <mesh filename='package://shelfino_description/models/xmas_hat/meshes/xmas_hat.dae' scale='0.01 0.01 0.01'/> -->
+      </geometry>
+    </collision>
+  </link>
+  <joint name='shelfino${robot_id}/hat_joint' type='fixed'>
+    <parent link='shelfino${robot_id}/base_link'/>
+    <child link='shelfino${robot_id}/hat'/>
+    <origin xyz='0 0 ${body_height+0.1}' rpy='0 0 0'/>
+  </joint>
+
+</robot>
+

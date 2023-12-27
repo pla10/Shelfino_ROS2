@@ -1,0 +1,65 @@
+<?xml version='1.0' ?>
+<robot name='shelfino' xmlns:xacro='http://www.ros.org/wiki/xacro'>  
+  <xacro:property name='wheel_radius' value='0.125'/>
+  <xacro:property name='wheel_width' value='0.03'/>
+
+  <xacro:macro name="wheel" params="prefix reflect">
+    
+    <!-- 
+                    LINKS
+    -->
+
+    <link name="shelfino${robot_id}/${prefix}_wheel">
+      <visual>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="Black"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width+0.005}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.028498940"/>
+        <inertia ixx='1.1175580e-05' ixy='-4.2369783e-11' ixz='-5.9381719e-09'
+            iyy='1.1192413e-05' iyz='-1.4400107e-11'
+            izz='2.0712558e-05' />
+      </inertial>
+    </link>
+
+    <!--
+                    JOINTS
+    -->
+
+    <joint name="shelfino${robot_id}/${prefix}_wheel_joint" type="continuous">
+      <parent link="shelfino${robot_id}/chassis_link"/>
+      <child link="shelfino${robot_id}/${prefix}_wheel"/>
+      <origin xyz="0 ${reflect*(body_width/2+0.02)} ${wheel_radius+0.05}" rpy="0 ${pi/2} ${pi/2}"/>
+      <axis xyz="0 0 1"/> <!-- specifies the axis around which it should revolve -->
+    </joint>
+
+    <!-- 
+                    GAZEBO COLORS
+    -->
+    <gazebo reference="shelfino${robot_id}/${prefix}_wheel">
+      <material>Gazebo/Black</material>
+      <plugin name='gazebo_ros_joint_state_publisher' filename='libgazebo_ros_joint_state_publisher.so'>
+        <update_rate>100</update_rate>
+        <ros>
+            <remapping>~/out:=joint_states</remapping>
+        </ros>
+        <joint_name>${prefix}_wheel_joint</joint_name>
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
+  <!-- 
+                    WHEELS
+  -->
+  <xacro:wheel prefix="right" reflect="-1" />
+  <xacro:wheel prefix="left" reflect="1" />
+
+</robot>

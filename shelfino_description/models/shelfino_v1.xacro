@@ -1,0 +1,25 @@
+<?xml version='1.0' ?>
+<robot name='shelfino' xmlns:xacro='http://www.ros.org/wiki/xacro'>  
+
+  <xacro:property name='PI_2' value='1.5707963267948966'/>
+  <xacro:arg name="robot_id" default="X" />
+
+  <!-- Define the macro for the whole shelfino -->
+  <xacro:macro name="shelfino" params='robot_id'>
+
+      <xacro:include filename='shelfino_v1/materials.xacro' />
+
+      <xacro:include filename='shelfino_v1/shelfino_body.xacro' />
+      <xacro:include filename='shelfino_v1/lidar.xacro' />
+      <xacro:include filename='shelfino_v1/wheels.xacro' />
+
+      <xacro:include filename='shelfino_v1/gazebo_classic_controls.xacro' />
+      <!-- <xacro:include filename='shelfino_v1/gazebo_controls.xacro' /> -->
+
+      <xacro:include filename='shelfino_v1/xmas_hat.xacro' />
+
+  </xacro:macro>
+
+  <!-- Instantiate the model -->
+  <xacro:shelfino robot_id="$(arg robot_id)" />
+</robot>

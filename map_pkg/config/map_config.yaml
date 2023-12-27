@@ -1,6 +1,6 @@
 /**/send_obstacles:
   ros__parameters:
-    n_obstacles: 5
+    n_obstacles: 3
     no_cylinders: false
     no_boxes: false
     max_size: 1.0
@@ -15,7 +15,7 @@
 
 /**/send_victims:
   ros__parameters:
-    n_victims: 5
+    n_victims: 3
     min_weight: 10
     max_weight: 500
 
@@ -30,7 +30,7 @@
 /**:
   ros__parameters:
     map: hexagon #hexagon, rectangle
-    dx: 8.0 # default edge used in exagon.world is 12.0
+    dx: 8.0 # default edge used in hexagon.world is 12.0
     dy: 10.0
     max_timeout: 3
     qos_overrides:

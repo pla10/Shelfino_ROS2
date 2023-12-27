@@ -53,7 +53,7 @@ def generate_launch_description():
 
     # Gazebo simulation arguments
     use_gui           = LaunchConfiguration('use_gui', default='true')
-    use_rviz          = LaunchConfiguration('use_rviz', default='false')
+    use_rviz          = LaunchConfiguration('use_rviz', default='true')
     rviz_config_file  = LaunchConfiguration('rviz_config_file', default=os.path.join(shelfino_desc_pkg, 'rviz', 'shelfino.rviz'))
     gazebo_world_file = LaunchConfiguration('gazebo_world_file', default=os.path.join(shelfino_gaze_pkg, 'worlds', 'hexagon.world'))
     robot_model_file  = LaunchConfiguration('robot_model_file', default=os.path.join(shelfino_desc_pkg, 'models', 'shelfino', 'model.sdf.xacro'))
@@ -145,7 +145,6 @@ def generate_launch_description():
         convert_types=True
     )
 
-
     # List of nodes to launch
     nodes = [
         IncludeLaunchDescription(
@@ -186,13 +185,13 @@ def generate_launch_description():
                 'rviz_config_file': nav2_rviz_config_file,
             }.items()
         ),
-        Node (
-            package='evader',
-            executable='evader',
-            name='evader_node',
-            namespace=shelfino_name,
-            output='screen'
-        ),
+        #Node (
+        #    package='evader',
+        #    executable='evader',
+        #    name='evader_node',
+        #    namespace=shelfino_name,
+        #    output='screen'
+        #),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 os.path.join(map_env_pkg, 'launch'),
@@ -214,7 +213,6 @@ def generate_launch_description():
     ld.add_action(OpaqueFunction(function=get_map_name))
     ld.add_action(OpaqueFunction(function=print_env))
     
-    ld.add_action(mpdp_node)
     for node in nodes:
         ld.add_action(node)
 

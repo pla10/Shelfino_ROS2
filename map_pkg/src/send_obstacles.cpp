@@ -64,11 +64,6 @@ public:
     RCLCPP_INFO(this->get_logger(), "min_size: %f", this->get_parameter("min_size").as_double());
     RCLCPP_INFO(this->get_logger(), "max_size: %f", this->get_parameter("max_size").as_double());
 
-    if (this->get_parameter("n_obstacles").as_int() == 0) {
-      RCLCPP_INFO(this->get_logger(), "Number of requested obstacles is 0, exiting");
-      exit(0);
-    }
-
     if (this->get_parameter("no_cylinders").as_bool() && this->get_parameter("no_boxes").as_bool()) {
       RCLCPP_ERROR(this->get_logger(), "Both no_cylinders and no_boxes are true. At least one of them must be false.");
       exit(1);

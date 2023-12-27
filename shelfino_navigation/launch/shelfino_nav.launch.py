@@ -54,12 +54,12 @@ def generate_launch_description():
     # Remap lifecycle nodes to robot namespace
     map_node               = PythonExpression(["'/", robot_name, '/map_server', "'"])
     amcl_node              = PythonExpression(["'/", robot_name, '/amcl', "'"])
-    bt_navigator_node      = PythonExpression(["'/", robot_name, '/bt_navigator', "'"])
+    # bt_navigator_node      = PythonExpression(["'/", robot_name, '/bt_navigator', "'"])
     controller_node        = PythonExpression(["'/", robot_name, '/controller_server', "'"])
     planner_node           = PythonExpression(["'/", robot_name, '/planner_server', "'"])
-    waypoint_follower_node = PythonExpression(["'/", robot_name, '/waypoint_follower', "'"])
-    behavior_node          = PythonExpression(["'/", robot_name, '/behavior_server', "'"])
-    smoother_node          = PythonExpression(["'/", robot_name, '/smoother_server', "'"])
+    # waypoint_follower_node = PythonExpression(["'/", robot_name, '/waypoint_follower', "'"])
+    # behavior_node          = PythonExpression(["'/", robot_name, '/behavior_server', "'"])
+    # smoother_node          = PythonExpression(["'/", robot_name, '/smoother_server', "'"])
     velocity_smoother_node = PythonExpression(["'/", robot_name, '/velocity_smoother', "'"])
 
     lifecycle_nodes_loc = [
@@ -68,12 +68,12 @@ def generate_launch_description():
     ]
 
     lifecycle_nodes_nav = [
-        [bt_navigator_node], 
+        # [bt_navigator_node], 
         [controller_node], 
         [planner_node], 
-        [waypoint_follower_node], 
-        [behavior_node], 
-        [smoother_node], 
+        # [waypoint_follower_node], 
+        # [behavior_node], 
+        # [smoother_node], 
         [velocity_smoother_node]
     ]
 
@@ -247,18 +247,18 @@ def generate_launch_description():
             condition=UnlessCondition(remote_nav),
         ),
 
-        Node(
-            package='nav2_waypoint_follower',
-            executable='waypoint_follower',
-            name='waypoint_follower',
-            namespace= robot_name,
-            output='screen',
-            respawn=True,
-            respawn_delay=2.0,
-            parameters=[configured_params],
-            arguments=['--ros-args', '--log-level', 'info'],
-            condition=UnlessCondition(remote_nav),
-        ),
+        # Node(
+        #     package='nav2_waypoint_follower',
+        #     executable='waypoint_follower',
+        #     name='waypoint_follower',
+        #     namespace= robot_name,
+        #     output='screen',
+        #     respawn=True,
+        #     respawn_delay=2.0,
+        #     parameters=[configured_params],
+        #     arguments=['--ros-args', '--log-level', 'info'],
+        #     condition=UnlessCondition(remote_nav),
+        # ),
 
         Node(
             package='nav2_behaviors',
@@ -273,18 +273,18 @@ def generate_launch_description():
             condition=UnlessCondition(remote_nav),
         ),
 
-        Node(
-            package='nav2_smoother',
-            executable='smoother_server',
-            name='smoother_server',
-            output='screen',
-            namespace= robot_name,
-            respawn=True,
-            respawn_delay=2.0,
-            parameters=[configured_params],
-            arguments=['--ros-args', '--log-level', 'info'],
-            condition=UnlessCondition(remote_nav),
-        ),
+        # Node(
+        #     package='nav2_smoother',
+        #     executable='smoother_server',
+        #     name='smoother_server',
+        #     output='screen',
+        #     namespace= robot_name,
+        #     respawn=True,
+        #     respawn_delay=2.0,
+        #     parameters=[configured_params],
+        #     arguments=['--ros-args', '--log-level', 'info'],
+        #     condition=UnlessCondition(remote_nav),
+        # ),
 
         Node(
             package='nav2_velocity_smoother',

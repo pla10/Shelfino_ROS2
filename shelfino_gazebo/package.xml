@@ -14,10 +14,13 @@
   <depend>gazebo_ros_pkgs</depend>
   <depend>gazebo_ros2_control</depend>
 
+  <exec_depend>gazebo_ros</exec_depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
+    <gazebo_ros gazebo_model_path="${prefix}/worlds"/>
   </export>
 </package>

@@ -104,7 +104,7 @@ public:
   : Node("send_borders")
   {
     this->share_dir = ament_index_cpp::get_package_share_directory("map_pkg");
-    this->gz_models = ament_index_cpp::get_package_share_directory("shelfino_description");
+    this->gz_models = ament_index_cpp::get_package_share_directory("shelfino_gazebo");
 
     this->declare_parameter<std::string>("map", "hexagon");
     this->declare_parameter<double>("dx", 5.0);
@@ -133,7 +133,11 @@ public:
     if(map_name=="hexagon"){
       pol = create_hexagon(dx);
       // Read XML file to string
-      std::ifstream xml_file(this->gz_models + "/models/hexagon_world/model.sdf");
+      std::ifstream xml_file(this->gz_models + "/worlds/hexagon_world/model.sdf");
+      if (!xml_file.is_open()) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to open file %s", (this->gz_models + "/worlds/hexagon_world/model.sdf").c_str());
+        exit(1);
+      }
       xml_string.assign(
         std::istreambuf_iterator<char>(xml_file),
         std::istreambuf_iterator<char>()
@@ -156,9 +160,69 @@ public:
       pose.orientation.z = 0;
       pose.orientation.w = 0;
 
-      spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose);
+      spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose, "border");
     }else if(map_name=="rectangle"){
       pol = create_rectangle(dx,dy);
+      // Read XML file to string
+      std::ifstream xml_file(this->gz_models + "/worlds/rectangle_world/model.sdf");
+      if (!xml_file.is_open()) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to open file %s", (this->gz_models + "/worlds/rectangle_world/model.sdf").c_str());
+        exit(1);
+      }
+      xml_string.assign(
+        std::istreambuf_iterator<char>(xml_file),
+        std::istreambuf_iterator<char>()
+      );
+      float wid = 0.15;
+      std::string size_string = "dx";
+      std::string size_replace_string = std::to_string(dx);
+      size_t pos = 0;
+      while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
+        xml_string.replace(pos, size_string.length(), size_replace_string);
+        pos += size_replace_string.length();
+      }
+      size_string = "dy";
+      size_replace_string = std::to_string(dy);
+      pos = 0;
+      while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
+        xml_string.replace(pos, size_string.length(), size_replace_string);
+        pos += size_replace_string.length();
+      }
+      size_string = "width";
+      size_replace_string = std::to_string(wid);
+      pos = 0;
+      while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
+        xml_string.replace(pos, size_string.length(), size_replace_string);
+        pos += size_replace_string.length();
+      }
+      size_string = "L1";
+      size_replace_string = std::to_string((dy+wid)/2);
+      pos = 0;
+      while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
+        xml_string.replace(pos, size_string.length(), size_replace_string);
+        pos += size_replace_string.length();
+      }
+      size_string = "L2";
+      size_replace_string = std::to_string((dx+wid)/2);
+      pos = 0;
+      while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
+        xml_string.replace(pos, size_string.length(), size_replace_string);
+        pos += size_replace_string.length();
+      }
+      // Spawn model in gazebo
+      geometry_msgs::msg::Pose pose;
+      pose.position.x = 0.0;
+      pose.position.y = 0.0;
+      pose.position.z = 0.1;
+      pose.orientation.x = 0;
+      pose.orientation.y = 0;
+      pose.orientation.z = 0;
+      pose.orientation.w = 0;
+
+      spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose, "border");
+    }
+    else {
+      RCLCPP_ERROR(this->get_logger(), "Map name %s not recognized", map_name.c_str());
     }
     
     pol_stamped.polygon = pol;

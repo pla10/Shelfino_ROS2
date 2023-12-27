@@ -149,7 +149,7 @@ public:
       pose.orientation.z = 0;
       pose.orientation.w = 0;
     
-      spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose);
+      spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose, "victim");
       sleep(0.5);
     }
 
