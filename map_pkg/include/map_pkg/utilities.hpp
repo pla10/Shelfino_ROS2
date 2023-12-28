@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "rclcpp/rclcpp.hpp"
+#include "geometry_msgs/msg/polygon.hpp"
 
 #include "map_pkg/obstacle_struct.hpp"
 
@@ -71,3 +72,25 @@ bool overlaps(obstacle o1, std::vector<obstacle> obstacles);
  */
 bool is_inside_map(obstacle obs, std::string map, double dx, double dy);
 
+geometry_msgs::msg::Polygon create_hexagon(double dx);
+
+geometry_msgs::msg::Polygon create_rectangle(double dx, double dy);
+
+static const std::vector<obstacle> default_victims = std::vector<obstacle>();
+
+/**
+ * @brief Checks if the obstacle overlaps with any other obstacle in the vector
+ * 
+ * @param obs The obstacle to check
+ * @param obstacles The vector of obstacles
+ * @param map The type of the map (rectangle or hexagon)
+ * @param dx x dimension of the map
+ * @param dy y dimension of the map
+ * @return true If the obstacle does not overlap and is inside the map
+ * @return false If the obstacle overlaps or is outside the map
+ */
+bool valid_position(
+  std::string map, double dx, double dy,
+  const obstacle & obs, const std::vector<obstacle>& obstacles,
+  const std::vector<obstacle>& gates, const std::vector<obstacle>& victims = default_victims
+);
