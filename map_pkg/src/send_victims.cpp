@@ -43,7 +43,7 @@ private:
     double dx;
     double dy;
     int max_timeout;
-    int n_victims;
+    uint n_victims;
     int min_weight;
     int max_weight;
   } data ;

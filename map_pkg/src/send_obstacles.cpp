@@ -232,7 +232,7 @@ std::vector<obstacle> ObstaclesPublisher::rand_obstacles()
 
   auto startTime = this->get_clock()->now();
   for (
-    int i=0; 
+    uint i=0; 
     i<this->data.n_obstacles && !overTime(this->get_clock(), startTime, this->data.max_timeout); 
     i++) 
   {
