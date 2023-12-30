@@ -29,7 +29,12 @@
       <geometry>
         <box size='${body_width} ${body_length} ${body_height}'/>
       </geometry>
-      <material name='Grey' />
+      <xacro:if value="${robot_id == 'evader'}">
+        <material name='Red' />
+      </xacro:if>
+      <xacro:if value="${robot_id != 'evader'}">
+        <material name='Grey' />
+      </xacro:if>
     </visual>
 
     <visual name='front_caster_visual'>
@@ -83,8 +88,14 @@
                   GAZEBO COLORS
   -->
 
-  <gazebo reference='shelfino${robot_id}/chassis_link'>
-    <material>Gazebo/White</material>
+  <gazebo reference="shelfino${robot_id}/chassis_link">
+    <xacro:if value="${robot_id == 'evader'}">
+      <material>Gazebo/Red</material>
+    </xacro:if>
+    <xacro:if value="${robot_id != 'evader'}">
+      <material>Gazebo/Grey</material>
+    </xacro:if>
+    
     <mu1 value="0.000001"/>
     <mu2 value="0.000001"/>
   </gazebo>

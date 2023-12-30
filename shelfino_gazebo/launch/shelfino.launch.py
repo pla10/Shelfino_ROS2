@@ -39,7 +39,7 @@ def generate_launch_description():
     shelfino_gaze_pkg = get_package_share_directory('shelfino_gazebo')
 
     use_sim_time      = LaunchConfiguration('use_sim_time', default='true')
-    shelfino_id          = LaunchConfiguration('shelfino_id', default='G')
+    shelfino_id       = LaunchConfiguration('shelfino_id', default='G')
     use_gui           = LaunchConfiguration('use_gui')
     use_rviz          = LaunchConfiguration('use_rviz')
     spawn_shelfino    = LaunchConfiguration('spawn_shelfino', default='false')

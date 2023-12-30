@@ -22,7 +22,7 @@
       <visual name='visual'>
         <geometry>
           <box>
-            <size>1 1 0.1</size>
+            <size>1.5 1 0.1</size>
           </box>
         </geometry>
         <material>

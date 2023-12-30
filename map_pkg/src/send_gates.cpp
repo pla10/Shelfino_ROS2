@@ -130,7 +130,7 @@ void GatesPublisher::rand_hexagon_gate(){
 
   obs.y = sqrt(3)/2.0*this->data.dx - 0.5-0.0001;
   obs.y = obs.y * (dis_left_right(gen) == 0 ? 1 : -1);
-  double th = obs.y == 1.0 ? M_PI : M_PI/2.0;
+  double th = obs.y > 0 ? M_PI/2.0 : -M_PI/2.0;
   do {
     obs.x = dis_x(gen);
   } while(!is_inside_map(obs, "hexagon", this->data.dx, this->data.dy));

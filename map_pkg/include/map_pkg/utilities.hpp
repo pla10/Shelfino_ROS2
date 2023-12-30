@@ -91,6 +91,5 @@ static const std::vector<obstacle> default_victims = std::vector<obstacle>();
  */
 bool valid_position(
   std::string map, double dx, double dy,
-  const obstacle & obs, const std::vector<obstacle>& obstacles,
-  const std::vector<obstacle>& gates, const std::vector<obstacle>& victims = default_victims
+  const obstacle & obs, std::vector<std::vector<obstacle>> others
 );

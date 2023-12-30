@@ -232,7 +232,7 @@ std::vector<obstacle> ObstaclesPublisher::rand_obstacles()
 
   auto startTime = this->get_clock()->now();
   for (
-    uint i=0; 
+    int i=0; 
     i<this->data.n_obstacles && !overTime(this->get_clock(), startTime, this->data.max_timeout); 
     i++) 
   {
@@ -374,7 +374,7 @@ void ObstaclesPublisher::rand_cylinder(obstacle& obs, std::vector<obstacle>& obs
     obs.radius = size_dis(gen);
     obs.x = x_dis(gen);
     obs.y = y_dis(gen);
-    if (valid_position(this->data.map_name, this->data.dx, this->data.dy, obs, obstacles, this->gates)){
+    if (valid_position(this->data.map_name, this->data.dx, this->data.dy, obs, {obstacles, this->gates})){
       obstacles.push_back(obs);
       break;
     }
@@ -396,7 +396,7 @@ void ObstaclesPublisher::rand_box(obstacle& obs, std::vector<obstacle>& obstacle
     obs.x = x_dis(gen);
     obs.y = y_dis(gen);
     
-    if (valid_position(this->data.map_name, this->data.dx, this->data.dy, obs, obstacles, this->gates)){
+    if (valid_position(this->data.map_name, this->data.dx, this->data.dy, obs, {obstacles, this->gates})){
       obstacles.push_back(obs);
       break;
     }

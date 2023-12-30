@@ -227,16 +227,12 @@ geometry_msgs::msg::Polygon create_rectangle(double dx, double dy){
  */
 bool valid_position(
   std::string map, double dx, double dy,
-  const obstacle & obs, const std::vector<obstacle>& obstacles,
-  const std::vector<obstacle>& gates, const std::vector<obstacle>& victims 
+  const obstacle & obs, std::vector<std::vector<obstacle>> others 
 )
 {
   bool res = is_inside_map(obs, map, dx, dy);
-  if (res && gates.size() > 0)
-    res &= !overlaps(obs, gates);
-  if (res && obstacles.size() > 0)
-    res &= !overlaps(obs, obstacles);
-  if (res && victims.size() > 0)
-    res &= !overlaps(obs, victims);
+  for (auto other : others) {
+    res &= !overlaps(obs, other);
+  }
   return res;
 }

@@ -254,19 +254,29 @@ def generate_launch_description():
             
             shelfino_name = PythonExpression(["'", "shelfino", str(shelfino_id), "'"])
     
-            spawn_node = Node(
-                package='gazebo_ros',
-                executable='spawn_entity.py',
-                arguments=[
-                        '-topic', PythonExpression(["'/", shelfino_name, "/robot_description", "'"]),
-                        '-entity', shelfino_name,
-                        '-robot_namespace', shelfino_name,
-                        '-x', str(shelfino_id*1.5-1.5),
-                        '-y', '0.0',
-                        '-z', '0.0',
-                        '-Y', '0.0',
-                ]
-            )
+            spawn_node = GroupAction([
+                Node(
+                    package='gazebo_ros',
+                    executable='spawn_entity.py',
+                    arguments=[
+                            '-topic', PythonExpression(["'/", shelfino_name, "/robot_description", "'"]),
+                            '-entity', shelfino_name,
+                            '-robot_namespace', shelfino_name,
+                            '-x', str(shelfino_id*2.0-2.0),
+                            '-y', str(shelfino_id*2.0-2.0),
+                            '-z', '0.0',
+                            '-Y', '0.0',
+                    ]
+                ),
+                Node(
+                    package='shelfino_gazebo',
+                    executable='destroy_shelfino',
+                    name='destroy_shelfino',
+                    output='screen',
+                    namespace=shelfino_name,
+                    parameters=[{'use_sim_time': use_sim_time}]
+                )
+            ])
             nodes.append(spawn_node)
 
         return nodes
@@ -290,7 +300,8 @@ def generate_launch_description():
                         'map_file' : map_file,
                         'nav2_params_file' : nav2_params_file,
                         'rviz_config_file': nav2_rviz_config_file,
-                        'initial_x': str(shelfino_id*1.5-1.5),
+                        'initial_x': str(shelfino_id*2.0-2.0),
+                        'initial_y': str(shelfino_id*2.0-2.0),
                         'headless' : 'true',
                     }.items()
                 ),

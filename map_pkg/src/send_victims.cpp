@@ -43,7 +43,7 @@ private:
     double dx;
     double dy;
     int max_timeout;
-    uint n_victims;
+    int n_victims;
     int min_weight;
     int max_weight;
   } data ;
@@ -235,7 +235,7 @@ std::vector<obstacle> VictimPublisher::rand_victims()
     do {
       vict.x = x_dis(gen);
       vict.y = y_dis(gen);
-      if (valid_position(this->data.map_name, this->data.dx, this->data.dy, vict, victims, this->obstacles, this->gates)) {
+      if (valid_position(this->data.map_name, this->data.dx, this->data.dy, vict, {victims, this->obstacles, this->gates})) {
         victims.push_back(vict);
         break;
       }

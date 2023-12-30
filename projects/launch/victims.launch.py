@@ -190,6 +190,14 @@ def generate_launch_description():
                 'rviz_config_file': nav2_rviz_config_file,
             }.items()
         ),
+        Node ( 
+            package='shelfino_gazebo',
+            executable='destroy_shelfino',
+            name='destroy_shelfino',
+            output='screen',
+            namespace=shelfino_name,
+            parameters=[{'use_sim_time': use_sim_time}]
+        ),
     ])
     
     ld = LaunchDescription()
