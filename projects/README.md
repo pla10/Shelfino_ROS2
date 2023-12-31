@@ -25,6 +25,7 @@
   - [What you should provide](#what-you-should-provide)
   - [When you should provide the what](#when-you-should-provide-the-what)
   - [How you should provide the what](#how-you-should-provide-the-what)
+- [Other useful information](#other-useful-information)
 - [TODOs on my end](#todos-on-my-end)
 - [P.S.](#ps)
 
@@ -46,6 +47,8 @@ General assumptions are:
 
 - The robots move at constant speed, i.e., use Dubins manoeuvres;
 - Touching the borders of the map and/or the obstacle will decrease the point obtained by completely the task successfully.  
+- The robots (except for the pursuer in the evasion scenario) must reach the center of the gate and with the angle provided in the topic.
+- Obstacles may have different shapes, so do not assume they are polygons.
 
 ## Coordinate Evacuation
 
@@ -116,7 +119,7 @@ You will lose points for:
 - While victims are circles of radius 0.5m, the robot must pass though the center of the circle in order to rescue them. 
 - The robot does not need to stop to rescue e victim.
 - The robot and the victims are initially deployed in random positions.
-- Since robots move at constant velocity, they should not stop.
+- Since robots move at constant velocity, they _must not_ stop or slow down.
 
 ## Pursuit-Evasion
 
@@ -128,7 +131,7 @@ The project is about capturing an evader robot (evader) using a pursuer robot. B
 
 The map can have one or more exit points and the project has different levels of difficulty, as detailed below.
 
-While the evader will be provided, the students will have to code the behaviour of the pursuer so that it can catch the evader.
+The students will have to code the behaviour of both the pursuer and the evader.
 
 
 ### Evaluation
@@ -150,9 +153,10 @@ Also the points will be given based on the difficulty of the scenario: catching 
 
 - The robots are initially deployed at random positions.
 - The evader _is controller by the computer_ but it HAS to move following the same roadmap computed by the pursuer. The students will have to publish said roadmap on a topic so that it can be used by the evader algorithm to compute the path.
-- You can assume that once the evader takes a link, it has to complete the movement and cannot back-off or stop.
-- Since robots move at constant velocity, they _should_ not stop.
+- You can assume that once the evader takes a link of the graph, it has to complete the movement and cannot back-off or stop.
+- Since robots move at constant velocity, they _must_ not stop or slow down.
 - The pursuer does not know the evader's future path, hence you cannot read from the evader topic to get the path it will follow. 
+- Once the evader has chosen a gate to reach, it will follow the shortest path to the gate without considering other smarter policies to avoid the pursuer(s).
 
 ### Level of complexity
 
@@ -256,6 +260,12 @@ You should write C++ (standard 17) nodes that allow the robots to complete their
 
 You should deliver the report and the code at least **1 week** before the date of the exam. Exam dates will be released in the near future and this document will be updated with them.
 
+| Date of exam | Delivery date          |
+|--------------|------------------------|
+| 12/01/2024   | 11/01/2024 12:00 (CET) |
+| 16/02/2024   | 14/02/2024 23:59 (CET) |
+| TBD          | One week before        |
+
 ## How you should provide the what 
 
 As said, [this](https://github.com/pla10/Shelfino_ROS2/) is the repository containing the code of the simulation and that is updated to fix bug and/or to add new features. 
@@ -265,6 +275,11 @@ The best thing would be for each group to create a fork of the repository so tha
 In any case, for the delivery you will have to provide an archive containing the code. Obviously no pre-compiled files nor executable will be taken into consideration.
 
 You should send the archive and the pdf to me as an email and wait for my ACK on the reception of the email. Also, in the email you should state the group components, and a name for the group (if you have chosen one). 
+
+# Other useful information
+
+- You can use any C++ standard from C++14 and above. Mind though that the last standard for which ROS2 has complete support is C++17, while for above stanrdard there may be problems when compiling.
+- AFAIC, using Nav2 FollowPath is the best course of actions. In this case, you should create your path using Dubins, split it in segments with the same lengths and then make a request to the Nav2 FollowPat action server to follow the points that you passed. The only part of this that is implemented is the Nav2 FollowPath server, but both the Dubins planner and the action client must be coded by you. 
 
 # TODOs on my end
 
