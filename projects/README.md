@@ -179,21 +179,15 @@ The students will setup a strategy (e.g., optimisation-based, heuristic) to deci
 
 ## Getting the simulation 
 
-The code for the simulation is available at: [https://github.com/pla10/Shelfino_ROS2/](https://github.com/pla10/Shelfino_ROS2/). The simulation uses an external library to check for collisions of the obstacles, so once you downloaded it, make sure to enter in the main folder and run 
+The code for the simulation is available at: [https://github.com/pla10/Shelfino_ROS2/](https://github.com/pla10/Shelfino_ROS2/). 
 
-```bash
-git submodule update --init --recursive
-```
-
-This should populate the repository `map_pkg/include/geometry`.
-
-To create the workspace, clone the repository and its submodules, you should run:
+Create the workspace in which you want to clone the repository:
 
 ```bash
 mkdir shelfino_ws
 cd shelfino_ws 
-git clone https://github.com/pla10/Shelfino_ROS2/ src --recurse-submodules
-# If not done before, execute sudo rosdep init
+git clone https://github.com/pla10/Shelfino_ROS2/ src 
+# If not done before, execute sudo rosdep init before the next command
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
