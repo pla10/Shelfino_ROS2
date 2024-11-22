@@ -8,22 +8,26 @@ This package contains all the necessary nodes to create the map and to provide i
 
 The nodes are:
 
-- `send_borders`: publish the margin of the map and spawns them in Gazebo
-- `send_gates`: publish the position of one or more gates
-- `send_obstacles`: publish the position of the obstacles
-- `send_victims`: publish the position of the victims (if they are needed for the scenario)
+- `generate_config_file.py`: takes the config file from `config/map_config.yaml` and creates a file 
+  containing the full configuration of the map, namely `full_config.yaml`, inside 
+  `install/map_pkg/share/map_pkg/config`.
+
+- `spawn_borders`: reads `full_config.yaml` and spawns the walls in Gazebo
+- `spawn_gates`: reads `full_config.yaml` and spawns the gate(s) in Gazebo
+- `spawn_obstacle`: reads `full_config.yaml` and spawns the obstacles in Gazebo
+
+- `send_borders`: publishes the margin of the map 
+- `send_gates`: publishes the position of one or more gates
+- `send_obstacles`: publishes the position of the obstacles
+- `send_victims`: publishes the position of the victims (if they are needed for the scenario)
 
 These are the nodes from which you will take the information on the map, more on them later. 
 
 There also other scripts and configuration files that are important:
 
 - `scripts/create_map_pgm.py` allows for dynamically restructuring the borders of the map to basically any polygon (don't quote me on this)
-- `config/map_config.yaml` contains the necessary configuration variables to run the simulation
-- `models` contains all the Gazebo models for the simulation 
+- `models` contains all the Gazebo models for the simulation (not the one of the robot, which is in `shelfino_description` instead)
 
 And finally the orchestrators:
 
-- `launch/map_env.launch.py` allows for launching the nodes in the correct order with the right parameters
-- `orchestrator` is a node that starts the other `send_*` nodes in the correct order.
-
-## `send_*` nodes
+- `launch/spawn_map.launch.py` allows for launching the nodes in the correct order with the right parameters
