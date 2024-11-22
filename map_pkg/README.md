@@ -4,7 +4,7 @@ That's one small package for this repo, an exhausting one for me, semicit.
 
 ## Introduction
 
-This package contains all the necessary nodes to create the map and provide information on it.
+This package contains all the necessary nodes to create the map and to provide information on it.
 
 The nodes are:
 

@@ -22,11 +22,10 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 
-#include "map_pkg/utilities.hpp"
-#include "map_pkg/spawn_model.hpp"
-
 #include "tf2/LinearMath/Matrix3x3.h"
 #include "tf2/LinearMath/Quaternion.h"
+
+#include "map_pkg/utilities.hpp"
 
 /**
  * @brief This class is responsible for generating and publishing victims in the map.

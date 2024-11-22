@@ -21,11 +21,10 @@
 #include "obstacles_msgs/msg/obstacle_msg.hpp"
 #include "std_msgs/msg/header.hpp"
 
-#include "map_pkg/utilities.hpp"
-#include "map_pkg/spawn_model.hpp"
-
 #include "tf2/LinearMath/Matrix3x3.h"
 #include "tf2/LinearMath/Quaternion.h"
+
+#include "map_pkg/utilities.hpp"
 
 class ObstaclesPublisher : public rclcpp_lifecycle::LifecycleNode
 {

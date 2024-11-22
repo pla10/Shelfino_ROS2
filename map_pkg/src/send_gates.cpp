@@ -11,14 +11,11 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "lifecycle_msgs/msg/transition_event.hpp"
-
 #include "std_msgs/msg/header.hpp"
 #include "geometry_msgs/msg/pose_array.hpp"
 #include "geometry_msgs/msg/pose.hpp"
-
 #include "tf2/LinearMath/Quaternion.h"
 
-#include "map_pkg/spawn_model.hpp"
 #include "map_pkg/utilities.hpp"
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;

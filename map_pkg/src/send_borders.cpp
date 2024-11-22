@@ -5,11 +5,10 @@
 #include "geometry_msgs/msg/polygon_stamped.hpp"
 #include "geometry_msgs/msg/pose.hpp"
 #include "lifecycle_msgs/msg/transition_event.hpp"
-#include "map_pkg/spawn_model.hpp"
-#include "map_pkg/utilities.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "std_msgs/msg/header.hpp"
+
 #include <chrono>
 #include <fstream>
 #include <functional>
@@ -17,6 +16,9 @@
 #include <memory>
 #include <string>
 #include <unistd.h>
+
+#include "map_pkg/utilities.hpp"
+
 
 using CallbackReturn =
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;

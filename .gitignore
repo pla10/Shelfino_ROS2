@@ -7,3 +7,5 @@ tmp*.txt
 build/
 install/
 log/
+
+__pycache__/

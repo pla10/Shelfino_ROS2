@@ -30,40 +30,15 @@ set(CMAKE_CXX_STANDARD 17)
 
 # list of nodes
 set(NODES
-  orchestrator
   send_borders
   send_gates
   send_obstacles
   send_victims
-  send_initialpose
-)
-
-add_library(${PROJECT_NAME}_lib SHARED
-  src/utilities.cpp
-  # src/spawn_model.cpp
-)
-
-target_include_directories(${PROJECT_NAME}_lib PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-
-target_compile_features(${PROJECT_NAME}_lib PUBLIC c_std_99 cxx_std_17)
-
-ament_target_dependencies(
-  ${PROJECT_NAME}_lib
-  "geometry_msgs"
-  "rclcpp"
-  "gazebo_msgs"
-  "obstacles_msgs"
-  "tf2"
-  "lifecycle_msgs"
-  "rclcpp_lifecycle"
-  "visualization_msgs"
 )
 
 # build nodes
 foreach(NODE ${NODES})
-  add_executable(${NODE} src/${NODE}.cpp src/utilities.cpp src/spawn_model.cpp)
+  add_executable(${NODE} src/${NODE}.cpp src/utilities.cpp)
 
   target_include_directories(${NODE} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -97,29 +72,5 @@ install(PROGRAMS
   scripts/generate_config_file.py
   DESTINATION lib/${PROJECT_NAME}
 )
-
-# Tests
-if(BUILD_TESTING)
-  find_package(ament_cmake_gtest REQUIRED)
-
-  ament_add_gtest(${PROJECT_NAME}_tests test/utilities_test.cpp)
-
-  target_include_directories(${PROJECT_NAME}_tests PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-  )
-
-  target_compile_features(${PROJECT_NAME}_tests PUBLIC c_std_99 cxx_std_17)
-
-  ament_target_dependencies(${PROJECT_NAME}_tests
-    "geometry_msgs"
-    "rclcpp"
-    "std_msgs"
-    "gazebo_msgs"
-    "obstacles_msgs"
-  )
-
-  target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME}_lib)
-endif()
 
 ament_package()
