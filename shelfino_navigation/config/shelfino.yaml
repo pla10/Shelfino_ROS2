@@ -41,7 +41,7 @@ amcl:
     map_topic: /map
     set_initial_pose: true
     initial_pose:
-      x: 0.0
+      x: 10.0
       y: 0.0
       z: 0.0
       yaw: 0.0

@@ -8,7 +8,6 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-
 find_package(ament_cmake_python REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -16,24 +15,32 @@ find_package(std_msgs REQUIRED)
 find_package(obstacles_msgs REQUIRED)
 find_package(gazebo_msgs REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(visualization_msgs REQUIRED)
+
+# add_compile_options(-DHOMOG2D_NOWARNINGS)
 
 install(DIRECTORY launch models config
   DESTINATION share/${PROJECT_NAME}
 )
 
+set(CMAKE_CXX_STANDARD 17)
+
 # list of nodes
 set(NODES
+  orchestrator
   send_borders
   send_gates
   send_obstacles
   send_victims
+  send_initialpose
 )
 
 add_library(${PROJECT_NAME}_lib SHARED
   src/utilities.cpp
-  src/spawn_model.cpp
+  # src/spawn_model.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
@@ -51,18 +58,19 @@ ament_target_dependencies(
   "tf2"
   "lifecycle_msgs"
   "rclcpp_lifecycle"
+  "visualization_msgs"
 )
 
 # build nodes
 foreach(NODE ${NODES})
   add_executable(${NODE} src/${NODE}.cpp src/utilities.cpp src/spawn_model.cpp)
-  
+
   target_include_directories(${NODE} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 
   target_compile_features(${NODE} PUBLIC c_std_99 cxx_std_17)
-  
+
   # target_link_libraries(${NODE} ${PROJECT_NAME}_lib)
 
   ament_target_dependencies(
@@ -72,8 +80,10 @@ foreach(NODE ${NODES})
     "gazebo_msgs"
     "obstacles_msgs"
     "tf2"
+    "tf2_ros"
     "lifecycle_msgs"
     "rclcpp_lifecycle"
+    "visualization_msgs"
   )
 
   install(TARGETS ${NODE}
@@ -84,20 +94,22 @@ endforeach()
 
 install(PROGRAMS
   scripts/create_map_pgm.py
+  scripts/generate_config_file.py
   DESTINATION lib/${PROJECT_NAME}
 )
-
 
 # Tests
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  
+
   ament_add_gtest(${PROJECT_NAME}_tests test/utilities_test.cpp)
 
   target_include_directories(${PROJECT_NAME}_tests PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
   )
+
+  target_compile_features(${PROJECT_NAME}_tests PUBLIC c_std_99 cxx_std_17)
 
   ament_target_dependencies(${PROJECT_NAME}_tests
     "geometry_msgs"
@@ -106,7 +118,7 @@ if(BUILD_TESTING)
     "gazebo_msgs"
     "obstacles_msgs"
   )
-  
+
   target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME}_lib)
 endif()
 

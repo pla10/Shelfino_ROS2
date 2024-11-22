@@ -5,7 +5,7 @@
         <collision name='Wall_10_Collision'>
           <geometry>
             <box>
-              <size>dx width 2.5</size>
+              <size>##dx## ##width## 2.5</size>
             </box>
           </geometry>
           <pose>0 0 1.25 0 -0 0</pose>
@@ -27,7 +27,7 @@
           <pose>0 0 1.25 0 -0 0</pose>
           <geometry>
             <box>
-              <size>dx width 2.5</size>
+              <size>##dx## ##width## 2.5</size>
             </box>
           </geometry>
           <material>
@@ -41,7 +41,7 @@
             <layer>0</layer>
           </meta>
         </visual>
-        <pose>0 -L1 0 0 -0 0</pose> <!-- 1 -->
+        <pose>0 -##L1## 0 0 -0 0</pose> <!-- 1 -->
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
@@ -50,7 +50,7 @@
         <collision name='Wall_11_Collision'>
           <geometry>
             <box>
-              <size>dy width 2.5</size>
+              <size>##dy## ##width## 2.5</size>
             </box>
           </geometry>
           <pose>0 0 1.25 0 -0 0</pose>
@@ -72,7 +72,7 @@
           <pose>0 0 1.25 0 -0 0</pose>
           <geometry>
             <box>
-              <size>dy width 2.5</size>
+              <size>##dy## ##width## 2.5</size>
             </box>
           </geometry>
           <material>
@@ -86,7 +86,7 @@
             <layer>0</layer>
           </meta>
         </visual>
-        <pose>L2 -0 0 0 -0 1.5708</pose>
+        <pose>##L2## -0 0 0 -0 1.5708</pose>
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
@@ -95,7 +95,7 @@
         <collision name='Wall_12_Collision'>
           <geometry>
             <box>
-              <size>dx width 2.5</size>
+              <size>##dx## ##width## 2.5</size>
             </box>
           </geometry>
           <pose>0 0 1.25 0 -0 0</pose>
@@ -117,7 +117,7 @@
           <pose>0 0 1.25 0 -0 0</pose>
           <geometry>
             <box>
-              <size>dx width 2.5</size>
+              <size>##dx## ##width## 2.5</size>
             </box>
           </geometry>
           <material>
@@ -131,7 +131,7 @@
             <layer>0</layer>
           </meta>
         </visual>
-        <pose>0 L1 0 0 -0 3.14159</pose>
+        <pose>0 ##L1## 0 0 -0 3.14159</pose>
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
@@ -140,7 +140,7 @@
         <collision name='Wall_7_Collision'>
           <geometry>
             <box>
-              <size>dy width 2.5</size>
+              <size>##dy## ##width## 2.5</size>
             </box>
           </geometry>
           <pose>0 0 1.25 0 -0 0</pose>
@@ -162,7 +162,7 @@
           <pose>0 0 1.25 0 -0 0</pose>
           <geometry>
             <box>
-              <size>dy width 2.5</size>
+              <size>##dy## ##width## 2.5</size>
             </box>
           </geometry>
           <material>
@@ -176,7 +176,7 @@
             <layer>0</layer>
           </meta>
         </visual>
-        <pose>-L2 -0 0 0 -0 -1.5708</pose>
+        <pose>-##L2## -0 0 0 -0 -1.5708</pose>
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>

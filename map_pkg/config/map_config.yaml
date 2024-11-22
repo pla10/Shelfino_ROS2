@@ -1,38 +1,50 @@
 /**/send_obstacles:
   ros__parameters:
-    n_obstacles: 0
-    no_cylinders: false
-    no_boxes: false
-    max_size: 1.0
-    min_size: 0.5
+    n_obstacles: 5                                # Number of RANDOM obstacles to be spawned
+    no_cylinders: true                            # If true, no cylinders will be spawned
+    no_boxes: false                               # If true, no boxes will be spawned
+    max_size: 1.0                                 # Maximum size of the random obstacles
+    min_size: 0.5                                 # Minimum size of the random obstacles
+    vect_type: [] #["cylinder", "box", "box"]     # Type of the obstacles to be spawned, either "cylinder" or "box"
+    vect_x: [] #[8.0, 2.0, -2.0]                  # X position of the obstacles
+    vect_y: [] #[8.0, 2.0, -2.0]                  # Y position of the obstacles
+    vect_yaw: [] #[0.0, 0.0, 0.0]                 # Yaw of the obstacles  
+    vect_dim_x: [] #[0.5, 1.0, 1.0]               # X dimension of the obstacles
+    vect_dim_y: [] #[0.5, 1.0, 1.0]               # Y dimension of the obstacles
+    # If vect_* are empty lists or not defined, then only random obstacles will be spawned
 
 /**/send_gates:
   ros__parameters:
-    use_namespace: false
+    use_namespace: false    # If true, the gates will be spawned one for each Shelfino. Not yet implemented
+    x: [0.0]                # X position of the gate(s)
+    y: [0.0]                # Y position of the gate(s)
+    yaw: [0.0]              # Yaw of the gate(s)
     # Values of x and y different from 0.0 will spawn the gates in the given position    
-    x: 0.0
-    y: 0.0 
 
 /**/send_victims:
   ros__parameters:
-    n_victims: 3
-    min_weight: 10
-    max_weight: 500
-
-/**/send_initialposes:
-  ros__parameters:
-    vect_x: [100.0]
-    vect_y: [100.0]
-    vect_yaw: [0.0]
-    names: ["1"]
-    random: false
-
+    victims_activated: true      # If true, the victims will be spawned
+    n_victims: 0                  # Number of RANDOM victims to be spawned 
+    min_weight: 10                # Minimum weight of the victims
+    max_weight: 500               # Maximum weight of the victims
+    vect_x: [8.0, -4.0, 4.0]     # X position of the victims
+    vect_y: [4.0, -4.0, 4.0]     # Y position of the victims
+    vect_weight: [100, 200, 300]  # Weight of the victims
+    # If vect_* are empty lists or not defined, then only random victims will be spawned
+    
 /**:
   ros__parameters:
-    map: hexagon #hexagon, rectangle
-    dx: 10.0 # default edge used in hexagon.world is 12.0
-    dy: 10.0
-    max_timeout: 3
+    map: rectangle                # Maps can be "hexagon" or "rectangle"
+    dx: 20.0                    # The width of the rectangle or the length of the hexagon's edges. Default edge used in hexagon.world is 12.0
+    dy: 20.0                    # The height of the rectangle. Not used in hexagon maps
+    max_timeout: 3              # Maximum time to spawn the map. NOT MAINTAINED
+    
+    init_names: ["shelfino1", "shelfino2"]   # Names of the robots to be spawned
+    init_rand: [false, false]           # If true, the robots will be spawned in random positions
+    init_x: [5.5, -5.5]               # X position of the robots
+    init_y: [5.5, -5.5]               # Y position of the robots
+    init_yaw: [50.0, 0.0]            # Yaw of the robots
+
     qos_overrides:
       /parameter_events:
         publisher:

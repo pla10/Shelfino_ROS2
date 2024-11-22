@@ -9,23 +9,29 @@
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <buildtool_depend>ament_python</buildtool_depend>
+  <!-- <buildtool_depend>ament_cmake_python</buildtool_depend> -->
 
   <depend>rclcpp</depend>
+  <depend>rclpy</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>lifecycle_msgs</depend>
-  <depend>rclpy</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>obstacles_msgs</depend>
   <depend>gazebo_msgs</depend>
   <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>visualization_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
-
+  
   <export>
     <build_type>ament_cmake</build_type>
+    <!-- <build_type>ament_python</build_type> -->
+    <rosdoc2>rosdoc2.yaml</rosdoc2>
   </export>
 </package>
+

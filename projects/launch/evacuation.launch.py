@@ -8,35 +8,119 @@ from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch.actions import OpaqueFunction, DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, ExecuteProcess, TimerAction
-from launch import LaunchDescription
+from launch.actions import RegisterEventHandler, OpaqueFunction, DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, ExecuteProcess, TimerAction
+from launch import LaunchDescription, LaunchContext
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from nav2_common.launch import RewrittenYaml
 
-import launch.logging
+from launch.events.process import ProcessExited
+from launch.event_handlers import OnProcessExit
+
 import logging
 
 def print_env(context):
+    """
+    Prints the environment variables.
+    :param context: The context of the launch including the launch config.
+    """
     print(__file__)
     for key in context.launch_configurations.keys():
         print("\t", key, context.launch_configurations[key])
     return
 
-def check_map(context):
-    from pathlib import Path
-    map_name = Path(context.launch_configurations['map_file'])
-    # world_name = Path(context.launch_configurations['gazebo_world_file'])
-    # if map_name.stem != world_name.stem:
-    #     raise Exception("[{}] Map `{}` does not match world `{}`".format(__file__, map_name.stem, world_name.stem))
-    return 
 
-def get_map_name(context):
-    map_name = Path(context.launch_configurations['map_file']).stem
-    context.launch_configurations['map_name'] = map_name
-    return 
+def start_shelfini(context, shelfino_desc_pkg, shelfino_nav2_pkg):
+    import yaml, re
 
-def evaluate_rviz(context, *args, **kwargs):
+    nodes = []
+
+    # use_sim_time = True if context.launch_configurations['use_sim_time'] == 'true' else False
+
+    with open (context.launch_configurations['gen_map_params_file'], 'r') as f:
+        shelfino_config_yaml = yaml.load(f, Loader=yaml.FullLoader)
+        shelfino_config_yaml = shelfino_config_yaml["/**"]["ros__parameters"]
+        print(shelfino_config_yaml)
+        for shelfino in range(len(shelfino_config_yaml['init_names'])):
+            if shelfino_config_yaml['init_rand'][shelfino]:
+                raise Exception(f"Shelfino {shelfino} is set to random pose, but should have been taken care of by the map generator")
+
+            shelfino_name = shelfino_config_yaml['init_names'][shelfino]
+            shelfino_id = int(re.search(r'\d+', shelfino_name).group())
+            shelfino_pose_x = shelfino_config_yaml['init_x'][shelfino]
+            shelfino_pose_y = shelfino_config_yaml['init_y'][shelfino]
+            shelfino_pose_yaw = shelfino_config_yaml['init_yaw'][shelfino]
+
+            print(f"Spawning {shelfino_name} at ({shelfino_pose_x}, {shelfino_pose_y}, {shelfino_pose_yaw})")
+
+            rsp_launch_file = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    os.path.join(shelfino_desc_pkg, 'launch', 'rsp.launch.py')
+                ]),
+                launch_arguments= {
+                    'use_sim_time': context.launch_configurations['use_sim_time'],
+                    'shelfino_id': str(shelfino_id),
+                }.items()
+            )
+
+            nav2_launch_file = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    os.path.join(shelfino_nav2_pkg, 'launch', 'shelfino_nav.launch.py')]
+                ),
+                launch_arguments= {
+                    'use_sim_time': "true" if context.launch_configurations['use_sim_time'] else "false",
+                    'robot_id': str(shelfino_id),
+                    'map_file' : context.launch_configurations['map_file'],
+                    'nav2_params_file' : context.launch_configurations['nav2_params_file'],
+                    'rviz_config_file': context.launch_configurations['nav2_rviz_config_file'],
+                    'initial_x': str(shelfino_pose_x),
+                    'initial_y': str(shelfino_pose_y),
+                    'initial_yaw': str(shelfino_pose_yaw),
+                    'headless' : 'true',
+                }.items()
+            )
+
+            
+            spawn_shelfino_node = Node(
+                package='gazebo_ros',
+                executable='spawn_entity.py',
+                arguments=[
+                        '-topic', PythonExpression(["'/", shelfino_name, "/robot_description", "'"]),
+                        '-entity', shelfino_name,
+                        '-robot_namespace', shelfino_name,
+                        '-x', PythonExpression(["'", str(shelfino_pose_x), "'"]),
+                        '-y', PythonExpression(["'", str(shelfino_pose_y), "'"]),
+                        '-z', '0.0',
+                        '-Y', PythonExpression(["'", str(shelfino_pose_yaw), "'"]),
+                ]
+            )
+
+            # destroy_shelfino_node = Node(
+            #     package='shelfino_gazebo',
+            #     executable='destroy_shelfino',
+            #     name='destroy_shelfino',
+            #     output='screen',
+            #     namespace=shelfino_name,
+            #     parameters=[{'use_sim_time': use_sim_time}]
+            # )
+
+            nodes += [
+                rsp_launch_file, 
+                spawn_shelfino_node,
+                nav2_launch_file, 
+                # destroy_shelfino_node
+            ]
+
+    return nodes
+
+
+def evaluate_rviz(context):
+    """
+    This function allows for launching just one Rviz instance for all the robots.
+    It takes the rviz config file and creates a new one with the correct items
+    multiplied for all the robots. 
+    :param context: The context of the launch including the launch config.
+    """
     shelfino_nav2_pkg = get_package_share_directory('shelfino_navigation')
     
     rviz_path = context.launch_configurations['nav2_rviz_config_file']
@@ -88,8 +172,19 @@ def evaluate_rviz(context, *args, **kwargs):
             yaml.dump(output_config, f_out, default_flow_style=False)
 
     context.launch_configurations['rviz_config_file'] = cr_path
+
+    nodes = [ Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', context.launch_configurations['rviz_config_file']],
+        parameters=[
+            # {'use_sim_time': True if context.launch_configurations['use_sim_time'] == 'true' else False}
+        ],
+    )]
     
-    return
+    return nodes
     
 
 def generate_launch_description():
@@ -102,9 +197,10 @@ def generate_launch_description():
 
     nav2_params_file_path = os.path.join(shelfino_nav2_pkg, 'config', 'shelfino.yaml')
     map_env_params_file_path = os.path.join(map_env_pkg, 'config', 'map_config.yaml')
+    gen_map_params_file_path = os.path.join(map_env_pkg, 'config', 'full_config.yaml')
 
     # General arguments
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     n_shelfini   = LaunchConfiguration('n_shelfini', default='3')
 
     # Gazebo simulation arguments
@@ -120,6 +216,10 @@ def generate_launch_description():
 
     # Map package arguments
     map_env_params_file = LaunchConfiguration('map_env_params_file', default=map_env_params_file_path)
+    gen_map_params_file = LaunchConfiguration('gen_map_params_file', default=gen_map_params_file_path)
+    victims_activated = LaunchConfiguration('victims_activated', default='true')
+    generate_new_map_config = LaunchConfiguration('generate_new_map_config', default='true')
+    
 
     # Declare LaunchArguments for exposing launching arguments
     launch_args = [
@@ -182,186 +282,130 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'map_env_params_file',
             default_value=map_env_params_file_path,
-            description='Full path to the map_pkg params file to use'
+            description='Full path to the map_pkg template file to use for params'
+        ),
+        DeclareLaunchArgument(
+            'gen_map_params_file',
+            default_value=gen_map_params_file_path,
+            description='Full path to the final params file file to use'
+        ),
+        DeclareLaunchArgument(
+            'victims_activated',
+            default_value=victims_activated,
+            choices=['true'],
+            description='Whether to activate the victims or not'
+        ),
+        DeclareLaunchArgument(
+            'generate_new_map_config',
+            default_value=generate_new_map_config,
+            choices=['true', 'false'],
+            description='Whether to regenerate the gen_map_params_file or not'
         ),
     ]
 
+    # List of nodes to launch
+
+    # This is the first node that must be called as it generates the configuration file
+    gen_config_node = Node ( 
+        package='map_pkg',
+        executable='generate_config_file.py',
+        name='generate_config_file',
+        output='screen',
+        parameters= [map_env_params_file] + [
+            {
+                'generate_new_config' : generate_new_map_config,
+                'map_env_params_file' : map_env_params_file,
+                'gen_map_params_file' : gen_map_params_file,
+                'victims_activated' : victims_activated,
+            }
+        ],
+    )
+
+    # Launch Gazebo but do not spawn the robots
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
-            os.path.join(shelfino_gaze_pkg, 'launch'),
-            '/shelfino.launch.py']
+            os.path.join(shelfino_gaze_pkg, 'launch', 'shelfino.launch.py')]
         ),
         launch_arguments= {
-            'use_sim_time': use_sim_time,
-            'spawn_shlefino': 'false',
+            # 'use_sim_time': use_sim_time,
             'use_gui': use_gui,
             'use_rviz': use_rviz,
-            'gazebo_world_file': gazebo_world_file
+            'gazebo_world_file': gazebo_world_file,
+            'spawn_shlefino': 'false',
         }.items()
     )
 
     # Rewrite the map file parameter substituting n_victims with 0
-    map_env_conf_params = RewrittenYaml(
+    gen_map_params_file_params = RewrittenYaml(
         source_file=map_env_params_file,
-        param_rewrites={'n_victims' : '0'},
+        param_rewrites={'send_victims' : {'victims_activated' : 'false'}},
         convert_types=True
     )
 
-    map_pkg_node = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(map_env_pkg, 'launch'),
-            '/map_env.launch.py']
-        ),
-        launch_arguments= {
-            'map_env_params_file': map_env_conf_params,
-        }.items()
-    )
-
-    rviz2_node = Node (
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='screen',
-        arguments=['-d', rviz_config_file],
-        parameters=[
-            {'use_sim_time': use_sim_time}
-        ],
-    )
-
-    def launch_rsp(context):
-        nodes = []
-        for shelfino_id in range(int(context.launch_configurations['n_shelfini'])):
-            
-            shelfino_name = PythonExpression(["'", "shelfino", str(shelfino_id), "'"])
-    
-            rsp_node = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([
-                    os.path.join(shelfino_desc_pkg, 'launch'),
-                    '/rsp.launch.py']
-                ),
-                launch_arguments= {
-                    'use_sim_time': use_sim_time,
-                    'shelfino_id': str(shelfino_id),
-                }.items()
-            )
-            nodes.append(rsp_node)
-
-        return nodes
-    
-    def spawn_shelfini(context):
-        nodes = []
-        for shelfino_id in range(int(context.launch_configurations['n_shelfini'])):
-            
-            shelfino_name = PythonExpression(["'", "shelfino", str(shelfino_id), "'"])
-    
-            spawn_node = GroupAction([
-                Node(
-                    package='gazebo_ros',
-                    executable='spawn_entity.py',
-                    arguments=[
-                            '-topic', PythonExpression(["'/", shelfino_name, "/robot_description", "'"]),
-                            '-entity', shelfino_name,
-                            '-robot_namespace', shelfino_name,
-                            '-x', str(shelfino_id*2.0-2.0),
-                            '-y', str(shelfino_id*2.0-2.0),
-                            '-z', '0.0',
-                            '-Y', '0.0',
-                    ]
-                ),
-                Node(
-                    package='shelfino_gazebo',
-                    executable='destroy_shelfino',
-                    name='destroy_shelfino',
-                    output='screen',
-                    namespace=shelfino_name,
-                    parameters=[{'use_sim_time': use_sim_time}]
-                )
-            ])
-            nodes.append(spawn_node)
-
-        return nodes
-
-    def launch_navigation(context):
-        nodes = []
-        for shelfino_id in range(int(context.launch_configurations['n_shelfini'])):
-            
-            shelfino_name = PythonExpression(["'", "shelfino", str(shelfino_id), "'"])
-    
-            model_output = PythonExpression(["'", os.path.join(shelfino_desc_pkg, 'models', 'shelfino'), str(shelfino_id), ".sdf'"])
-            sapf_node = GroupAction([
-                IncludeLaunchDescription(
-                    PythonLaunchDescriptionSource([
-                        os.path.join(shelfino_nav2_pkg, 'launch'),
-                        '/shelfino_nav.launch.py']
-                    ),
-                    launch_arguments= {
-                        'use_sim_time': use_sim_time,
-                        'robot_id': str(shelfino_id),
-                        'map_file' : map_file,
-                        'nav2_params_file' : nav2_params_file,
-                        'rviz_config_file': nav2_rviz_config_file,
-                        'initial_x': str(shelfino_id*2.0-2.0),
-                        'initial_y': str(shelfino_id*2.0-2.0),
-                        'headless' : 'true',
-                    }.items()
-                ),
-            ])
-
-            nodes.append(sapf_node)
-
-        return nodes
-
-
-    # LaunchDescription with the additional launch files
-    ld = LaunchDescription()
-
-    for launch_arg in launch_args:
-        ld.add_action(launch_arg)
-
-    ld.add_action(OpaqueFunction(function=get_map_name))
-    ld.add_action(OpaqueFunction(function=print_env))
-    ld.add_action(OpaqueFunction(function=evaluate_rviz))
-    
+    # This node creates the map in pgm format
     create_map_node = Node (
         package='map_pkg',
         executable='create_map_pgm.py',
         name='create_map_pgm',
         output='screen',
-        parameters=[map_env_conf_params]
+        parameters=[gen_map_params_file_params]
     )
 
+    # This node spawns the objects in Gazebo and publishes the data to the topics
+    spawn_map_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(map_env_pkg, 'launch', 'spawn_map.launch.py')]
+        ),
+        launch_arguments= {
+            'victims_activated': victims_activated,
+            'gen_map_params_file': gen_map_params_file,
+        }.items()
+    )
+    
+
+    # Event handlers
+    # The nodes to launch after the configuration node has finished
+    after_config_nodes = [
+        create_map_node,
+        spawn_map_launch,
+        OpaqueFunction(function=evaluate_rviz),
+    ]
+
+    def launch_after_config_nodes(event : ProcessExited, context : LaunchContext):
+        return after_config_nodes 
+
+    gen_config_eh = RegisterEventHandler(
+        event_handler = OnProcessExit(
+            target_action=gen_config_node,
+            on_exit=launch_after_config_nodes
+        )
+    )
+
+    # Spawn shelini and start the navigation
+    def launch_after_spawn_map_nodes(event : ProcessExited, context : LaunchContext):
+        return OpaqueFunction(function=start_shelfini, args=[shelfino_desc_pkg, shelfino_nav2_pkg])
+    
+    spawn_map_eh = RegisterEventHandler(
+        event_handler = OnProcessExit(
+            target_action=create_map_node,
+            on_exit=launch_after_spawn_map_nodes
+        )
+    )
+
+    # LaunchDescription 
+    ld = LaunchDescription()
+
+    for launch_arg in launch_args:
+        ld.add_action(launch_arg)
+
+    ld.add_action(OpaqueFunction(function=print_env))
+
     ld.add_action(gazebo_launch)
-    ld.add_action(map_pkg_node)
-    
-    ld.add_action(TimerAction(
-        period='2',
-        actions = [create_map_node]
-    ))
-    
-    ld.add_action(TimerAction(
-        period='5',
-        actions = [OpaqueFunction(function=launch_rsp)]
-    ))
-    ld.add_action(TimerAction(
-        period='10',
-        actions = [OpaqueFunction(function=spawn_shelfini)]
-    ))
 
-    ld.add_action(TimerAction(
-        period='15',
-        actions = [rviz2_node]
-    ))
+    ld.add_action(gen_config_node)
 
-    ld.add_action(TimerAction(
-        period='20',
-        actions = [OpaqueFunction(function=launch_navigation)]
-    ))
+    ld.add_action(gen_config_eh)
 
-
-
-    # ld.add_action(map_pkg_node)
-    # nodes = OpaqueFunction(function=populate)
-    # ld.add_action(nodes)
-    # ld.add_action(rviz2_node)
+    ld.add_action(spawn_map_eh)
 
     return ld

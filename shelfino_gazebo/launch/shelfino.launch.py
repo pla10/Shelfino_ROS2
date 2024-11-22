@@ -40,15 +40,18 @@ def generate_launch_description():
 
     use_sim_time      = LaunchConfiguration('use_sim_time', default='true')
     shelfino_id       = LaunchConfiguration('shelfino_id', default='G')
-    use_gui           = LaunchConfiguration('use_gui')
-    use_rviz          = LaunchConfiguration('use_rviz')
-    spawn_shelfino    = LaunchConfiguration('spawn_shelfino', default='false')
+    use_gui           = LaunchConfiguration('use_gui', default='true')
+    use_rviz          = LaunchConfiguration('use_rviz', default='false')
+    spawn_shelfino    = LaunchConfiguration('spawn_shelfino', default='true')
     rviz_config_file  = LaunchConfiguration('rviz_config_file', 
         default=PythonExpression(["'", os.path.join(shelfino_desc_pkg, 'rviz', 'shelfino'), shelfino_id, ".rviz'"]) 
     )
     gazebo_world_file = LaunchConfiguration('gazebo_world_file', 
         default=os.path.join(shelfino_gaze_pkg, 'worlds', 'hexagon.world')
     )
+    shelfino_init_x   = LaunchConfiguration('shelfino_init_x', default='0.0')
+    shelfino_init_y   = LaunchConfiguration('shelfino_init_y', default='0.0')
+    shelfino_init_yaw = LaunchConfiguration('shelfino_init_yaw', default='0.0')
     
     shelfino_name = PythonExpression(["'", 'shelfino', shelfino_id, "'"])
     model_output = PythonExpression(["'", os.path.join(shelfino_desc_pkg, 'models', 'shelfino'), shelfino_id, ".sdf'"])
@@ -119,6 +122,21 @@ def generate_launch_description():
             default_value=gazebo_world_file, # choices=['empty', 'povo', 'hexagon'],
             description='World used in the gazebo simulation'
         ),
+        DeclareLaunchArgument(
+            name='shelfino_init_x',
+            default_value=shelfino_init_x,
+            description='Initial x position of the robot'
+        ),
+        DeclareLaunchArgument(
+            name='shelfino_init_y',
+            default_value=shelfino_init_y,
+            description='Initial y position of the robot'
+        ),
+        DeclareLaunchArgument(
+            name='shelfino_init_yaw',
+            default_value=shelfino_init_yaw,
+            description='Initial yaw of the robot'
+        ),
 
         OpaqueFunction(function=print_env),
         OpaqueFunction(function=check_exists),
@@ -150,7 +168,11 @@ def generate_launch_description():
             arguments=[
                         '-topic', PythonExpression(["'/", shelfino_name, "/robot_description", "'"]),
                         '-entity', shelfino_name,
-                        '-robot_namespace', shelfino_name],
+                        '-robot_namespace', shelfino_name,
+                        '-x', shelfino_init_x,
+                        '-y', shelfino_init_y,
+                        '-Y', shelfino_init_yaw
+                        ],
             condition=IfCondition(spawn_shelfino),
         ),
 

@@ -6,12 +6,14 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.substitutions import LaunchConfiguration, PythonExpression, OrSubstitution, AndSubstitution, NotSubstitution
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, RegisterEventHandler, LogInfo
 from launch.conditions import UnlessCondition
 from nav2_common.launch import RewrittenYaml
 from launch import LaunchDescription
-from launch_ros.actions import Node
+from launch_ros.actions import Node, LifecycleNode
+from launch_ros.event_handlers import OnStateTransition
+
 
 def print_env(context):
     print(__file__)
@@ -32,6 +34,28 @@ def check_exists(context):
 
     return
 
+def get_shelfino_pos(context):
+    import yaml
+    map_pkg = get_package_share_directory('map_pkg')
+
+    map_conf_file = os.path.join(map_pkg, 'config', 'map_config.yaml')
+
+    shelfino_name = 'shelfino' + context.launch_configurations['robot_id']
+
+    with open(map_conf_file, 'r') as f:
+        map_conf = yaml.safe_load(f)
+
+        context.launch_configurations['initial_x'] = map_conf[shelfino_name]['send_initialpose']['init_x']
+        context.launch_configurations['initial_y'] = map_conf[shelfino_name]['send_initialpose']['init_y']
+        context.launch_configurations['initial_yaw'] = map_conf[shelfino_name]['send_initialpose']['init_yaw']
+
+
+def print_env(context):
+    print(__file__)
+    for key in context.launch_configurations.keys():
+        print("\t", key, context.launch_configurations[key])
+    return
+
 def generate_launch_description():
     shelfino_nav2_pkg = os.path.join(get_package_share_directory('shelfino_navigation'))
 
@@ -45,7 +69,8 @@ def generate_launch_description():
     remote_nav       = LaunchConfiguration('remote_nav', default='false')
     headless         = LaunchConfiguration('headless', default='false')
 
-    initial_x        = LaunchConfiguration('initial_x', default='0.0')
+    spawn_shelfino   = LaunchConfiguration('spawn_shelfino', default='false')
+    initial_x        = LaunchConfiguration('initial_x', default='10.0')
     initial_y        = LaunchConfiguration('initial_y', default='0.0')
     initial_yaw      = LaunchConfiguration('initial_yaw', default='0.0')
     
@@ -88,6 +113,7 @@ def generate_launch_description():
         'x'                : initial_x,
         'y'                : initial_y,
         'yaw'              : initial_yaw,
+        'set_initial_pose' : spawn_shelfino
     }
 
     configured_params = RewrittenYaml(
@@ -112,7 +138,41 @@ def generate_launch_description():
         
         return
 
-    return LaunchDescription([        
+
+    # map_server_node = LifecycleNode(
+    #     package='nav2_map_server',
+    #     executable='map_server',
+    #     name='map_server',
+    #     output='screen',
+    #     namespace= robot_name,
+    #     respawn=True,
+    #     respawn_delay=2.0,
+    #     parameters=[
+    #         {'use_sim_time': use_sim_time},
+    #         {'topic_name': "/map"},
+    #         {'frame_id': "map"},
+    #         {'yaml_filename': map_file}
+    #     ],
+    #     condition=UnlessCondition(remote_nav),
+    # )
+    
+    # When the talker node reaches the 'active' state, log a message and start the listener node.
+    # register_event_handler_for_talker_reaches_active_state = RegisterEventHandler(
+    #     OnStateTransition(
+    #         target_lifecycle_node=map_server_node, goal_state='active',
+    #         entities=[
+    #             LogInfo(
+    #                 msg="node 'orchestrator' reached the 'active' state, launching 'nav2 map_server'."),
+    #             LifecycleNode(
+    #                 name='orchestrator', namespace='',
+    #                 package='map_pkg', executable='orchestrator', output='screen'),
+    #         ],
+    #     )
+    # )
+
+    return LaunchDescription([    
+        OpaqueFunction(function=print_env),
+
         DeclareLaunchArgument(
             name='use_sim_time', 
             default_value=use_sim_time,
@@ -127,7 +187,6 @@ def generate_launch_description():
         DeclareLaunchArgument(
             name='map_file', 
             default_value=map_file,
-            # choices=['lab1', 'povo', 'hexagon'],
             description='Map to load for localization'
         ),
         DeclareLaunchArgument(
@@ -159,6 +218,12 @@ def generate_launch_description():
             description='Flag to toggle between navigation stack running on robot or locally'
         ),
         DeclareLaunchArgument(
+            name='spawn_shelfino',
+            default_value=spawn_shelfino,
+            choices=['true', 'false'],
+            description='Flag to enable spawning of the robot. If false, amcl does not send initial pose'
+        ),
+        DeclareLaunchArgument(
             name='initial_x',
             default_value=initial_x,
             description='Initial x position of the robot'
@@ -177,6 +242,7 @@ def generate_launch_description():
         OpaqueFunction(function=print_env),
         OpaqueFunction(function=check_exists),
         OpaqueFunction(function=evaluate_rviz),
+
 
         Node(
             package='nav2_map_server',
@@ -206,6 +272,7 @@ def generate_launch_description():
             arguments=['--ros-args', '--log-level', 'info'],
             parameters=[configured_params],
             condition=UnlessCondition(remote_nav),
+            # condition=UnlessCondition(OrSubstitution(remote_nav, NotSubstitution(spawn_shelfino))),
         ),
 
         Node(
