@@ -98,7 +98,7 @@ def generate_launch_description():
 
     # General arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    shelfino_id  = LaunchConfiguration('shelfino_id', default='X')
+    shelfino_id  = LaunchConfiguration('shelfino_id', default='1')
 
     # Gazebo simulation arguments
     use_gui           = LaunchConfiguration('use_gui', default='true')
