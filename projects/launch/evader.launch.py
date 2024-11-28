@@ -245,7 +245,7 @@ def generate_launch_description():
     # Map package arguments
     map_env_params_file = LaunchConfiguration('map_env_params_file', default=map_env_params_file_path)
     gen_map_params_file = LaunchConfiguration('gen_map_params_file', default=gen_map_params_file_path)
-    victims_activated = LaunchConfiguration('victims_activated', default='true')
+    victims_activated = LaunchConfiguration('victims_activated', default='false')
     generate_new_map_config = LaunchConfiguration('generate_new_map_config', default='true')
     
 
@@ -322,7 +322,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'victims_activated',
             default_value=victims_activated,
-            choices=['true'],
+            choices=['false'],
             description='Whether to activate the victims or not'
         ),
         DeclareLaunchArgument(
