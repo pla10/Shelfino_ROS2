@@ -7,7 +7,7 @@
   <xacro:property name='laser_height' value='0.02'/>
   <xacro:property name='laser_mass' value='0.1'/>
   
-  <link name='shelfino${robot_id}/base_laser'>
+  <link name='${robot_name}/base_laser'>
     <visual>
       <origin xyz='0 0 ${laser_height/2}' rpy='0 0 0'/>
       <geometry>
@@ -28,12 +28,12 @@
   -->  
   
   <joint name='lidar2d_joint' type='fixed'>
-    <parent link='shelfino${robot_id}/chassis_link'/>
-    <child link='shelfino${robot_id}/base_laser'/>
+    <parent link='${robot_name}/chassis_link'/>
+    <child link='${robot_name}/base_laser'/>
     <origin xyz='0 0 ${body_height+0.11}' rpy='0 0 0'/>
   </joint>
 
-  <gazebo reference='shelfino${robot_id}/base_laser'>
+  <gazebo reference='${robot_name}/base_laser'>
     <material>Gazebo/Green</material>
     <sensor name="laser" type="ray">
       <pose> 0 0 0 0 0 0 </pose>
@@ -62,7 +62,7 @@
           <remapping>~/out:=scan</remapping>
         </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
-        <frame_name>shelfino${robot_id}/base_laser</frame_name>
+        <frame_name>${robot_name}/base_laser</frame_name>
       </plugin>
     </sensor>
   </gazebo>

@@ -160,15 +160,21 @@ Also the points will be given based on the difficulty of the scenario: catching 
 
 ### Level of complexity
 
-The behaviour of the evader is organised in increasing levels of complexity:
+The behaviour of the evader is organised in increasing levels of complexity. If you choose this project, you must account for the following 3 behaviours:
 
-1. There is only one exit and the evader has to reach it in minimum time.
-   
-2. There are two exits and at each location of the roadmap reached by the evader, it can decide non-deterministically to go in minimum time to one or to the other.
-   
-3. There are two exits and at each location of the roadmap the evader can decide to take one or the other accounting for the presence of the pursuer.
+1. There is only one exit and the evader reaches it in minimum time.
 
-4. Given a not smart behaviour of the evader as in point 2, there are multiple pursuer that can be used to catch the evader. Pursuers must coordinate, i.e., they must not collide otherwise the group will lose points.
+2. There are two exits and the evader randomically chooses one of the two gates before moving. 
+
+3. There are two gates and the evader chooses one based on the position of the pursuer. 
+
+<!-- The following 3 levels are not mandaory and curen
+
+4. There are two exits and at every second, the evader chooses non-deterministically to go to one or to the other.
+   
+5. There are two exits and at every second, the evader can decide to take one or the other accounting for the presence of the pursuer.
+
+6. Given a non-smart behaviour of the evader as in point 2, there are multiple pursuer that can be used to catch the evader. Pursuers must coordinate, i.e., they must not collide with each other otherwise the group will lose points. -->
 
 ### Steps
 

@@ -16,17 +16,17 @@
 /**/send_gates:
   ros__parameters:
     use_namespace: false    # If true, the gates will be spawned one for each Shelfino. Not yet implemented
-    x: [0.0]                # X position of the gate(s)
-    y: [0.0]                # Y position of the gate(s)
-    yaw: [0.0]              # Yaw of the gate(s)
+    x: [0.0, 0.0]                # X position of the gate(s)
+    y: [0.0, 0.0]                # Y position of the gate(s)
+    yaw: [0.0, 0.0]              # Yaw of the gate(s)
     # Values of x and y different from 0.0 will spawn the gates in the given position    
 
 /**/send_victims:
   ros__parameters:
     victims_activated: true      # If true, the victims will be spawned
-    n_victims: 0                  # Number of RANDOM victims to be spawned 
-    min_weight: 10                # Minimum weight of the victims
-    max_weight: 500               # Maximum weight of the victims
+    n_victims: 0                 # Number of RANDOM victims to be spawned 
+    min_weight: 10               # Minimum weight of the victims
+    max_weight: 500              # Maximum weight of the victims
     vect_x: [8.0, -4.0, 4.0]     # X position of the victims
     vect_y: [4.0, -4.0, 4.0]     # Y position of the victims
     vect_weight: [100, 200, 300]  # Weight of the victims
@@ -34,16 +34,16 @@
     
 /**:
   ros__parameters:
-    map: rectangle                # Maps can be "hexagon" or "rectangle"
+    map: rectangle              # Maps can be "hexagon" or "rectangle"
     dx: 20.0                    # The width of the rectangle or the length of the hexagon's edges. Default edge used in hexagon.world is 12.0
     dy: 20.0                    # The height of the rectangle. Not used in hexagon maps
     max_timeout: 3              # Maximum time to spawn the map. NOT MAINTAINED
     
-    init_names: ["shelfino1", "shelfino2"]   # Names of the robots to be spawned
-    init_rand: [false, false]           # If true, the robots will be spawned in random positions
-    init_x: [5.5, -5.5]               # X position of the robots
-    init_y: [5.5, -5.5]               # Y position of the robots
-    init_yaw: [50.0, 0.0]            # Yaw of the robots
+    init_names: ["shelfino1", "evader", "shelfino3", "pursuer"]   # Names of the robots to be spawned
+    init_rand: [false, false, false, false]                       # If true, the robots will be spawned in random positions
+    init_x:   [5.5, -5.5,  5.5, -5.5]                             # X position of the robots
+    init_y:   [5.5, -5.5, -5.5,  5.5]                             # Y position of the robots
+    init_yaw: [0.0,  0.0,  0.0,  0.0]                             # Yaw of the robots
 
     qos_overrides:
       /parameter_events:

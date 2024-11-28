@@ -30,7 +30,7 @@
 /**
  * @brief This class is responsible for generating and publishing victims in the map.
  * @details It is a lifecycle node that either generates random victims in the map, or reads the
- * positions from the parameters. It also subscribes to the /gates_position topic to get the gates
+ * positions from the parameters. It also subscribes to the /gates topic to get the gates
  * positions, and to the /obstacles topic to get the obstacles positions. It publishes the victims
  * 
  */
