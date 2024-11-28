@@ -1,7 +1,7 @@
 /**/send_obstacles:
   ros__parameters:
     n_obstacles: 5                                # Number of RANDOM obstacles to be spawned
-    no_cylinders: true                            # If true, no cylinders will be spawned
+    no_cylinders: false                           # If true, no cylinders will be spawned
     no_boxes: false                               # If true, no boxes will be spawned
     max_size: 1.0                                 # Maximum size of the random obstacles
     min_size: 0.5                                 # Minimum size of the random obstacles
@@ -24,7 +24,7 @@
 /**/send_victims:
   ros__parameters:
     victims_activated: true      # If true, the victims will be spawned
-    n_victims: 0                 # Number of RANDOM victims to be spawned 
+    n_victims: 2                 # Number of RANDOM victims to be spawned 
     min_weight: 10               # Minimum weight of the victims
     max_weight: 500              # Maximum weight of the victims
     vect_x: [8.0, -4.0, 4.0]     # X position of the victims
@@ -40,7 +40,7 @@
     max_timeout: 3              # Maximum time to spawn the map. NOT MAINTAINED
     
     init_names: ["shelfino1", "evader", "shelfino3", "pursuer"]   # Names of the robots to be spawned
-    init_rand: [false, false, false, false]                       # If true, the robots will be spawned in random positions
+    init_rand: [true, false, false, false]                       # If true, the robots will be spawned in random positions
     init_x:   [5.5, -5.5,  5.5, -5.5]                             # X position of the robots
     init_y:   [5.5, -5.5, -5.5,  5.5]                             # Y position of the robots
     init_yaw: [0.0,  0.0,  0.0,  0.0]                             # Yaw of the robots

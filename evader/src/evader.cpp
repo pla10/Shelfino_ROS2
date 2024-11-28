@@ -6,10 +6,6 @@ Evader::Evader() : Node("evader")
   // Define the QoS
   auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
 
-#ifdef DOCKER_COMPILE
-  this->get_logger().set_level(rclcpp::Logger::Level::Fatal);
-#endif
-
   // Define the parameters
   this->declare_parameter("difficulty", 0);
   
@@ -69,11 +65,7 @@ Evader::Evader() : Node("evader")
   this->compute_path_to_pose_client_ = rclcpp_action::create_client<ComputePathToPose>(this, "compute_path_to_pose");
   this->follow_path_client_ = rclcpp_action::create_client<FollowPath>(this, "follow_path");
 
-#ifdef DOCKER_COMPILE
-  std::cout << "Evader node created." << std::endl;
-#else
   RCLCPP_INFO(this->get_logger(), "Evader node created.");
-#endif
 }
 
 void Evader::handle_evader_pose(const PoseWithCovarianceStamped::SharedPtr msg)

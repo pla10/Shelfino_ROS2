@@ -5,6 +5,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME}")
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -15,10 +19,7 @@ find_package(nav2_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
-
-if (DOCKER_COMPILE)
-  add_compile_options(-DDOCKER_COMPILE)
-endif()
+find_package(Python3 REQUIRED COMPONENTS Development)
 
 add_executable(evader 
   src/evader.cpp
@@ -27,6 +28,9 @@ add_executable(evader
 target_include_directories(evader PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
+
+target_link_libraries(evader ${Python3_LIBRARIES})
+
 
 ament_target_dependencies(evader 
   rclcpp 
