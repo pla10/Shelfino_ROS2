@@ -1,33 +1,42 @@
-#include <chrono>
-#include <functional>
-#include <memory>
-#include <string>
-#include <unistd.h>
-#include <iostream>
-#include <fstream>
-
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp_lifecycle/lifecycle_node.hpp"
-#include "lifecycle_msgs/msg/transition_event.hpp"
-
 #include "geometry_msgs/msg/point32.hpp"
 #include "geometry_msgs/msg/polygon.hpp"
 #include "geometry_msgs/msg/polygon_stamped.hpp"
 #include "geometry_msgs/msg/pose.hpp"
+#include "lifecycle_msgs/msg/transition_event.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "std_msgs/msg/header.hpp"
 
-#include "gazebo_msgs/srv/spawn_entity.hpp"
+#include <chrono>
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <unistd.h>
 
-#include "map_pkg/spawn_model.hpp"
 #include "map_pkg/utilities.hpp"
 
-#include "ament_index_cpp/get_package_share_directory.hpp"
 
-class BordersPublisher : public rclcpp_lifecycle::LifecycleNode
-{
-private:
-  std::string gz_models;
-  rclcpp::Client<gazebo_msgs::srv::SpawnEntity>::SharedPtr spawner_;
+using CallbackReturn =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+
+/**
+ * @brief This node publishes the borders of the map and spawns them in gazebo.
+ * @details The borders can be a hexagon or a rectangle. The size of the map is defined by
+ * the edges of the hexagon or the rectangle. If it's an hexagon, then all the edges will
+ * have the same length and only dx should be set, whereas, if it's a rectangle, both dx
+ * and dy can be set. The borders are published as a Polygon message and a PolygonStamped
+ * message. The Polygon message is used to spawn the borders in gazebo.
+ * During configuration, it declares and reads the parameters map, dx, and dy. The map
+ * parameter can be "hexagon" or "rectangle". The dx and dy parameters are the size of the
+ * map. During activation, it creates the Polygon message and the PolygonStamped message,
+ * publishes them, and spawns the borders in gazebo. The models are created by reading the
+ * SDF files in the worlds directory of the package, "/worlds/hexagon_world/model.sdf" and
+ * "/worlds/rectangle_world/model.sdf".
+ */
+class BordersPublisher : public rclcpp_lifecycle::LifecycleNode {
+ private:
   rclcpp::Publisher<geometry_msgs::msg::Polygon>::SharedPtr publisher_;
   rclcpp::Publisher<geometry_msgs::msg::PolygonStamped>::SharedPtr pub_;
 
@@ -36,23 +45,31 @@ private:
     std::string map_name;
     double dx;
     double dy;
-  } data ;
+  } data;
 
-public:
-  explicit BordersPublisher(bool intra_process_comms = false) 
-  : rclcpp_lifecycle::LifecycleNode("send_borders", 
-      rclcpp::NodeOptions().use_intra_process_comms(intra_process_comms)
-    )
-  {
-    this->gz_models = ament_index_cpp::get_package_share_directory("shelfino_gazebo");
-    this->configure();
-    this->activate();
-    this->deactivate();
+ public:
+  explicit BordersPublisher(bool intra_process_comms = false)
+      : rclcpp_lifecycle::LifecycleNode(
+            "send_borders",
+            rclcpp::NodeOptions().use_intra_process_comms(intra_process_comms)) {
+    RCLCPP_INFO(this->get_logger(), "Node created.");
   }
 
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn 
-  on_configure(const rclcpp_lifecycle::State& state)
-  {
+  /**
+   * @brief This function is called when the node is in the configuring state.
+   * @details It creates and reads teh parameters. It also sets up the publishers and the
+   * client to spawn the model in gazebo. There are two publishers:
+   * - /map_borders: Publishes the borders of the map as a Polygon message. The script
+   *   create+map_pgm.py reads from this topic.
+   * - /borders: Publishes the borders of the map as a PolygonStamped message. The other
+   *   nodes should be reading from this topic.
+   *
+   * @param state State
+   * @return CallbackReturn Success if the node is configured successfully.
+   */
+  CallbackReturn on_configure(rclcpp_lifecycle::State const& state) {
+    RCLCPP_INFO(this->get_logger(), "Configuring node.");
+    LifecycleNode::on_configure(state);
     this->declare_parameter<std::string>("map", "hexagon");
     this->declare_parameter<double>("dx", 5.0);
     this->declare_parameter<double>("dy", 5.0);
@@ -60,169 +77,96 @@ public:
     this->data.dx = this->get_parameter("dx").as_double();
     this->data.dy = this->get_parameter("dy").as_double();
 
+    if (this->data.map_name != "hexagon" && this->data.map_name != "rectangle") {
+      RCLCPP_ERROR(this->get_logger(), "Map name %s not recognized",
+                   this->data.map_name.c_str());
+      return CallbackReturn::FAILURE;
+    }
+
     RCLCPP_INFO(this->get_logger(), "Map name: %s", this->data.map_name.c_str());
     RCLCPP_INFO(this->get_logger(), "dx: %f", this->data.dx);
     RCLCPP_INFO(this->get_logger(), "dy: %f", this->data.dy);
 
     auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
 
-    this->publisher_  = this->create_publisher<geometry_msgs::msg::Polygon>("/map_borders", qos);
-    this->pub_        = this->create_publisher<geometry_msgs::msg::PolygonStamped>("/borders", qos);
-    this->spawner_    = this->create_client<gazebo_msgs::srv::SpawnEntity>("/spawn_entity");
+    auto callback_group = this->create_callback_group(
+        rclcpp::CallbackGroupType::Reentrant, true);
 
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+    this->publisher_ =
+        this->create_publisher<geometry_msgs::msg::Polygon>("/map_borders", qos);
+    this->pub_ =
+        this->create_publisher<geometry_msgs::msg::PolygonStamped>("/borders", qos);
+
+    RCLCPP_INFO(this->get_logger(), "Node configured.");
+
+    return CallbackReturn::SUCCESS;
   }
 
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-  on_activate(const rclcpp_lifecycle::State& state)
-  {
+  /**
+   * @brief This function is called when the node is in the activating state.
+   * @details It creates the Polygon message and the PolygonStamped message and publishes
+   * them. It also spawns the borders in gazebo. The models are created by reading the SDF
+   * files in the worlds directory of the package, "/worlds/hexagon_world/model.sdf" and
+   * "/worlds/rectangle_world/model.sdf". It calls either `map_hexagon()` or
+   * `map_rectangle()` to create the models correctly.
+   *
+   * @param state
+   * @return CallbackReturn
+   */
+  CallbackReturn on_activate(rclcpp_lifecycle::State const& state) {
+    RCLCPP_INFO(this->get_logger(), "Activating node.");
+    LifecycleNode::on_activate(state);
     std_msgs::msg::Header hh;
 
     hh.stamp = this->get_clock()->now();
     hh.frame_id = "map";
-    
+
     geometry_msgs::msg::Polygon pol;
     std::string xml_string;
-    
-    if(this->data.map_name=="hexagon"){
-      this->map_hexagon(xml_string, pol);
+
+    if (this->data.map_name == "hexagon") {
+      pol = create_hexagon(this->data.dx);
+    } else if (this->data.map_name == "rectangle") {
+      pol = create_rectangle(this->data.dx, this->data.dy);
+    } else {
+      RCLCPP_ERROR(this->get_logger(), "Map name %s not recognized",
+                   this->data.map_name.c_str());
     }
-    else if(this->data.map_name=="rectangle"){
-      this->map_rectangle(xml_string, pol);
-    }
-    else {
-      RCLCPP_ERROR(this->get_logger(), "Map name %s not recognized", this->data.map_name.c_str());
-    }
-    
+
     geometry_msgs::msg::PolygonStamped pol_stamped;
     pol_stamped.header = hh;
     pol_stamped.polygon = pol;
-    
+
     // Publish borders
     this->publisher_->publish(pol);
     this->pub_->publish(pol_stamped);
 
-    // Spawn model in gazebo
-    geometry_msgs::msg::Pose pose;
-    pose.position.x = 0.0;
-    pose.position.y = 0.0;
-    pose.position.z = 0.1;
-    pose.orientation.x = 0;
-    pose.orientation.y = 0;
-    pose.orientation.z = 0;
-    pose.orientation.w = 0;
-    spawn_model(this->get_node_base_interface(), this->spawner_, xml_string, pose, "border", true);
-  
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+    RCLCPP_INFO(this->get_logger(), "Node active.");
+
+    return CallbackReturn::SUCCESS;
   }
-  
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-  on_deactivate(const rclcpp_lifecycle::State& state)
-  {
+
+  CallbackReturn on_deactivate(rclcpp_lifecycle::State const& state) {
     RCLCPP_INFO(this->get_logger(), "Deactivating node.");
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+    LifecycleNode::on_deactivate(state);
+    return CallbackReturn::SUCCESS;
   }
-  
-private:
-  void map_hexagon(std::string & xml_string, geometry_msgs::msg::Polygon & pol);
-  void map_rectangle(std::string & xml_string, geometry_msgs::msg::Polygon & pol);
 };
 
-void 
-BordersPublisher::map_hexagon(std::string & xml_string, geometry_msgs::msg::Polygon & pol)
-{
-  pol = create_hexagon(this->data.dx);
-  // Read XML file to string
-  std::ifstream xml_file(this->gz_models + "/worlds/hexagon_world/model.sdf");
-  if (!xml_file.is_open()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to open file %s", 
-      (this->gz_models + "/worlds/hexagon_world/model.sdf").c_str()
-    );
-    exit(1);
-  }
-  xml_string.assign(
-    std::istreambuf_iterator<char>(xml_file),
-    std::istreambuf_iterator<char>()
-  );
 
-  float original_size = 12.00;     // 13.20
-  std::string size_string = "<scale>1 1 1</scale>";
-  std::string size_replace_string = "<scale>" + 
-    std::to_string(this->data.dx/original_size) + " " + 
-    std::to_string(this->data.dx/original_size) + " 1</scale>";
-  
-  size_t pos = 0;
-  while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
-    xml_string.replace(pos, size_string.length(), size_replace_string);
-    pos += size_replace_string.length();
-  }
-}
-
-void 
-BordersPublisher::map_rectangle(std::string & xml_string, geometry_msgs::msg::Polygon & pol)
-{
-  pol = create_rectangle(this->data.dx, this->data.dy);
-  // Read XML file to string
-  std::ifstream xml_file(this->gz_models + "/worlds/rectangle_world/model.sdf");
-  if (!xml_file.is_open()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to open file %s", 
-      (this->gz_models + "/worlds/rectangle_world/model.sdf").c_str()
-    );
-    exit(1);
-  }
-  xml_string.assign(
-    std::istreambuf_iterator<char>(xml_file),
-    std::istreambuf_iterator<char>()
-  );
-
-  float wid = 0.15;
-  std::string size_string = "dx";
-  std::string size_replace_string = std::to_string(this->data.dx);
-  size_t pos = 0;
-  while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
-    xml_string.replace(pos, size_string.length(), size_replace_string);
-    pos += size_replace_string.length();
-  }
-  size_string = "dy";
-  size_replace_string = std::to_string(this->data.dy);
-  pos = 0;
-  while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
-    xml_string.replace(pos, size_string.length(), size_replace_string);
-    pos += size_replace_string.length();
-  }
-  size_string = "width";
-  size_replace_string = std::to_string(wid);
-  pos = 0;
-  while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
-    xml_string.replace(pos, size_string.length(), size_replace_string);
-    pos += size_replace_string.length();
-  }
-  size_string = "L1";
-  size_replace_string = std::to_string((this->data.dy+wid)/2);
-  pos = 0;
-  while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
-    xml_string.replace(pos, size_string.length(), size_replace_string);
-    pos += size_replace_string.length();
-  }
-  size_string = "L2";
-  size_replace_string = std::to_string((this->data.dx+wid)/2);
-  pos = 0;
-  while ((pos = xml_string.find(size_string, pos)) != std::string::npos) {
-    xml_string.replace(pos, size_string.length(), size_replace_string);
-    pos += size_replace_string.length();
-  }
-}
-
-
-int main(int argc, char * argv[])
-{
+int main(int argc, char* argv[]) {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<BordersPublisher>();
 
-  rclcpp::executors::SingleThreadedExecutor exe;
+  node->configure();
+  node->activate();
+
+  rclcpp::executors::MultiThreadedExecutor exe;
   exe.add_node(node->get_node_base_interface());
   exe.spin();
 
   rclcpp::shutdown();
   return 0;
 }
+
+

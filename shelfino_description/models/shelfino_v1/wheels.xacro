@@ -9,7 +9,7 @@
                     LINKS
     -->
 
-    <link name="shelfino${robot_id}/${prefix}_wheel">
+    <link name="${robot_name}/${prefix}_wheel">
       <visual>
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
@@ -33,9 +33,9 @@
                     JOINTS
     -->
 
-    <joint name="shelfino${robot_id}/${prefix}_wheel_joint" type="continuous">
-      <parent link="shelfino${robot_id}/chassis_link"/>
-      <child link="shelfino${robot_id}/${prefix}_wheel"/>
+    <joint name="${robot_name}/${prefix}_wheel_joint" type="continuous">
+      <parent link="${robot_name}/chassis_link"/>
+      <child link="${robot_name}/${prefix}_wheel"/>
       <origin xyz="0 ${reflect*(body_width/2+0.02)} ${wheel_radius+0.05}" rpy="0 ${pi/2} ${pi/2}"/>
       <axis xyz="0 0 1"/> <!-- specifies the axis around which it should revolve -->
     </joint>
@@ -43,7 +43,7 @@
     <!-- 
                     GAZEBO COLORS
     -->
-    <gazebo reference="shelfino${robot_id}/${prefix}_wheel">
+    <gazebo reference="${robot_name}/${prefix}_wheel">
       <material>Gazebo/Black</material>
       <plugin name='gazebo_ros_joint_state_publisher' filename='libgazebo_ros_joint_state_publisher.so'>
         <update_rate>100</update_rate>

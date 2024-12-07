@@ -1,5 +1,5 @@
 <p align='center'>
-    <h1 align="center">Robot Planning and its Applications Project 2023/24</h1>
+    <h1 align="center">Robot Planning and its Applications Project 2024/25</h1>
 </p>
 
 ----------
@@ -45,10 +45,10 @@ Each group of students, composed at maximum of 3 students $\left(|\text{group}|\
 
 General assumptions are:
 
-- The robots move at constant speed, i.e., use Dubins manoeuvres;
+- The robots move at constant speed, i.e., use Dubins manoeuvers;
 - Touching the borders of the map and/or the obstacle will decrease the point obtained by completely the task successfully.  
 - The robots (except for the pursuer in the evasion scenario) must reach the center of the gate and with the angle provided in the topic.
-- Obstacles may have different shapes, so do not assume they are polygons.
+- Obstacles may have different shapes, so do not assume they are regular polygons.
 
 ## Coordinate Evacuation
 
@@ -78,7 +78,7 @@ You will lose points for:
 
 - Robots are initially spawned at random position, i.e., get their position as a first thing. 
 - Robots reaching the gate will disappear. 
-- Since robots move at constant velocity, they _should_ not be able to stop.
+- Since robots move at constant velocity, they _must_ not stop.
 
 ### Steps
 
@@ -127,11 +127,11 @@ You will lose points for:
 <img src="../assets/images/Pursuit.png" alt="Pursuit evasion image" width="400"/>
 </center>
 
-The project is about capturing an evader robot (evader) using a pursuer robot. Both the pursuer and the evader move in an environment characterised by the presence of obstacles.
+The project is about capturing an evader robot using a pursuer robot. Both the pursuer and the evader move in an environment characterized by the presence of obstacles.
 
 The map can have one or more exit points and the project has different levels of difficulty, as detailed below.
 
-The students will have to code the behaviour of both the pursuer and the evader.
+The students will have to code the behavior of both the pursuer and the evader.
 
 
 ### Evaluation
@@ -160,15 +160,21 @@ Also the points will be given based on the difficulty of the scenario: catching 
 
 ### Level of complexity
 
-The behaviour of the evader is organised in increasing levels of complexity:
+The behaviour of the evader is organised in increasing levels of complexity. If you choose this project, you must account for the following 3 behaviours:
 
-1. There is only one exit and the evader has to reach it in minimum time.
-   
-2. There are two exits and at each location of the roadmap reached by the evader, it can decide non-deterministically to go in minimum time to one or to the other.
-   
-3. There are two exits and at each location of the roadmap the evader can decide to take one or the other accounting for the presence of the pursuer.
+1. There is only one exit and the evader reaches it in minimum time.
 
-4. Given a not smart behaviour of the evader as in point 2, there are multiple pursuer that can be used to catch the evader. Pursuers must coordinate, i.e., they must not collide otherwise the group will lose points.
+2. There are two exits and the evader randomically chooses one of the two gates before moving. 
+
+3. There are two gates and the evader chooses one based on the position of the pursuer. 
+
+<!-- The following 3 levels are not mandaory and curen
+
+4. There are two exits and at every second, the evader chooses non-deterministically to go to one or to the other.
+   
+5. There are two exits and at every second, the evader can decide to take one or the other accounting for the presence of the pursuer.
+
+6. Given a non-smart behaviour of the evader as in point 2, there are multiple pursuer that can be used to catch the evader. Pursuers must coordinate, i.e., they must not collide with each other otherwise the group will lose points. -->
 
 ### Steps
 
@@ -179,20 +185,16 @@ The students will setup a strategy (e.g., optimisation-based, heuristic) to deci
 
 ## Getting the simulation 
 
-The code for the simulation is available at: [https://github.com/pla10/Shelfino_ROS2/](https://github.com/pla10/Shelfino_ROS2/). The simulation uses an external library to check for collisions of the obstacles, so once you downloaded it, make sure to enter in the main folder and run 
+The code for the simulation is available at: [https://github.com/pla10/Shelfino_ROS2/](https://github.com/pla10/Shelfino_ROS2/). 
 
-```bash
-git submodule update --init --recursive
-```
-
-This should populate the repository `map_pkg/include/geometry`.
-
-To create the workspace, clone the repository and its submodules, you should run:
+Create the workspace in which you want to clone the repository:
 
 ```bash
 mkdir shelfino_ws
 cd shelfino_ws 
-git clone https://github.com/pla10/Shelfino_ROS2/ src --recurse-submodules
+git clone https://github.com/pla10/Shelfino_ROS2/ src 
+# If not done before, execute sudo rosdep init before the next command
+rosdep install --from-paths src --ignore-src -r -y
 ```
 
 The structure of the code is the following: 
@@ -208,10 +210,14 @@ The structure of the code is the following:
   - spawning the borders;
   
   This package publishes the following topics:
-  - `/obstacles`: contains the obstacles that are present on the map. They may be only cylinders or boxes. In the former, the center $(x, y)$ in $z=0$ and the radius are provided, in the latter, the center $(x,y)$ in $z=0$ and the lengths of the borders are provided. 
-  - `/map_borders`: 
-  - `/victims`: contains information for the victims, which are thought as circles of radius 0.5m.
-  - `/gate_position`: contains the position and orientation of the gate.
+  - `/borders`: the vertexes of the map. The message is of type `geometry_msgs::msg::Polygon`.
+  - `/gates`: the centers and orientations of the gates, which are rectangles of size 1x1. The message is of type `geometry_msgs::msg::PoseArray`.
+  - `/obstacles`: the obstacles of type `obstacles_msgs::msg::ObstacleArrayMsg`. The `ObstacleArrayMsg` contains an array of `ObstacleMsg`, which have the following fields:
+    - `polygon` of type `geometry_msgs::msgs::Polygon`, which contains the vertexes of the obstacle if it is a polygon, or just the center of the cylinder otherwhise.
+    - `radius` of type `float64`, which is set only if the obstacle is a cylinder.
+  - `/victims`: the victims of type `obstacles_msgs::msg::ObstacleArrayMsg`. The `ObstacleArrayMsg` contains an array of `ObstacleMsg`, which have the following fields:
+    - `polygon` of type `geometry_msgs::msgs::Polygon`, which contains the center of the victim.
+    - `radius` of type `float64`, which in victims reflects the weight of the victim.
   
   This package can be configured using the `map_config.yaml` file inside of `map_pkg/config`. Also check the launch file to have more information on the possible parameters to pass. 
 
@@ -258,12 +264,12 @@ You should write C++ (standard 17) nodes that allow the robots to complete their
 
 ## When you should provide the what
 
-You should deliver the report and the code at least **1 week** before the date of the exam. Exam dates will be released in the near future and this document will be updated with them.
+You should deliver the report and the code at least **1 week** before the date of the exam.
 
 | Date of exam | Delivery date          |
 |--------------|------------------------|
-| 12/01/2024   | 11/01/2024 12:00 (CET) |
-| 16/02/2024   | 14/02/2024 23:59 (CET) |
+| 08/01/2025   | 01/01/2025 23:59 (CET) |
+| 04/02/2025   | 29/01/2025 23:59 (CET) |
 | TBD          | One week before        |
 
 ## How you should provide the what 
@@ -274,19 +280,18 @@ The best thing would be for each group to create a fork of the repository so tha
 
 In any case, for the delivery you will have to provide an archive containing the code. Obviously no pre-compiled files nor executable will be taken into consideration.
 
-You should send the archive and the pdf to me as an email and wait for my ACK on the reception of the email. Also, in the email you should state the group components, and a name for the group (if you have chosen one). 
+You should send the archive and the pdf to both Prof. Palopoli and me in an email and wait for my ACK on the reception of the email. Also, in the email you should state the group components, and a name for the group (if you have chosen one). 
 
 # Other useful information
 
 - You can use any C++ standard from C++14 and above. Mind though that the last standard for which ROS2 has complete support is C++17, while for above stanrdard there may be problems when compiling.
-- AFAIC, using Nav2 FollowPath is the best course of actions. In this case, you should create your path using Dubins, split it in segments with the same lengths and then make a request to the Nav2 FollowPat action server to follow the points that you passed. The only part of this that is implemented is the Nav2 FollowPath server, but both the Dubins planner and the action client must be coded by you. 
+- AFAIK, using Nav2 FollowPath is the best course of actions. In this case, you should create your path using Dubins, split it in segments with the same lengths and then make a request to the Nav2 FollowPat action server to follow the points that you passed. The only part of this that is implemented is the Nav2 FollowPath server, but both the Dubins planner and the action client must be coded by you. 
 
 # TODOs on my end
 
 - As you may see by looking at the repository, the evader package is still empty. It will be updated during the week. 
 - Some files are still missing their documentation. I'll see to udpate them as soon as I can .
 - I'm aware that some of you have asked me to create a server for running Gazebo remotely, but it's not a simple task. Just know that I'll look into this as soon as I have the means.
-- Fixing the robots. I hoped it would have taken less time, but at this point I hope to be able to fix them for end of December so that you can test your code on them by January. I'll keep you updated.
 
 # P.S. 
 

@@ -1,11 +1,11 @@
 <?xml version='1.0' ?>
 <robot name='shelfino' xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
-  <link name='shelfino${robot_id}/base_link'>
+  <link name='${robot_name}/base_link'>
   <!-- This is the main link of reference for the body -->
   </link> 
 
-  <link name='shelfino${robot_id}/base_footprint'>
+  <link name='${robot_name}/base_footprint'>
   <!-- This is the standard link to which the map is usually associated to -->
   </link>
 
@@ -23,16 +23,16 @@
   <xacro:property name='caster_offset_z' value='0.1'/>
   <xacro:property name='body_weight' value='0.5'/>
   
-  <link name='shelfino${robot_id}/chassis_link'>
+  <link name='${robot_name}/chassis_link'>
     <visual name='body_visual'>
       <origin xyz='${body_offset_x} ${body_offset_y} ${body_offset_z}'/>
       <geometry>
         <box size='${body_width} ${body_length} ${body_height}'/>
       </geometry>
-      <xacro:if value="${robot_id == 'evader'}">
+      <xacro:if value="${robot_name == 'evader'}">
         <material name='Red' />
       </xacro:if>
-      <xacro:if value="${robot_id != 'evader'}">
+      <xacro:if value="${robot_name != 'evader'}">
         <material name='Grey' />
       </xacro:if>
     </visual>
@@ -72,15 +72,15 @@
                   JOINTS
   -->
 
-  <joint name='shelfino${robot_id}/base_to_chassis_joint' type='fixed'>
-    <parent link='shelfino${robot_id}/base_link'/>
-    <child link='shelfino${robot_id}/chassis_link'/>
+  <joint name='${robot_name}/base_to_chassis_joint' type='fixed'>
+    <parent link='${robot_name}/base_link'/>
+    <child link='${robot_name}/chassis_link'/>
     <origin xyz='0 0 0' rpy='0 0 0'/>
   </joint>
 
-  <joint name='shelfino${robot_id}/base_to_base_footprint_joint' type='fixed'>
-    <parent link='shelfino${robot_id}/base_link'/>
-    <child link='shelfino${robot_id}/base_footprint'/>
+  <joint name='${robot_name}/base_to_base_footprint_joint' type='fixed'>
+    <parent link='${robot_name}/base_link'/>
+    <child link='${robot_name}/base_footprint'/>
     <origin xyz='0 0 0' rpy='0 0 0'/>
   </joint>
 
@@ -88,12 +88,12 @@
                   GAZEBO COLORS
   -->
 
-  <gazebo reference="shelfino${robot_id}/chassis_link">
-    <xacro:if value="${robot_id == 'evader'}">
-      <material>Gazebo/Red</material>
+  <gazebo reference="${robot_name}/chassis_link">
+    <xacro:if value="${robot_name == 'evader'}">
+      <material>Gazebo/Green</material>
     </xacro:if>
-    <xacro:if value="${robot_id != 'evader'}">
-      <material>Gazebo/Grey</material>
+    <xacro:if value="${robot_name != 'evader'}">
+      <material>Gazebo/Green</material>
     </xacro:if>
     
     <mu1 value="0.000001"/>

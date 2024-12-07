@@ -39,24 +39,22 @@ def generate_launch_description():
     shelfino_gaze_pkg = get_package_share_directory('shelfino_gazebo')
 
     use_sim_time      = LaunchConfiguration('use_sim_time', default='true')
-    shelfino_id       = LaunchConfiguration('shelfino_id', default='G')
-    use_gui           = LaunchConfiguration('use_gui')
-    use_rviz          = LaunchConfiguration('use_rviz')
-    spawn_shelfino    = LaunchConfiguration('spawn_shelfino', default='false')
+    shelfino_name     = LaunchConfiguration('shelfino_name', default='shelfino')
+    use_gui           = LaunchConfiguration('use_gui', default='true')
+    use_rviz          = LaunchConfiguration('use_rviz', default='false')
+    spawn_shelfino    = LaunchConfiguration('spawn_shelfino', default='true')
     rviz_config_file  = LaunchConfiguration('rviz_config_file', 
-        default=PythonExpression(["'", os.path.join(shelfino_desc_pkg, 'rviz', 'shelfino'), shelfino_id, ".rviz'"]) 
+        default=os.path.join(shelfino_desc_pkg, "rviz", "shelfino.rviz")
     )
     gazebo_world_file = LaunchConfiguration('gazebo_world_file', 
-        default=os.path.join(shelfino_gaze_pkg, 'worlds', 'hexagon.world')
+        default=os.path.join(shelfino_gaze_pkg, "worlds", "hexagon.world")
     )
-    
-    shelfino_name = PythonExpression(["'", 'shelfino', shelfino_id, "'"])
-    model_output = PythonExpression(["'", os.path.join(shelfino_desc_pkg, 'models', 'shelfino'), shelfino_id, ".sdf'"])
+    shelfino_init_x   = LaunchConfiguration('shelfino_init_x', default='0.0')
+    shelfino_init_y   = LaunchConfiguration('shelfino_init_y', default='0.0')
+    shelfino_init_yaw = LaunchConfiguration('shelfino_init_yaw', default='0.0')
     
     # TODO move models to shelfino_gazebo
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(shelfino_desc_pkg, 'models')
-
-    # rviz_config = PythonExpression(["'", os.path.join(get_package_share_directory('shelfino_description'), 'rviz', 'shelfino'), shelfino_id, '.rviz', "'"])
 
     def evaluate_rviz(context, *args, **kwargs):
         """
@@ -64,9 +62,9 @@ def generate_launch_description():
         sets the rviz_config_file to the new file
         """
         if context.launch_configurations['use_rviz'] == 'true':
-            rn = 'shelfino' + context.launch_configurations['shelfino_id']
+            rn = context.launch_configurations['shelfino_name']
             rviz_path = context.launch_configurations['rviz_config_file']
-            cr_path = os.path.join(shelfino_desc_pkg, 'rviz', 'shelfino') + context.launch_configurations['shelfino_id'] + '.rviz'
+            cr_path = os.path.join(shelfino_desc_pkg, 'rviz', (context.launch_configurations['shelfino_name'] + '.rviz'))
             
             print("[{}] Replacing shelfinoX with {} from file {} to file {}".format(__file__, rn, rviz_path, cr_path))
 
@@ -87,9 +85,9 @@ def generate_launch_description():
             description='Flag to enable use of simulation (Gazebo) clock'
         ),
         DeclareLaunchArgument(
-            name='shelfino_id',
-            default_value=shelfino_id,
-            description='ID of the robot'
+            name='shelfino_name',
+            default_value=shelfino_name,
+            description='Shellfino\'s name'
         ),
         DeclareLaunchArgument(
             name='use_gui',
@@ -118,6 +116,21 @@ def generate_launch_description():
             name='gazebo_world_file',
             default_value=gazebo_world_file, # choices=['empty', 'povo', 'hexagon'],
             description='World used in the gazebo simulation'
+        ),
+        DeclareLaunchArgument(
+            name='shelfino_init_x',
+            default_value=shelfino_init_x,
+            description='Initial x position of the robot'
+        ),
+        DeclareLaunchArgument(
+            name='shelfino_init_y',
+            default_value=shelfino_init_y,
+            description='Initial y position of the robot'
+        ),
+        DeclareLaunchArgument(
+            name='shelfino_init_yaw',
+            default_value=shelfino_init_yaw,
+            description='Initial yaw of the robot'
         ),
 
         OpaqueFunction(function=print_env),
@@ -150,7 +163,11 @@ def generate_launch_description():
             arguments=[
                         '-topic', PythonExpression(["'/", shelfino_name, "/robot_description", "'"]),
                         '-entity', shelfino_name,
-                        '-robot_namespace', shelfino_name],
+                        '-robot_namespace', shelfino_name,
+                        '-x', shelfino_init_x,
+                        '-y', shelfino_init_y,
+                        '-Y', shelfino_init_yaw
+                        ],
             condition=IfCondition(spawn_shelfino),
         ),
 
