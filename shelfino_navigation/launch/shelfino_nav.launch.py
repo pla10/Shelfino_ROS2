@@ -36,8 +36,8 @@ def generate_launch_description():
     shelfino_nav2_pkg = os.path.join(get_package_share_directory('shelfino_navigation'))
 
     use_sim_time     = LaunchConfiguration('use_sim_time', default='false')
-    robot_id         = LaunchConfiguration('robot_id', default='G')
-    map_file         = LaunchConfiguration('map_file', default=os.path.join(shelfino_nav2_pkg, 'map', 'hexagon.yaml'))
+    shelfino_id         = LaunchConfiguration('shelfino_id', default='G')
+    map_file         = LaunchConfiguration('map_file', default=os.path.join(shelfino_nav2_pkg, 'maps', 'lab1.yaml'))
     nav2_params_file = LaunchConfiguration('nav2_params_file', default=os.path.join(shelfino_nav2_pkg,'config', 'shelfino.yaml'))
     rviz_config_file = LaunchConfiguration('rviz_config_file', default=os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino_nav.rviz'))
     nav2_autostart   = LaunchConfiguration('nav2_autostart', default='true')
@@ -49,7 +49,7 @@ def generate_launch_description():
     initial_y        = LaunchConfiguration('initial_y', default='0.0')
     initial_yaw      = LaunchConfiguration('initial_yaw', default='0.0')
     
-    robot_name = PythonExpression(["'", 'shelfino', robot_id, "'"])
+    robot_name = PythonExpression(["'", 'shelfino', shelfino_id, "'"])
     
     # Remap lifecycle nodes to robot namespace
     map_node               = PythonExpression(["'/", robot_name, '/map_server', "'"])
@@ -98,9 +98,9 @@ def generate_launch_description():
     )
 
     def evaluate_rviz(context, *args, **kwargs):
-        rn = 'shelfino' + LaunchConfiguration('robot_id').perform(context)
+        rn = 'shelfino' + LaunchConfiguration('shelfino_id').perform(context)
         rviz_path = context.launch_configurations['rviz_config_file']
-        cr_path = os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino') + context.launch_configurations['robot_id'] + '_nav.rviz'
+        cr_path = os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino') + context.launch_configurations['shelfino_id'] + '_nav.rviz'
         
         with open(rviz_path,'r') as f_in:
             filedata = f_in.read()
@@ -120,8 +120,8 @@ def generate_launch_description():
             description='Flag to toggle between real robot and simulation'
         ),
         DeclareLaunchArgument(
-            name='robot_id', 
-            default_value=robot_id,
+            name='shelfino_id', 
+            default_value=shelfino_id,
             description='ID of the robot'
         ),
         DeclareLaunchArgument(
@@ -333,17 +333,17 @@ def generate_launch_description():
             condition=UnlessCondition(remote_nav),
         ),
 
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            namespace= robot_name,
-            arguments=['-d', rviz_config_file],
-            parameters=[
-                {'use_sim_time': use_sim_time}
-            ],
-            condition=UnlessCondition(headless),
-            output='screen'
-        ),
+        # Node(
+        #     package='rviz2',
+        #     executable='rviz2',
+        #     namespace= robot_name,
+        #     arguments=['-d', rviz_config_file],
+        #     parameters=[
+        #         {'use_sim_time': use_sim_time}
+        #     ],
+        #     condition=UnlessCondition(headless),
+        #     output='screen'
+        # ),
     ])
 
     
