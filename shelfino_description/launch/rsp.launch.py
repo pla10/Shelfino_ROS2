@@ -20,15 +20,13 @@ def print_env(context):
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    shelfino_id = LaunchConfiguration('shelfino_id', default='')
-
-    shelfino_name = PythonExpression(["'", 'shelfino', shelfino_id, "'"])
+    shelfino_name = LaunchConfiguration('shelfino_name', default='shelfino')
 
     xacro_model = os.path.join(
         get_package_share_directory('shelfino_description'),
         'models','shelfino_v1.xacro')
     
-    robot_desc = Command(['xacro ', xacro_model, ' robot_id:=', shelfino_id])
+    robot_desc = Command(['xacro ', xacro_model, ' robot_name:=', shelfino_name])
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -37,9 +35,9 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         DeclareLaunchArgument(
-            'shelfino_id',
-            default_value='',
-            description='Shelfino ID'),
+            'shelfino_name',
+            default_value='shelfino',
+            description='Shelfino\'s name'),
 
         OpaqueFunction(function=print_env),
 

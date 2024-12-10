@@ -22,7 +22,7 @@ static const rmw_qos_profile_t rmw_qos_profile_custom =
 class ShelfinoDestroyer : public rclcpp::Node
 {
 private:
-  geometry_msgs::msg::Pose gate_pose;
+  geometry_msgs::msg::PoseArray gates_pose;
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr sub_gates_;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr sub_amcl_pose_;
 
@@ -35,15 +35,15 @@ public:
 
     auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
 
-    // Create subscription to /gate_position 
+    // Create subscription to /gates 
     this->sub_gates_ = this->create_subscription<geometry_msgs::msg::PoseArray>(
-      "/gate_position", qos, 
-      [this](const geometry_msgs::msg::PoseArray::SharedPtr msg) {
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Received gates in %f %f", msg->poses[0].position.x, msg->poses[0].position.y);
-        this->gate_pose = msg->poses[0];
-        this->listen_to_pose();
-      }
-    );
+      "/gates", qos, std::bind(&ShelfinoDestroyer::handle_gates_pose, this, std::placeholders::_1));
+  }
+
+  void handle_gates_pose(const geometry_msgs::msg::PoseArray::SharedPtr msg){
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Received gates in %f %f", msg->poses[0].position.x, msg->poses[0].position.y);
+    this->gates_pose.poses = msg->poses;
+    this->create_amcl_sub();
   }
 
   void delete_entity(){
@@ -65,24 +65,25 @@ public:
     deleted = true;
   }
 
-  void listen_to_pose(){
+  void listen_to_pose(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg){
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Received amcl pose: x: %f, y: %f", 
+      msg->pose.pose.position.x, msg->pose.pose.position.y
+    );
+    for (auto gate_pose : this->gates_pose.poses){
+      if (std::abs(msg->pose.pose.position.x - gate_pose.position.x) < 0.5 && 
+          std::abs(msg->pose.pose.position.y - gate_pose.position.y) < 0.5)
+      {
+        delete_entity();
+      }
+    }
+  }
+
+
+  void create_amcl_sub(){
     // Create subscription to amcl_pose
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for pose...");
     this->sub_amcl_pose_ = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
-      "amcl_pose", 10, 
-      [this](const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg) {
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Received pose: x: %f, y: %f", 
-          msg->pose.pose.position.x, msg->pose.pose.position.y
-        );
-        if (std::abs(msg->pose.pose.position.x - this->gate_pose.position.x) < 0.5 && 
-            std::abs(msg->pose.pose.position.y - this->gate_pose.position.y) < 0.5)
-        {
-          delete_entity();
-        }
-        else {
-          RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for pose...");
-        }
-      }
+      "amcl_pose", 10, std::bind(&ShelfinoDestroyer::listen_to_pose, this, std::placeholders::_1)
     );
   }
 };

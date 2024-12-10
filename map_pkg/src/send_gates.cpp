@@ -89,7 +89,7 @@ public:
 
     auto qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_custom);
     
-    this->publisher_ = this->create_publisher<geometry_msgs::msg::PoseArray>("/gates_position", qos);
+    this->publisher_ = this->create_publisher<geometry_msgs::msg::PoseArray>("/gates", qos);
 
     // Get parameters
     this->data.map_name = this->get_parameter("map").as_string();
