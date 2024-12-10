@@ -399,11 +399,9 @@ void HardwareGlobalInterface::updateOdometryV(double current_time, double vl, do
   double df = 0.5 * (ticks_l/LEFT_INCREMENTS_PER_TOUR * 2*M_PI * LEFT_RADIUS + ticks_r/RIGHT_INCREMENTS_PER_TOUR * 2*M_PI * RIGHT_RADIUS);
 
   odomData.twist_lin_x = df/seconds_since_last_update;
-
 }
 
 void HardwareGlobalInterface::updateOdometryOmega(double current_time, std::vector<double> const & orientation, std::vector<double> const & angular_vel){
-
   std::unique_lock<std::mutex> lock(odomMTX);
 
   double seconds_since_last_update = (current_time - odomData.last_odom_update)/1000;
