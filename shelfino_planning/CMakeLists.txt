@@ -11,6 +11,7 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(obstacles_msgs REQUIRED)
 
 
 
@@ -30,14 +31,10 @@ endif()
 include_directories(include)
 
 add_executable(mapinfo_node src/mapinfo.cpp)
-ament_target_dependencies(mapinfo_node rclcpp geometry_msgs)
+ament_target_dependencies(mapinfo_node rclcpp geometry_msgs obstacles_msgs)
 
 add_executable(shelfino_dates src/shelfino_dates.cpp)
-ament_target_dependencies(shelfino_dates rclcpp geometry_msgs nav_msgs)
-
-
-
-
+ament_target_dependencies(shelfino_dates rclcpp geometry_msgs nav_msgs obstacles_msgs )
 
 
 install(
