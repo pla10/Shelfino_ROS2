@@ -1,0 +1,12 @@
+.DS_Store
+.vscode
+docs
+rope_planning
+tmp*.txt
+
+build/
+install/
+log/
+
+__pycache__/
+*.pyc

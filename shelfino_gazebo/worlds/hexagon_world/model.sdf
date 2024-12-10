@@ -1,0 +1,45 @@
+<sdf version='1.5'>
+    <!-- Draw Circle -->
+    <model name='ros_symbol'>
+      <static>1</static>
+      <link name='symbol'>
+        
+        <!-- Draw Wall -->
+        <collision name='body'>
+        <pose>0 0 -0.3 0 0 -1.5708</pose>
+        <geometry>
+          <mesh>
+            <uri>model://hexagon_world/meshes/wall.dae</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <bounce/>
+          <friction>
+            <ode/>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+
+      <visual name='body'>
+        <pose>0 0 -0.3 0 0 -1.5708</pose>
+        <geometry>
+          <mesh>
+            <uri>model://hexagon_world/meshes/wall.dae</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/FlatBlack</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

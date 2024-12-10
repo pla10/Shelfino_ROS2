@@ -1,0 +1,103 @@
+<?xml version='1.0' ?>
+<robot name='shelfino' xmlns:xacro='http://www.ros.org/wiki/xacro'>
+
+  <link name='${robot_name}/base_link'>
+  <!-- This is the main link of reference for the body -->
+  </link> 
+
+  <link name='${robot_name}/base_footprint'>
+  <!-- This is the standard link to which the map is usually associated to -->
+  </link>
+
+  <!--
+                  SHELFINO'S BODY
+  -->
+  <xacro:property name='body_width' value='0.5'/>
+  <xacro:property name='body_length' value='0.5'/>
+  <xacro:property name='body_height' value='0.4'/>
+  <xacro:property name='body_offset_x' value='0'/>
+  <xacro:property name='body_offset_y' value='0'/>
+  <xacro:property name='body_offset_z' value='0.3'/>
+  <xacro:property name='caster_radius' value='0.05'/>
+  <xacro:property name='caster_width' value='0.05'/>
+  <xacro:property name='caster_offset_z' value='0.1'/>
+  <xacro:property name='body_weight' value='0.5'/>
+  
+  <link name='${robot_name}/chassis_link'>
+    <visual name='body_visual'>
+      <origin xyz='${body_offset_x} ${body_offset_y} ${body_offset_z}'/>
+      <geometry>
+        <box size='${body_width} ${body_length} ${body_height}'/>
+      </geometry>
+      <xacro:if value="${robot_name == 'evader'}">
+        <material name='Red' />
+      </xacro:if>
+      <xacro:if value="${robot_name != 'evader'}">
+        <material name='Grey' />
+      </xacro:if>
+    </visual>
+
+    <visual name='front_caster_visual'>
+      <origin xyz='-0.2 0 ${caster_offset_z}' rpy='0 ${PI_2} ${PI_2}'/>
+      <geometry>
+        <cylinder radius='${caster_radius}' length='${caster_width}'/>
+      </geometry>
+      <material name='Black' />
+    </visual>
+
+    <visual name='back_caster_visual'>
+      <origin xyz='0.2 0 ${caster_offset_z}' rpy='0 ${PI_2} ${PI_2}'/>
+      <geometry>
+        <cylinder radius='${caster_radius}' length='${caster_width}'/>
+      </geometry>
+      <material name='Black' />
+    </visual>
+
+    <collision>
+      <origin xyz='${body_offset_x} ${body_offset_y} ${body_offset_z}'/>
+      <geometry>
+        <box size='${body_width+caster_radius+0.02} ${body_length+0.02} ${body_height+caster_radius*2.0}' />
+      </geometry>
+    </collision>
+
+    <inertial>
+      <mass value='${body_weight}'/>
+      <inertia ixx='0.001' ixy='0.0' ixz='0.0'
+                iyy='0.001' iyz='0.0'
+                izz='0.001' />
+    </inertial>
+  </link>
+
+  <!-- 
+                  JOINTS
+  -->
+
+  <joint name='${robot_name}/base_to_chassis_joint' type='fixed'>
+    <parent link='${robot_name}/base_link'/>
+    <child link='${robot_name}/chassis_link'/>
+    <origin xyz='0 0 0' rpy='0 0 0'/>
+  </joint>
+
+  <joint name='${robot_name}/base_to_base_footprint_joint' type='fixed'>
+    <parent link='${robot_name}/base_link'/>
+    <child link='${robot_name}/base_footprint'/>
+    <origin xyz='0 0 0' rpy='0 0 0'/>
+  </joint>
+
+  <!-- 
+                  GAZEBO COLORS
+  -->
+
+  <gazebo reference="${robot_name}/chassis_link">
+    <xacro:if value="${robot_name == 'evader'}">
+      <material>Gazebo/Green</material>
+    </xacro:if>
+    <xacro:if value="${robot_name != 'evader'}">
+      <material>Gazebo/Green</material>
+    </xacro:if>
+    
+    <mu1 value="0.000001"/>
+    <mu2 value="0.000001"/>
+  </gazebo>
+
+</robot>
