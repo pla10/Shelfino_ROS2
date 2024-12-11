@@ -40,7 +40,7 @@ def get_shelfino_pos(context):
 
     map_conf_file = os.path.join(map_pkg, 'config', 'map_config.yaml')
 
-    shelfino_name = 'shelfino' + context.launch_configurations['robot_id']
+    shelfino_name = context.launch_configurations['robot_name']
 
     with open(map_conf_file, 'r') as f:
         map_conf = yaml.safe_load(f)
@@ -49,18 +49,11 @@ def get_shelfino_pos(context):
         context.launch_configurations['initial_y'] = map_conf[shelfino_name]['send_initialpose']['init_y']
         context.launch_configurations['initial_yaw'] = map_conf[shelfino_name]['send_initialpose']['init_yaw']
 
-
-def print_env(context):
-    print(__file__)
-    for key in context.launch_configurations.keys():
-        print("\t", key, context.launch_configurations[key])
-    return
-
 def generate_launch_description():
     shelfino_nav2_pkg = os.path.join(get_package_share_directory('shelfino_navigation'))
 
     use_sim_time     = LaunchConfiguration('use_sim_time', default='false')
-    robot_id         = LaunchConfiguration('robot_id', default='G')
+    robot_name       = LaunchConfiguration('robot_name', default='shelfino')
     map_file         = LaunchConfiguration('map_file', default=os.path.join(shelfino_nav2_pkg, 'map', 'hexagon.yaml'))
     nav2_params_file = LaunchConfiguration('nav2_params_file', default=os.path.join(shelfino_nav2_pkg,'config', 'shelfino.yaml'))
     rviz_config_file = LaunchConfiguration('rviz_config_file', default=os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino_nav.rviz'))
@@ -69,12 +62,10 @@ def generate_launch_description():
     remote_nav       = LaunchConfiguration('remote_nav', default='false')
     headless         = LaunchConfiguration('headless', default='false')
 
-    spawn_shelfino   = LaunchConfiguration('spawn_shelfino', default='false')
-    initial_x        = LaunchConfiguration('initial_x', default='10.0')
+    set_initial_pose   = LaunchConfiguration('set_initial_pose', default='false')
+    initial_x        = LaunchConfiguration('initial_x', default='0.0')
     initial_y        = LaunchConfiguration('initial_y', default='0.0')
     initial_yaw      = LaunchConfiguration('initial_yaw', default='0.0')
-    
-    robot_name = PythonExpression(["'", 'shelfino', robot_id, "'"])
     
     # Remap lifecycle nodes to robot namespace
     map_node               = PythonExpression(["'/", robot_name, '/map_server', "'"])
@@ -113,7 +104,7 @@ def generate_launch_description():
         'x'                : initial_x,
         'y'                : initial_y,
         'yaw'              : initial_yaw,
-        'set_initial_pose' : spawn_shelfino
+        'set_initial_pose' : set_initial_pose
     }
 
     configured_params = RewrittenYaml(
@@ -124,9 +115,9 @@ def generate_launch_description():
     )
 
     def evaluate_rviz(context, *args, **kwargs):
-        rn = 'shelfino' + LaunchConfiguration('robot_id').perform(context)
+        rn = context.launch_configurations['robot_name']
         rviz_path = context.launch_configurations['rviz_config_file']
-        cr_path = os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino') + context.launch_configurations['robot_id'] + '_nav.rviz'
+        cr_path = os.path.join(shelfino_nav2_pkg, 'rviz', 'shelfino') + context.launch_configurations['robot_name'] + '_nav.rviz'
         
         with open(rviz_path,'r') as f_in:
             filedata = f_in.read()
@@ -180,9 +171,9 @@ def generate_launch_description():
             description='Flag to toggle between real robot and simulation'
         ),
         DeclareLaunchArgument(
-            name='robot_id', 
-            default_value=robot_id,
-            description='ID of the robot'
+            name='robot_name', 
+            default_value=robot_name,
+            description='Name of the robot'
         ),
         DeclareLaunchArgument(
             name='map_file', 
@@ -218,8 +209,8 @@ def generate_launch_description():
             description='Flag to toggle between navigation stack running on robot or locally'
         ),
         DeclareLaunchArgument(
-            name='spawn_shelfino',
-            default_value=spawn_shelfino,
+            name='set_initial_pose',
+            default_value=set_initial_pose,
             choices=['true', 'false'],
             description='Flag to enable spawning of the robot. If false, amcl does not send initial pose'
         ),
@@ -272,7 +263,7 @@ def generate_launch_description():
             arguments=['--ros-args', '--log-level', 'info'],
             parameters=[configured_params],
             condition=UnlessCondition(remote_nav),
-            # condition=UnlessCondition(OrSubstitution(remote_nav, NotSubstitution(spawn_shelfino))),
+            # condition=UnlessCondition(OrSubstitution(remote_nav, NotSubstitution(set_initial_pose))),
         ),
 
         Node(
@@ -400,17 +391,17 @@ def generate_launch_description():
             condition=UnlessCondition(remote_nav),
         ),
 
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            namespace= robot_name,
-            arguments=['-d', rviz_config_file],
-            parameters=[
-                {'use_sim_time': use_sim_time}
-            ],
-            condition=UnlessCondition(headless),
-            output='screen'
-        ),
+        # Node(
+        #     package='rviz2',
+        #     executable='rviz2',
+        #     namespace= robot_name,
+        #     arguments=['-d', rviz_config_file],
+        #     parameters=[
+        #         {'use_sim_time': use_sim_time}
+        #     ],
+        #     condition=UnlessCondition(headless),
+        #     output='screen'
+        # ),
     ])
 
     

@@ -13,7 +13,7 @@ from launch.actions import RegisterEventHandler, OpaqueFunction, DeclareLaunchAr
 from launch import LaunchDescription, LaunchContext
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
-
+from launch.conditions import IfCondition
 import launch
 
 from launch.events.process import ProcessExited
@@ -118,7 +118,8 @@ def generate_launch_description():
             executable='send_victims',
             name='send_victims',
             output='screen',
-            parameters=[gen_map_params_file]
+            parameters=[gen_map_params_file],
+            condition=IfCondition(victims_activated)
         ),
     ]
 

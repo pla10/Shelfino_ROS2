@@ -5,6 +5,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME}")
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -13,12 +17,12 @@ find_package(rclpy REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(obstacles_msgs REQUIRED)
-find_package(gazebo_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(visualization_msgs REQUIRED)
+find_package(Python3 REQUIRED COMPONENTS Development)
 
 # add_compile_options(-DHOMOG2D_NOWARNINGS)
 
@@ -46,13 +50,13 @@ foreach(NODE ${NODES})
 
   target_compile_features(${NODE} PUBLIC c_std_99 cxx_std_17)
 
+  target_link_libraries(${NODE} ${Python3_LIBRARIES})
   # target_link_libraries(${NODE} ${PROJECT_NAME}_lib)
 
   ament_target_dependencies(
     ${NODE}
     "geometry_msgs"
     "rclcpp"
-    "gazebo_msgs"
     "obstacles_msgs"
     "tf2"
     "tf2_ros"
