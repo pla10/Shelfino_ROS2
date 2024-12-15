@@ -57,25 +57,53 @@ public:
   on_configure(const rclcpp_lifecycle::State& state)
   {
     // Obstacle parameters
-    this->declare_parameter("n_obstacles", 3);
-    this->declare_parameter("no_cylinders", false);
-    this->declare_parameter("no_boxes", false);
-    this->declare_parameter("min_size", 0.5);
-    this->declare_parameter("max_size", 1.5);
-    this->declare_parameter("vect_type", std::vector<std::string>());
-    this->declare_parameter("vect_x", std::vector<double>());
-    this->declare_parameter("vect_y", std::vector<double>());
-    this->declare_parameter("vect_yaw", std::vector<double>());
-    this->declare_parameter("vect_dim_x", std::vector<double>());
-    this->declare_parameter("vect_dim_y", std::vector<double>());
+    try{
+      this->declare_parameter("n_obstacles", 3);
+      this->declare_parameter("no_cylinders", false);
+      this->declare_parameter("no_boxes", false);
+      this->declare_parameter("min_size", 0.5);
+      this->declare_parameter("max_size", 1.5);
+      this->declare_parameter("vect_type", std::vector<std::string>());
+      this->declare_parameter("vect_x", std::vector<double>());
+      this->declare_parameter("vect_y", std::vector<double>());
+      this->declare_parameter("vect_yaw", std::vector<double>());
+      this->declare_parameter("vect_dim_x", std::vector<double>());
+      this->declare_parameter("vect_dim_y", std::vector<double>());
+    } catch (...){
+      RCLCPP_ERROR(this->get_logger(), "Error declaring parameters");
+    }
 
     // Get parameters
-    this->data.vect_type = this->get_parameter("vect_type").as_string_array();
-    this->data.vect_x = this->get_parameter("vect_x").as_double_array();
-    this->data.vect_y = this->get_parameter("vect_y").as_double_array();
-    this->data.vect_yaw = this->get_parameter("vect_yaw").as_double_array();
-    this->data.vect_dim_x = this->get_parameter("vect_dim_x").as_double_array();
-    this->data.vect_dim_y = this->get_parameter("vect_dim_y").as_double_array();
+    try{
+      this->data.vect_type = this->get_parameter("vect_type").as_string_array();
+    } catch (...){
+      RCLCPP_ERROR(this->get_logger(), "Error getting parameter vect_type");
+    }
+    try{
+      this->data.vect_x = this->get_parameter("vect_x").as_double_array();
+    } catch (...){
+      RCLCPP_ERROR(this->get_logger(), "Error getting parameter vect_x");
+    }
+    try{
+      this->data.vect_y = this->get_parameter("vect_y").as_double_array();
+    } catch (...){
+      RCLCPP_ERROR(this->get_logger(), "Error getting parameter vect_y");
+    }
+    try{
+      this->data.vect_yaw = this->get_parameter("vect_yaw").as_double_array();
+    } catch (...){
+      RCLCPP_ERROR(this->get_logger(), "Error getting parameter vect_yaw");
+    }
+    try{
+      this->data.vect_dim_x = this->get_parameter("vect_dim_x").as_double_array();
+    } catch (...){
+      RCLCPP_ERROR(this->get_logger(), "Error getting parameter vect_dim_x");
+    }
+    try{
+      this->data.vect_dim_y = this->get_parameter("vect_dim_y").as_double_array();
+    } catch (...){
+      RCLCPP_ERROR(this->get_logger(), "Error getting parameter vect_dim_y");
+    }
 
     // Print parameters values
     RCLCPP_INFO(this->get_logger(), "Parameters:");

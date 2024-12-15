@@ -455,6 +455,13 @@ def generate_config_file(map_env_params_file, generated_config_file):
         full_conf_file["/**/send_victims"]["ros__parameters"]["vect_y"] = [float(victim.y) for victim in victims]
         full_conf_file["/**/send_victims"]["ros__parameters"]["vect_weight"] = [float(victim.weight) for victim in victims]
 
+    # Set timeout info
+    full_conf_file["/**/send_timeout"] = {
+        "ros__parameters": {
+            "victims_timeout": config_yaml["/**/send_victims"]["ros__parameters"]["victims_timeout"]
+        }
+    }
+
     yaml.dump(full_conf_file, open(generated_config_file, "a"))
 
 

@@ -16,7 +16,7 @@
       <xacro:include filename='shelfino_v1/gazebo_classic_controls.xacro' />
       <!-- <xacro:include filename='shelfino_v1/gazebo_controls.xacro' /> -->
 
-      <!-- <xacro:include filename='shelfino_v1/xmas_hat.xacro' /> -->
+      <xacro:include filename='shelfino_v1/xmas_hat.xacro' />
 
   </xacro:macro>
 

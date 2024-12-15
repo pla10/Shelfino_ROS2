@@ -1,7 +1,7 @@
 /**/send_obstacles:
   ros__parameters:
     n_obstacles: 5                                # Number of RANDOM obstacles to be spawned
-    no_cylinders: false                           # If true, no cylinders will be spawned
+    no_cylinders: true                           # If true, no cylinders will be spawned
     no_boxes: false                               # If true, no boxes will be spawned
     max_size: 1.0                                 # Maximum size of the random obstacles
     min_size: 0.5                                 # Minimum size of the random obstacles
@@ -16,26 +16,27 @@
 /**/send_gates:
   ros__parameters:
     use_namespace: false    # If true, the gates will be spawned one for each Shelfino. Not yet implemented
-    x: [0.0, 0.0]                # X position of the gate(s)
-    y: [0.0, 0.0]                # Y position of the gate(s)
-    yaw: [0.0, 0.0]              # Yaw of the gate(s)
+    x: [0.0]                # X position of the gate(s)
+    y: [0.0]                # Y position of the gate(s)
+    yaw: [0.0]              # Yaw of the gate(s)
     # Values of x and y different from 0.0 will spawn the gates in the given position    
 
 /**/send_victims:
   ros__parameters:
     victims_activated: true      # If true, the victims will be spawned
-    n_victims: 2                 # Number of RANDOM victims to be spawned 
+    n_victims: 4                 # Number of RANDOM victims to be spawned 
     min_weight: 10               # Minimum weight of the victims
     max_weight: 500              # Maximum weight of the victims
-    vect_x: [8.0, -4.0, 4.0]     # X position of the victims
-    vect_y: [4.0, -4.0, 4.0]     # Y position of the victims
-    vect_weight: [100, 200, 300]  # Weight of the victims
+    vect_x: []                   # X position of the victims
+    vect_y: []                   # Y position of the victims
+    vect_weight: []              # Weight of the victims
+    victims_timeout: 0           # Time given to collect the victims and reach the gate in seconds. If 0, the simulation will choose one.
     # If vect_* are empty lists or not defined, then only random victims will be spawned
     
 /**:
   ros__parameters:
-    map: rectangle              # Maps can be "hexagon" or "rectangle"
-    dx: 20.0                    # The width of the rectangle or the length of the hexagon's edges. Default edge used in hexagon.world is 12.0
+    map: hexagon              # Maps can be "hexagon" or "rectangle"
+    dx: 10.0                    # The width of the rectangle or the length of the hexagon's edges. Default edge used in hexagon.world is 12.0
     dy: 20.0                    # The height of the rectangle. Not used in hexagon maps
     max_timeout: 3              # Maximum time to spawn the map. NOT MAINTAINED
     

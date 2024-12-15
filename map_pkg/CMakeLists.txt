@@ -38,6 +38,7 @@ set(NODES
   send_gates
   send_obstacles
   send_victims
+  send_timeout
 )
 
 # build nodes

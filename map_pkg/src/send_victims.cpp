@@ -19,6 +19,7 @@
 #include "obstacles_msgs/msg/obstacle_array_msg.hpp"
 #include "obstacles_msgs/msg/obstacle_msg.hpp"
 #include "std_msgs/msg/header.hpp"
+#include "std_msgs/msg/int32.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 
@@ -51,7 +52,7 @@ private:
 
 public:
   explicit VictimPublisher(bool intra_process_comms = false) 
-  : rclcpp_lifecycle::LifecycleNode("obstacles_sender",
+  : rclcpp_lifecycle::LifecycleNode("victims_sender",
       rclcpp::NodeOptions().use_intra_process_comms(intra_process_comms)
     )
   {
@@ -88,15 +89,6 @@ public:
       RCLCPP_ERROR(this->get_logger(), "vect_x and vect_y and vect_weigths must have the same size.");
       exit(1);
     }
-
-    // Create callback groups for gates and obstacles
-    auto cb_group_gates = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
-    rclcpp::SubscriptionOptions sub_options_gates;
-    sub_options_gates.callback_group = cb_group_gates;
-
-    auto cb_group_obstacles = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
-    rclcpp::SubscriptionOptions sub_options_obstacles;
-    sub_options_obstacles.callback_group = cb_group_obstacles;
 
     //Create publishers
     this->publisher_ = this->create_publisher<obstacles_msgs::msg::ObstacleArrayMsg>("/victims", this->qos);

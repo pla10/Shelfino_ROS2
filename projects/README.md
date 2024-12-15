@@ -210,14 +210,10 @@ The structure of the code is the following:
   - spawning the borders;
   
   This package publishes the following topics:
-  - `/borders`: the vertexes of the map. The message is of type `geometry_msgs::msg::Polygon`.
-  - `/gates`: the centers and orientations of the gates, which are rectangles of size 1x1. The message is of type `geometry_msgs::msg::PoseArray`.
-  - `/obstacles`: the obstacles of type `obstacles_msgs::msg::ObstacleArrayMsg`. The `ObstacleArrayMsg` contains an array of `ObstacleMsg`, which have the following fields:
-    - `polygon` of type `geometry_msgs::msgs::Polygon`, which contains the vertexes of the obstacle if it is a polygon, or just the center of the cylinder otherwhise.
-    - `radius` of type `float64`, which is set only if the obstacle is a cylinder.
-  - `/victims`: the victims of type `obstacles_msgs::msg::ObstacleArrayMsg`. The `ObstacleArrayMsg` contains an array of `ObstacleMsg`, which have the following fields:
-    - `polygon` of type `geometry_msgs::msgs::Polygon`, which contains the center of the victim.
-    - `radius` of type `float64`, which in victims reflects the weight of the victim.
+  - `/obstacles`: contains the obstacles that are present on the map. They may be only cylinders or boxes. In the former, the center $(x, y)$ in $z=0$ and the radius are provided, in the latter, the center $(x,y)$ in $z=0$ and the lengths of the borders are provided. 
+  - `/map_borders`: 
+  - `/victims`: contains information for the victims, which are thought as circles of radius 0.5m.
+  - `/gate_position`: contains the position and orientation of the gate.
   
   This package can be configured using the `map_config.yaml` file inside of `map_pkg/config`. Also check the launch file to have more information on the possible parameters to pass. 
 

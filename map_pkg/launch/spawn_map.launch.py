@@ -8,16 +8,19 @@ import os
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
-from launch.substitutions import LaunchConfiguration, PythonExpression, PathJoinSubstitution
-from launch.actions import RegisterEventHandler, OpaqueFunction, DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction
-from launch import LaunchDescription, LaunchContext
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
-from launch.conditions import IfCondition
-import launch
 
-from launch.events.process import ProcessExited
-from launch.event_handlers import OnProcessExit
+from launch import LaunchDescription, LaunchContext
+from launch.actions import RegisterEventHandler, OpaqueFunction, DeclareLaunchArgument, EmitEvent
+from launch.conditions import IfCondition
+from launch.events import matches_action
+from launch.substitutions import LaunchConfiguration, PythonExpression, PathJoinSubstitution
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
+from launch_ros.actions import Node, LifecycleNode
+from launch_ros.event_handlers import OnStateTransition
+from launch_ros.events.lifecycle import ChangeState
+
+from lifecycle_msgs.msg import Transition
 
 try:
     from mapscripts import spawn_borders, spawn_gates, spawn_obstacles
@@ -91,36 +94,65 @@ def generate_launch_description():
         # OpaqueFunction(function=spawn_victims.spawn_victims)
     ]
 
+    send_borders = Node(
+        package='map_pkg',
+        executable='send_borders',
+        name='send_borders',
+        output='screen',
+        parameters=[gen_map_params_file]
+    )
+    send_gates = Node(
+        package='map_pkg',
+        executable='send_gates',
+        name='send_gates',
+        output='screen',
+        parameters=[gen_map_params_file]
+    )
+    send_obstacles = Node(
+        package='map_pkg',
+        executable='send_obstacles',
+        name='send_obstacles',
+        output='screen',
+        parameters=[gen_map_params_file]
+    )
+    send_victims = Node(
+        package='map_pkg',
+        executable='send_victims',
+        name='send_victims',
+        output='screen',
+        parameters=[gen_map_params_file],
+        condition=IfCondition(victims_activated)
+    )
+    send_timeout = LifecycleNode(
+        package='map_pkg',
+        executable='send_timeout',
+        name='send_timeout',
+        output='screen',
+        namespace='',
+        parameters=[gen_map_params_file],
+        condition=IfCondition(victims_activated)
+    )
+    # activate_timeout = RegisterEventHandler(
+    #     OnStateTransition(
+    #         target_lifecycle_node=send_timeout,
+    #         start_state="configuring",
+    #         goal_state="inactive",
+    #         entities=[
+    #             EmitEvent(event=ChangeState(
+    #                 lifecycle_node_matcher=matches_action(send_timeout),
+    #                 transition_id=Transition.TRANSITION_ACTIVATE
+    #             ))
+    #         ]
+    #     ),
+    #     condition=IfCondition(victims_activated)
+    # )
     nodes = [
-        Node(
-            package='map_pkg',
-            executable='send_borders',
-            name='send_borders',
-            output='screen',
-            parameters=[gen_map_params_file]
-        ),
-        Node(
-            package='map_pkg',
-            executable='send_gates',
-            name='send_gates',
-            output='screen',
-            parameters=[gen_map_params_file]
-        ),
-        Node(
-            package='map_pkg',
-            executable='send_obstacles',
-            name='send_obstacles',
-            output='screen',
-            parameters=[gen_map_params_file]
-        ),
-        Node(
-            package='map_pkg',
-            executable='send_victims',
-            name='send_victims',
-            output='screen',
-            parameters=[gen_map_params_file],
-            condition=IfCondition(victims_activated)
-        ),
+        send_borders,
+        send_gates,
+        send_obstacles,
+        send_victims,
+        send_timeout,
+        # activate_timeout
     ]
 
     for action in nodes+functions:

@@ -122,20 +122,6 @@ def start_shelfini(context, shelfino_desc_pkg, shelfino_nav2_pkg):
                 destroy_shelfino_node
             ]
 
-            if "evader" in shelfino_name:
-                nodes.append(
-                    Node(
-                        package='evader',
-                        executable='evader',
-                        name='evader',
-                        namespace='evader',
-                        parameters=[{
-                            'difficulty': int(context.launch_configurations['difficulty']),
-                            'use_sim_time': True if context.launch_configurations['use_sim_time'] == 'true' else False
-                        }]
-                    )
-                ) 
-
     return nodes + [OpaqueFunction(function=evaluate_rviz, args=[shelfini_names])]
 
 def evaluate_rviz(context, shelfini_names):
@@ -245,7 +231,7 @@ def generate_launch_description():
     # Map package arguments
     map_env_params_file = LaunchConfiguration('map_env_params_file', default=map_env_params_file_path)
     gen_map_params_file = LaunchConfiguration('gen_map_params_file', default=gen_map_params_file_path)
-    victims_activated = LaunchConfiguration('victims_activated', default='false')
+    victims_activated = LaunchConfiguration('victims_activated', default='true')
     generate_new_map_config = LaunchConfiguration('generate_new_map_config', default='true')
     
 
@@ -322,7 +308,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'victims_activated',
             default_value=victims_activated,
-            choices=['false'],
+            choices=['true'],
             description='Whether to activate the victims or not'
         ),
         DeclareLaunchArgument(
