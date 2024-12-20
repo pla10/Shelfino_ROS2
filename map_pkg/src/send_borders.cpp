@@ -1,5 +1,3 @@
-#include "ament_index_cpp/get_package_share_directory.hpp"
-#include "gazebo_msgs/srv/spawn_entity.hpp"
 #include "geometry_msgs/msg/point32.hpp"
 #include "geometry_msgs/msg/polygon.hpp"
 #include "geometry_msgs/msg/polygon_stamped.hpp"

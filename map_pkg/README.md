@@ -31,3 +31,16 @@ There also other scripts and configuration files that are important:
 And finally the orchestrators:
 
 - `launch/spawn_map.launch.py` allows for launching the nodes in the correct order with the right parameters
+
+## Topics
+
+The following topics can be used to get information on the map:
+
+- `/borders`: the vertexes of the map. The message is of type `geometry_msgs::msg::Polygon`.
+- `/gates`: the centers and orientations of the gates, which are rectangles of size 1x1. The message is of type `geometry_msgs::msg::PoseArray`.
+- `/obstacles`: the obstacles of type `obstacles_msgs::msg::ObstacleArrayMsg`. The `ObstacleArrayMsg` contains an array of `ObstacleMsg`, which have the following fields:
+  - `polygon` of type `geometry_msgs::msgs::Polygon`, which contains the vertexes of the obstacle if it is a polygon, or just the center of the cylinder otherwhise.
+  - `radius` of type `float64`, which is set only if the obstacle is a cylinder.
+- `/victims`: the victims of type `obstacles_msgs::msg::ObstacleArrayMsg`. The `ObstacleArrayMsg` contains an array of `ObstacleMsg`, which have the following fields:
+  - `polygon` of type `geometry_msgs::msgs::Polygon`, which contains the center of the victim.
+  - `radius` of type `float64`, which in victims reflects the weight of the victim.

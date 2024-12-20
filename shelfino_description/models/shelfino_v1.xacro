@@ -2,10 +2,10 @@
 <robot name='shelfino' xmlns:xacro='http://www.ros.org/wiki/xacro'>  
 
   <xacro:property name='PI_2' value='1.5707963267948966'/>
-  <xacro:arg name="robot_id" default="X" />
+  <xacro:arg name="robot_name" default="X" />
 
   <!-- Define the macro for the whole shelfino -->
-  <xacro:macro name="shelfino" params='robot_id'>
+  <xacro:macro name="shelfino" params='robot_name'>
 
       <xacro:include filename='shelfino_v1/materials.xacro' />
 
@@ -21,5 +21,5 @@
   </xacro:macro>
 
   <!-- Instantiate the model -->
-  <xacro:shelfino robot_id="$(arg robot_id)" />
+  <xacro:shelfino robot_name="$(arg robot_name)" />
 </robot>

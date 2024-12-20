@@ -160,15 +160,21 @@ Also the points will be given based on the difficulty of the scenario: catching 
 
 ### Level of complexity
 
-The behaviour of the evader is organised in increasing levels of complexity:
+The behaviour of the evader is organised in increasing levels of complexity. If you choose this project, you must account for the following 3 behaviours:
 
-1. There is only one exit and the evader has to reach it in minimum time.
-   
-2. There are two exits and at each location of the roadmap reached by the evader, it can decide non-deterministically to go in minimum time to one or to the other.
-   
-3. There are two exits and at each location of the roadmap the evader can decide to take one or the other accounting for the presence of the pursuer.
+1. There is only one exit and the evader reaches it in minimum time.
 
-4. Given a not smart behaviour of the evader as in point 2, there are multiple pursuer that can be used to catch the evader. Pursuers must coordinate, i.e., they must not collide otherwise the group will lose points.
+2. There are two exits and the evader randomically chooses one of the two gates before moving. 
+
+3. There are two gates and the evader chooses one based on the position of the pursuer. 
+
+<!-- The following 3 levels are not mandaory and curen
+
+4. There are two exits and at every second, the evader chooses non-deterministically to go to one or to the other.
+   
+5. There are two exits and at every second, the evader can decide to take one or the other accounting for the presence of the pursuer.
+
+6. Given a non-smart behaviour of the evader as in point 2, there are multiple pursuer that can be used to catch the evader. Pursuers must coordinate, i.e., they must not collide with each other otherwise the group will lose points. -->
 
 ### Steps
 
@@ -179,21 +185,15 @@ The students will setup a strategy (e.g., optimisation-based, heuristic) to deci
 
 ## Getting the simulation 
 
-The code for the simulation is available at: [https://github.com/pla10/Shelfino_ROS2/](https://github.com/pla10/Shelfino_ROS2/). The simulation uses an external library to check for collisions of the obstacles, so once you downloaded it, make sure to enter in the main folder and run 
+The code for the simulation is available at: [https://github.com/pla10/Shelfino_ROS2/](https://github.com/pla10/Shelfino_ROS2/). 
 
-```bash
-git submodule update --init --recursive
-```
-
-This should populate the repository `map_pkg/include/geometry`.
-
-To create the workspace, clone the repository and its submodules, you should run:
+Create the workspace in which you want to clone the repository:
 
 ```bash
 mkdir shelfino_ws
 cd shelfino_ws 
-git clone https://github.com/pla10/Shelfino_ROS2/ src --recurse-submodules
-# If not done before, execute sudo rosdep init
+git clone https://github.com/pla10/Shelfino_ROS2/ src 
+# If not done before, execute sudo rosdep init before the next command
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
@@ -210,10 +210,14 @@ The structure of the code is the following:
   - spawning the borders;
   
   This package publishes the following topics:
-  - `/obstacles`: contains the obstacles that are present on the map. They may be only cylinders or boxes. In the former, the center $(x, y)$ in $z=0$ and the radius are provided, in the latter, the center $(x,y)$ in $z=0$ and the lengths of the borders are provided. 
-  - `/map_borders`: 
-  - `/victims`: contains information for the victims, which are thought as circles of radius 0.5m.
-  - `/gate_position`: contains the position and orientation of the gate.
+  - `/borders`: the vertexes of the map. The message is of type `geometry_msgs::msg::Polygon`.
+  - `/gates`: the centers and orientations of the gates, which are rectangles of size 1x1. The message is of type `geometry_msgs::msg::PoseArray`.
+  - `/obstacles`: the obstacles of type `obstacles_msgs::msg::ObstacleArrayMsg`. The `ObstacleArrayMsg` contains an array of `ObstacleMsg`, which have the following fields:
+    - `polygon` of type `geometry_msgs::msgs::Polygon`, which contains the vertexes of the obstacle if it is a polygon, or just the center of the cylinder otherwhise.
+    - `radius` of type `float64`, which is set only if the obstacle is a cylinder.
+  - `/victims`: the victims of type `obstacles_msgs::msg::ObstacleArrayMsg`. The `ObstacleArrayMsg` contains an array of `ObstacleMsg`, which have the following fields:
+    - `polygon` of type `geometry_msgs::msgs::Polygon`, which contains the center of the victim.
+    - `radius` of type `float64`, which in victims reflects the weight of the victim.
   
   This package can be configured using the `map_config.yaml` file inside of `map_pkg/config`. Also check the launch file to have more information on the possible parameters to pass. 
 

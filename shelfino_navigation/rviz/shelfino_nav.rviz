@@ -570,7 +570,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /gates_position
+        Value: /gates
       Value: true
     - Name: Victims
       Class: rviz_default_plugins/MarkerArray

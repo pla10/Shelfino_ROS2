@@ -128,7 +128,6 @@ class GateConfig:
         DELTA = self.dx/2.0 + 0.1 # 0.1 is half the border width + something
 
         edge = random.choice(range(len(borders_points)))
-        edge = 0
         P0 = borders_points[edge]
         P1 = borders_points[(edge+1)%len(borders_points)]
 
