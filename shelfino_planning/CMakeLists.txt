@@ -12,7 +12,9 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(obstacles_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
+find_package(rclpy REQUIRED)
 
 
 
@@ -36,6 +38,9 @@ ament_target_dependencies(mapinfo_node rclcpp geometry_msgs obstacles_msgs)
 add_executable(shelfino_dates src/shelfino_dates.cpp)
 ament_target_dependencies(shelfino_dates rclcpp geometry_msgs nav_msgs obstacles_msgs )
 
+add_executable(samples_marker_node src/prm/samples_marker.cpp)
+ament_target_dependencies(samples_marker_node rclcpp geometry_msgs visualization_msgs)
+
 
 install(
   DIRECTORY include/
@@ -45,7 +50,15 @@ install(
 install(TARGETS
   shelfino_dates
   mapinfo_node
+  samples_marker_node
   DESTINATION lib/${PROJECT_NAME}
 )
+
+install(
+  PROGRAMS
+    src/py_code/creation_of_sample.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 
 ament_package()
