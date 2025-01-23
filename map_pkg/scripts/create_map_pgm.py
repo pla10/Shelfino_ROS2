@@ -51,7 +51,7 @@ class CreateMap(Node):
         pts = np.array([self.__comp_point_wrt_map(point) for point in msg.points])
         isClosed = True
         color = (255,255,255)
-        thickness = 2
+        thickness = 20
         
         cv2.polylines(self.img, [pts], isClosed, color, thickness)
 

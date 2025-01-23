@@ -45,37 +45,25 @@
   ros__parameters:
     vect_dim_x:
     - 2.5
-    - 4.0
-    - 4.0
     - 2.0
     - 2.0
     vect_dim_y:
     - 4.0
-    - 19.5
-    - 19.5
     - 1.0
     - 0.8
     vect_type:
     - cylinder
     - box
     - box
-    - box
-    - box
     vect_x:
     - 2.3
-    - -7.5
-    - 7.5
     - -4.0
     - 0.0
     vect_y:
     - -2.5
-    - 0.0
-    - 0.0
     - -2.5
     - 9.0
     vect_yaw:
-    - 0.0
-    - 0.0
     - 0.0
     - 0.0
     - 0.0
