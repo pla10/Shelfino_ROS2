@@ -265,7 +265,7 @@ You should deliver the report and the code at least **1 week** before the date o
 | Date of exam | Delivery date          |
 |--------------|------------------------|
 | 08/01/2025   | 01/01/2025 23:59 (CET) |
-| 04/02/2025   | 29/01/2025 23:59 (CET) |
+| 04/02/2025   | 01/02/2025 23:59 (CET) |
 | TBD          | One week before        |
 
 ## How you should provide the what 
